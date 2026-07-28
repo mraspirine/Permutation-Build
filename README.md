@@ -51,20 +51,24 @@ cp -R figma-permutation-build ~/.claude/skills/
 ## ข้างในมีอะไร
 
 ```
-SKILL.md                  ตัวคุมเกม: ลำดับงาน 5 เฟส, ด่าน 6 ด่าน, กติกากลาง
-references/               ความรู้กลาง ใช้ได้ทุกโปรเจค
-  case-library.md         คลังเคส — ระดับจอ + ราย component
-  archetype-cases.md      ประเภทจอ 6 แบบ + 9 แกนที่ต้องไล่ให้ครบ
-  board-grammar.md        กติกาการวาง board + checklist 10 ข้อตอนไปวัดของทีม
-                          (ตั้งใจไม่มีตัวเลขของโปรเจคไหนอยู่ในไฟล์นี้เลย)
-scripts/                  โค้ดที่ยิงเข้า Figma
-  scan-cases.js           สำรวจว่ามี board/เคสอะไรอยู่แล้ว ทำไปกี่ %
-  harvest-board.js        วัดสไตล์ board ของทีม (ด่าน G1)
-  scaffold-kit.js         ชุดฟังก์ชันสร้างของ — ตัวเดียวที่เขียนไฟล์จริง
-  verify-board.js         ชุดตรวจ 7 ข้อ ต้องผ่านถึงเรียกว่าเสร็จ (ด่าน G5)
-projects/                 ความจริงของแต่ละโปรเจค
-  _template.md            แบบฟอร์มเปล่าสำหรับโปรเจคใหม่
-  next.md · dgl.md · clicx.md   ตัวอย่าง 3 โปรเจค (ต่างกันคนละเรื่อง)
+figma-permutation-build/
+├── SKILL.md                    ตัวคุมเกม: ลำดับงาน 5 เฟส, ด่าน 6 ด่าน, กติกากลาง
+├── README.md                   เอกสารฉบับนี้
+├── references/                 ความรู้กลาง ใช้ได้ทุกโปรเจค
+│   ├── case-library.md         คลังเคส — ระดับจอ + ราย component
+│   ├── archetype-cases.md      ประเภทจอ 6 แบบ + 9 แกนที่ต้องไล่ให้ครบ
+│   └── board-grammar.md        กติกาการวาง board + checklist 10 ข้อตอนไปวัดของทีม
+│                               (ตั้งใจไม่มีตัวเลขของโปรเจคไหนอยู่ในไฟล์นี้เลย)
+├── projects/                   ความจริงของแต่ละโปรเจค
+│   ├── next.md                 NEXT — label แบบ strict, จอ 390×844
+│   ├── dgl.md                  DGL Revamp — อยู่แอปเดียวกับ NEXT แต่ board คนละสไตล์
+│   ├── clicx.md                CLICX — caption เป็น instance, จอ 375×812
+│   └── _template.md            แบบฟอร์มเปล่าสำหรับบันทึกโปรเจคใหม่
+└── scripts/                    โค้ดที่ยิงเข้า Figma
+    ├── scan-cases.js           สำรวจว่ามี board/เคสอะไรอยู่แล้ว ทำไปกี่ %
+    ├── harvest-board.js        วัดสไตล์ board ของทีม (ด่าน G1)
+    ├── scaffold-kit.js         ชุดฟังก์ชันสร้างของ — ตัวเดียวที่เขียนไฟล์จริง
+    └── verify-board.js         ชุดตรวจ 7 ข้อ ต้องผ่านถึงเรียกว่าเสร็จ (ด่าน G5)
 ```
 
 ## มันทำงานยังไง
