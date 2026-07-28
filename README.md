@@ -1,124 +1,123 @@
 # figma-permutation-build
 
-A Claude Code skill that turns **one base screen in Figma** into a **Permutation board** —
-it enumerates the cases that screen should have (2 levels: screen-wide + per-component),
-proposes a prioritized matrix for you to trim, then scaffolds the board on canvas in
-**your project's own layout style**.
+Skill สำหรับ Claude Code ที่ช่วยตอบคำถามยอดฮิตก่อนส่งงาน: **"จอนี้ต้องมี state อะไรบ้าง ครบหรือยัง"**
 
-**Phase 1 (this version): structure + cases only.** Each case gets a `Case#N` label, a
-description, and an **empty screen slot** (`◻︎ Case Spec — awaiting design`) for the designer
-to fill. Generating the screens inside the cases is phase 2 (not built yet).
+วิธีใช้คือชี้จอใน Figma ให้มัน 1 จอ แล้วมันจะ:
+
+1. อ่านจอว่าเป็นจอแบบไหน มี component อะไรบ้าง
+2. แตกเคสให้ 2 ระดับ — เคสระดับจอ (loading / empty / error / จอเล็ก ฯลฯ) กับเคสของแต่ละ component ที่อยู่บนจอ (text field ก็มีชุดของมัน dropdown ก็มีชุดของมัน)
+3. สรุปเป็นตารางให้ดูก่อน ตัด/เพิ่มได้ — **อยากได้แค่ list เคสก็จบตรงนี้ ยังไม่มีอะไรถูกเขียนลงไฟล์**
+4. ถ้ายืนยัน มันถึงจะสร้าง Permutation board บน canvas ให้ หน้าตาเหมือนที่ทีมทำเองทุกอย่าง
+
+**เวอร์ชันนี้ทำแค่โครง** — แต่ละเคสจะได้ label `Case#N` + คำอธิบาย + ช่องจอเปล่า
+(`◻︎ Case Spec — awaiting design`) ไว้ให้ designer มาออกแบบต่อ ยังไม่ได้ออกแบบจอในเคสให้
 
 ---
 
-## Install
+## ติดตั้ง
 
 ```bash
-# copy the folder into your Claude Code skills directory
 cp -R figma-permutation-build ~/.claude/skills/
 ```
 
-Then invoke it with `/figma-permutation-build`, or just say what you want in chat —
-e.g. "แตกเคสจอนี้", "generate cases for this screen", "state ครบยัง".
+เสร็จแล้วเรียกด้วย `/figma-permutation-build` หรือพิมพ์คุยปกติเลยก็ได้ เช่น
+"แตกเคสจอนี้หน่อย", "จอนี้ลืม state อะไรไหม", "ก่อนส่ง dev ขาดอะไร"
 
-## Requirements
+## ต้องมีอะไรบ้าง
 
-| Need | Why |
+| ของ | เอาไว้ทำอะไร |
 |---|---|
-| **Figma MCP** (official) | reads the base screen, writes the scaffold |
-| **figma-console Desktop Bridge** | required only to read/audit *large existing* permutation boards (the official MCP overflows on big ones) |
-| Node.js *(optional)* | to run the scripts' built-in self-checks: `node scripts/scan-cases.js` |
+| **Figma MCP** (ตัว official) | อ่านจอ + เขียน board |
+| **figma-console Desktop Bridge** | ใช้เฉพาะตอนไปอ่าน board ใหญ่ๆ ที่มีอยู่แล้ว (MCP ตัว official อ่านแล้วล้น) |
+| Node.js *(ไม่บังคับ)* | ไว้รัน self-check ของสคริปต์ เช่น `node scripts/scan-cases.js` |
 
-## First run in a new project
+## ใช้กับโปรเจคตัวเองครั้งแรก
 
-The skill ships with three learned projects (`projects/next.md`, `projects/dgl.md`,
-`projects/clicx.md`) — those are **one team's conventions, not defaults for you**.
-For your own project it will:
+ในนี้แถมโปรเจคที่สอนไว้แล้ว 3 ตัว (`projects/next.md`, `projects/dgl.md`, `projects/clicx.md`)
+แต่นั่นคือ**ธรรมเนียมของทีมนึงเท่านั้น ไม่ใช่ค่ากลางของทุกคน** — พอเอาไปใช้กับโปรเจคตัวเอง มันจะ:
 
-1. detect that the project is unknown
-2. run `scripts/harvest-board.js` against a permutation board your team already made
-3. draft `projects/<yourproject>.md` from `projects/_template.md` and ask you to confirm
-4. build every future board to exactly those values
+1. รู้ตัวว่าไม่รู้จักโปรเจคนี้
+2. ไปวัด board ที่ทีมคุณเคยทำไว้ด้วย `scripts/harvest-board.js`
+3. ร่างไฟล์ `projects/<โปรเจคคุณ>.md` จาก template แล้วให้คุณตรวจก่อนเซฟ
+4. หลังจากนั้น board ทุกอันจะถูกสร้างตามค่าที่วัดมาเป๊ะๆ
 
-If you have no existing board at all, it asks you rather than guessing.
+ถ้ายังไม่เคยมี board เลยสักอัน มันจะถามคุณ ไม่เดาเอง
 
-> Worth knowing: two of the bundled projects (NEXT and DGL Revamp) live in the **same app
-> and even the same Figma file**, yet their boards differ in font, fill, spacing, label
-> format, and numbering. That is exactly why the skill measures a real board (gate G1)
-> instead of trusting the project's name.
+> เรื่องจริงที่อยากให้รู้: 2 ใน 3 โปรเจคที่แถมมา (NEXT กับ DGL Revamp) อยู่**แอปเดียวกัน
+> อยู่ไฟล์ Figma เดียวกันด้วยซ้ำ** แต่ board คนละสไตล์เลย — ฟอนต์ สี ระยะ รูปแบบ label
+> ระบบนับเลข ต่างหมด นี่แหละเหตุผลที่ skill ถูกบังคับให้ไปวัดของจริงก่อนสร้างทุกครั้ง (gate G1)
+> แทนที่จะเชื่อชื่อโปรเจค
 
-## What's inside
-
-```
-SKILL.md                  the engine: pipeline, 6 gates, the shared contract
-references/
-  case-library.md         case base — screen-level + per-component packs, Tier 1/2
-  archetype-cases.md      archetype → signature cases + the 9 permutation axes
-  board-grammar.md        cross-project layout grammar + the 10-item harvest checklist
-                          (deliberately contains no project-specific numbers)
-scripts/
-  scan-cases.js           finds boards/cases, reports fill status  (Phase 1 + AUDIT)
-  harvest-board.js        captures a team board's style             (gate G1)
-  scaffold-kit.js         build factories: safe auto-layout, stamps (Phase 4 prelude)
-  verify-board.js         the full check battery, pass/fail         (gate G5)
-projects/
-  _template.md            blank profile for a new project
-  next.md · dgl.md · clicx.md   three worked examples (all very different)
-```
-
-## How it runs
+## ข้างในมีอะไร
 
 ```
-Base → Profile → Enumerate → Confirm ◄ stop here for just the case list (nothing written)
-                                 ↓
-                            Scaffold → Verify → board on canvas
+SKILL.md                  ตัวคุมเกม: ลำดับงาน 5 เฟส, ด่าน 6 ด่าน, กติกากลาง
+references/               ความรู้กลาง ใช้ได้ทุกโปรเจค
+  case-library.md         คลังเคส — ระดับจอ + ราย component
+  archetype-cases.md      ประเภทจอ 6 แบบ + 9 แกนที่ต้องไล่ให้ครบ
+  board-grammar.md        กติกาการวาง board + checklist 10 ข้อตอนไปวัดของทีม
+                          (ตั้งใจไม่มีตัวเลขของโปรเจคไหนอยู่ในไฟล์นี้เลย)
+scripts/                  โค้ดที่ยิงเข้า Figma
+  scan-cases.js           สำรวจว่ามี board/เคสอะไรอยู่แล้ว ทำไปกี่ %
+  harvest-board.js        วัดสไตล์ board ของทีม (ด่าน G1)
+  scaffold-kit.js         ชุดฟังก์ชันสร้างของ — ตัวเดียวที่เขียนไฟล์จริง
+  verify-board.js         ชุดตรวจ 7 ข้อ ต้องผ่านถึงเรียกว่าเสร็จ (ด่าน G5)
+projects/                 ความจริงของแต่ละโปรเจค
+  _template.md            แบบฟอร์มเปล่าสำหรับโปรเจคใหม่
+  next.md · dgl.md · clicx.md   ตัวอย่าง 3 โปรเจค (ต่างกันคนละเรื่อง)
 ```
 
-Every stage has a gate. The two that matter most:
+## มันทำงานยังไง
 
-- **G1 — harvest before scaffold.** Board style differs per project (spacing, font weight,
-  line-height, caption shape, link style). The skill measures a real board in *your* file
-  instead of assuming.
-- **G5 — verify must pass.** `verify-board.js` checks case count, duplicate numbers, label
-  style, pluginData completeness, slot sizes, overlap with neighbouring boards, and that the
-  **base screen was never touched**. The scaffold isn't done until it returns `pass: true`.
-  Projects that restart `Case#N` numbering inside each group (like DGL) set
-  `numbersScopedPerGroup: true` in CONFIG so the duplicate check runs per group.
+```
+จอ → Profile → แตกเคส → Confirm ◄ หยุดตรงนี้ = ได้ list เคส ไฟล์ยังสะอาด
+                            ↓ (กดยืนยันแล้วเท่านั้น)
+                       Scaffold → Verify → ได้ board บน canvas
+```
 
-## Label styles & renumbering
+ทุกขั้นมีด่านกั้น สองด่านที่สำคัญสุด:
 
-- `strict` — the label node is exactly `Case#N` → compatible with automated renumbering
-- `loose` — `Case #N - <name>` in one node (DGL, CLICX) → renumbering is manual; the
-  skill says so in every report for these projects
+- **G1 — วัดก่อนสร้าง** ทุกโปรเจควาง board ไม่เหมือนกัน (ระยะ ฟอนต์ line-height
+  รูปแบบ caption เส้นโยง) skill เลยต้องไปวัด board จริงในไฟล์นั้นก่อนเสมอ ห้ามเดา
+- **G5 — ตรวจก่อนจบ** `verify-board.js` เช็คให้หมด: จำนวนเคส เลขซ้ำ รูปแบบ label
+  ขนาดช่องจอ ไม่ทับ board ข้างๆ และ**จอต้นทางต้องไม่โดนแตะแม้แต่ node เดียว**
+  (นับ node ก่อน-หลังเทียบกัน) ยังไม่ `pass: true` = ยังไม่เสร็จ
+  โปรเจคไหนนับ `Case#N` ใหม่ทุกกลุ่ม (อย่าง DGL) ก็เปิด `numbersScopedPerGroup: true`
+  ให้การเช็คเลขซ้ำทำงานเป็นรายกลุ่ม
 
-## Safety
+## เรื่อง label กับการ renumber
 
-- Everything is written **inside one board node** → rollback = delete that node
-- The base screen is never modified (phase 1 doesn't even clone it) — verify proves it
-  by comparing the base's node count before and after
-- Every write batch is guarded against writing into the wrong file
-- AUDIT reports orphaned cases but **never deletes** anything
+- `strict` — label เป็น `Case#N` เพียวๆ → ใช้เครื่องมือ renumber อัตโนมัติได้ (NEXT ใช้แบบนี้)
+- `loose` — เป็น `Case #N - ชื่อเคส` ใน node เดียว (DGL, CLICX) → renumber เองมือ
+  ซึ่ง skill จะเตือนเรื่องนี้ในรายงานทุกครั้ง จะได้ไม่มีใครไปกดเครื่องมือแล้วงง
 
-## Script self-checks
+## ความปลอดภัย
+
+- ทุกอย่างถูกเขียน**ในกล่อง board เดียว** — อยากย้อนกลับก็ลบ node นั้นทิ้ง จบ
+- จอต้นทางไม่โดนแตะเลย (ขั้นตอนไหนก็ไม่ clone ด้วยซ้ำ) และ verify พิสูจน์ให้ดูด้วยการนับ node
+- ทุกก้อนโค้ดที่เขียนไฟล์มี guard เช็คชื่อไฟล์ก่อน กันเขียนผิดไฟล์เวลา Figma สลับแท็บ
+- โหมด AUDIT เจอเคสแปลกปลอมจะแค่รายงาน **ไม่ลบของใครทิ้งเด็ดขาด**
+
+## รัน self-check ของสคริปต์
 
 ```bash
-node scripts/scan-cases.js      # regex + container-name + dup-number tests
-node scripts/scaffold-kit.js    # factory syntax check
-node scripts/verify-board.js    # label-style + dup logic tests
+node scripts/scan-cases.js      # เทส regex, ชื่อ board, เลขซ้ำ
+node scripts/scaffold-kit.js    # เช็ค syntax ของ factory
+node scripts/verify-board.js    # เทส logic ของ label + เลขซ้ำ
 ```
 
-`harvest-board.js` has no Node self-check — it uses a top-level `return await`, which only
-works inside `figma_execute` / `use_figma` (those wrap the code in an async function).
-That's by design; paste it whole into the Figma runtime.
+ยกเว้น `harvest-board.js` ตัวเดียวที่รันใน Node ตรงๆ ไม่ได้ — มันใช้ `return await`
+ที่ระดับบนสุด ซึ่งทำงานได้เฉพาะใน `figma_execute` / `use_figma` (พวกนั้นห่อโค้ดใน
+async function ให้อยู่แล้ว) ตั้งใจเขียนแบบนั้นเพราะมันเกิดมาเพื่อ paste ลง Figma ทั้งก้อน
 
-## Known limitation
+## ข้อจำกัดที่รู้อยู่
 
-In Figma **design** files the plugin API cannot create or clone `CONNECTOR` nodes (FigJam only).
-Where a project links screens to boards with connectors, the skill draws a matching VECTOR elbow
-and tells you it won't auto-attach — draw a real connector by hand (`Shift+C`) if you need one.
+ไฟล์ Figma แบบ design สร้าง `CONNECTOR` ผ่าน plugin API ไม่ได้ (ทำได้เฉพาะ FigJam)
+โปรเจคไหนใช้เส้น connector โยงจอกับ board skill จะวาดเส้น VECTOR หน้าตาเหมือนกันแทน
+แล้วบอกตรงๆ ว่าเส้นนี้ไม่เกาะจอนะ — ถ้าอยากได้เส้นจริงต้องลากเองด้วย `Shift+C` ครั้งเดียว
 
-## License / provenance
+## ที่มา
 
-Built and pilot-tested against real production-style Figma boards (latest: a 17-case board
-for a DGL Revamp address-edit screen, 2026-07-27). The bundled `projects/*.md` describe one
-specific team's conventions — treat them as examples and learn your own.
+สร้างและเทสกับ board งานจริง (ล่าสุด: board 17 เคสของจอแก้ไขที่อยู่ใน DGL Revamp,
+27 ก.ค. 2026) ไฟล์ `projects/*.md` ที่แถมมาคือธรรมเนียมของทีมใดทีมหนึ่ง —
+มองเป็นตัวอย่างแล้วสอนของทีมตัวเองดีกว่า
