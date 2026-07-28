@@ -31,8 +31,9 @@ e.g. "แตกเคสจอนี้", "generate cases for this screen", "sta
 
 ## First run in a new project
 
-The skill ships with two learned projects (`projects/next.md`, `projects/clicx.md`) — those are
-**one team's conventions, not defaults for you**. For your own project it will:
+The skill ships with three learned projects (`projects/next.md`, `projects/dgl.md`,
+`projects/clicx.md`) — those are **one team's conventions, not defaults for you**.
+For your own project it will:
 
 1. detect that the project is unknown
 2. run `scripts/harvest-board.js` against a permutation board your team already made
@@ -40,6 +41,11 @@ The skill ships with two learned projects (`projects/next.md`, `projects/clicx.m
 4. build every future board to exactly those values
 
 If you have no existing board at all, it asks you rather than guessing.
+
+> Worth knowing: two of the bundled projects (NEXT and DGL Revamp) live in the **same app
+> and even the same Figma file**, yet their boards differ in font, fill, spacing, label
+> format, and numbering. That is exactly why the skill measures a real board (gate G1)
+> instead of trusting the project's name.
 
 ## What's inside
 
@@ -57,7 +63,7 @@ scripts/
   verify-board.js         the full check battery, pass/fail         (gate G5)
 projects/
   _template.md            blank profile for a new project
-  next.md · clicx.md      two worked examples (very different from each other)
+  next.md · dgl.md · clicx.md   three worked examples (all very different)
 ```
 
 ## How it runs
@@ -76,13 +82,34 @@ Every stage has a gate. The two that matter most:
 - **G5 — verify must pass.** `verify-board.js` checks case count, duplicate numbers, label
   style, pluginData completeness, slot sizes, overlap with neighbouring boards, and that the
   **base screen was never touched**. The scaffold isn't done until it returns `pass: true`.
+  Projects that restart `Case#N` numbering inside each group (like DGL) set
+  `numbersScopedPerGroup: true` in CONFIG so the duplicate check runs per group.
+
+## Label styles & renumbering
+
+- `strict` — the label node is exactly `Case#N` → compatible with automated renumbering
+- `loose` — `Case #N - <name>` in one node (DGL, CLICX) → renumbering is manual; the
+  skill says so in every report for these projects
 
 ## Safety
 
 - Everything is written **inside one board node** → rollback = delete that node
-- The base screen is never modified (phase 1 doesn't even clone it)
+- The base screen is never modified (phase 1 doesn't even clone it) — verify proves it
+  by comparing the base's node count before and after
 - Every write batch is guarded against writing into the wrong file
 - AUDIT reports orphaned cases but **never deletes** anything
+
+## Script self-checks
+
+```bash
+node scripts/scan-cases.js      # regex + container-name + dup-number tests
+node scripts/scaffold-kit.js    # factory syntax check
+node scripts/verify-board.js    # label-style + dup logic tests
+```
+
+`harvest-board.js` has no Node self-check — it uses a top-level `return await`, which only
+works inside `figma_execute` / `use_figma` (those wrap the code in an async function).
+That's by design; paste it whole into the Figma runtime.
 
 ## Known limitation
 
@@ -92,5 +119,6 @@ and tells you it won't auto-attach — draw a real connector by hand (`Shift+C`)
 
 ## License / provenance
 
-Built and pilot-tested against real production-style Figma boards. The bundled `projects/*.md`
-describe one specific team's conventions — treat them as examples and learn your own.
+Built and pilot-tested against real production-style Figma boards (latest: a 17-case board
+for a DGL Revamp address-edit screen, 2026-07-27). The bundled `projects/*.md` describe one
+specific team's conventions — treat them as examples and learn your own.
