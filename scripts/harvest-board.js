@@ -16,6 +16,10 @@ function solid(node, key) {
   const arr = node[key];
   return arr && Array.isArray(arr) && arr[0] && arr[0].type === "SOLID" ? hex(arr[0].color) : null;
 }
+// CONNECTOR / VECTOR nodes throw on layoutSizingHorizontal — they can live inside a board.
+function sizingOf(n) { try { return n.layoutSizingHorizontal || null; } catch (e) { return null; } }
+// VECTOR/LINE throw on connector* props; CONNECTOR throws on layout* props. Read defensively.
+function prop(n, k) { try { return n[k]; } catch (e) { return null; } }
 function lh(t) {
   return t.lineHeight && t.lineHeight.unit === "PIXELS" ? Math.round(t.lineHeight.value) : t.lineHeight ? t.lineHeight.unit : null;
 }
@@ -51,7 +55,7 @@ async function harvest() {
             wrap: n.layoutWrap === "WRAP",
             pad: [n.paddingTop, n.paddingRight, n.paddingBottom, n.paddingLeft].join("/") }
         : null,
-      sizing: n.layoutSizingHorizontal || null, // FILL headers span their group (CLICX lesson)
+      sizing: sizingOf(n), // FILL headers span their group (CLICX lesson)
       fill: solid(n, "fills"), radius: typeof n.cornerRadius === "number" ? n.cornerRadius : null,
       isScreenSlot: screen || undefined,
     });
@@ -102,13 +106,14 @@ async function harvest() {
     const lineish = n.type === "CONNECTOR" || n.type === "LINE" ||
       (n.type === "VECTOR" && (n.width > 100 || n.height > 100));
     if (lineish) {
+      const cs = prop(n, "connectorStart"), ce = prop(n, "connectorEnd");
       const rec = { kind: n.type, name: n.name, stroke: solid(n, "strokes"),
         weight: n.strokeWeight, dash: (n.dashPattern || []).join(","),
-        lineType: n.connectorLineType || null,
-        startMagnet: n.connectorStart && n.connectorStart.magnet,
-        endMagnet: n.connectorEnd && n.connectorEnd.magnet };
-      const s = n.connectorStart && n.connectorStart.endpointNodeId;
-      const e = n.connectorEnd && n.connectorEnd.endpointNodeId;
+        lineType: prop(n, "connectorLineType"),
+        startMagnet: cs && cs.magnet,
+        endMagnet: ce && ce.magnet };
+      const s = cs && cs.endpointNodeId;
+      const e = ce && ce.endpointNodeId;
       if (e && inBoard.has(e)) { rec.startNodeId = s; links.push(rec); }
       else otherLines.push(rec);
     }

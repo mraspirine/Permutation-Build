@@ -90,8 +90,13 @@ function stampBoard(node, d) {
   }));
 }
 
-// Elbow link (screen → board) for design files, where figma.createConnector is unavailable.
-// REMIND THE USER: this vector does not auto-attach — a real connector must be drawn by hand.
+// LAST RESORT ONLY. If the file already contains a CONNECTOR (most flow files do — they carry FigJam
+// nodes), CLONE it and re-point the endpoints instead; the clone stays a real connector and attaches:
+//   const c = src.clone(); src.parent.appendChild(c);
+//   c.connectorStart = { endpointNodeId: startId, magnet: "BOTTOM" };
+//   c.connectorEnd   = { endpointNodeId: boardId, magnet: "TOP" };
+// Use elbowLink only when there is no connector anywhere to clone (figma.createConnector is blocked
+// in design mode). REMIND THE USER: this vector never auto-attaches — it will not follow the nodes.
 function elbowLink(section, name, sx, sy, ex, ey, color, weight) {
   const midY = ey - 120, minX = Math.min(sx, ex), minY = Math.min(sy, ey);
   const P = (x, y) => (x - minX) + " " + (y - minY);

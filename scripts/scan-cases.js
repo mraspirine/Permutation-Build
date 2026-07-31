@@ -25,9 +25,13 @@ function isContainerName(name) {
 function isContainer(node) {
   return !!node && CONTAINER_TYPES.indexOf(node.type) !== -1 && isContainerName(node.name);
 }
-function hasBoardStamp(node) {
-  try { return !!(node.getPluginData && node.getPluginData('permBuildBoard')); } catch (e) { return false; }
+// use_figma blocks plain pluginData → scaffold-kit writes sharedPluginData there. Read both.
+function readPD(n, key) {
+  try { const v = n.getPluginData && n.getPluginData(key); if (v) return v; } catch (e) {}
+  try { const v = n.getSharedPluginData && n.getSharedPluginData('permBuild', key); if (v) return v; } catch (e) {}
+  return '';
 }
+function hasBoardStamp(node) { return !!readPD(node, 'permBuildBoard'); }
 
 function parseLabel(text) {
   const m = typeof text === 'string' ? text.match(LOOSE_RE) : null;
@@ -70,7 +74,7 @@ function scanCases() {
   function findCell(labelNode) {
     let p = labelNode.parent, hops = 0;
     while (p && hops < 6) {
-      try { if (p.getPluginData && p.getPluginData('permBuild')) return p; } catch (e) {}
+      if (readPD(p, 'permBuild')) return p;
       p = p.parent; hops++;
     }
     return labelNode.parent;
@@ -79,7 +83,7 @@ function scanCases() {
   function readCell(labelNode) {
     const cell = findCell(labelNode);
     let pd = null;
-    try { pd = JSON.parse(cell.getPluginData('permBuild') || 'null'); } catch (e) {}
+    try { pd = JSON.parse(readPD(cell, 'permBuild') || 'null'); } catch (e) {}
     const lab = parseLabel(labelNode.characters);
     const designed = pd && pd.status === 'designed' ? true : isDesigned(cell);
     return {
@@ -98,7 +102,7 @@ function scanCases() {
 
   const out = containers.map(c => {
     let boardStamp = null;
-    try { boardStamp = JSON.parse(c.getPluginData('permBuildBoard') || 'null'); } catch (e) {}
+    try { boardStamp = JSON.parse(readPD(c, 'permBuildBoard') || 'null'); } catch (e) {}
     const cases = [];
     (function walk(n) {
       if (n.type === 'TEXT' && LOOSE_RE.test(n.characters) && /^\s*Case/i.test(n.characters)) {

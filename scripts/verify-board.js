@@ -13,6 +13,7 @@ const CONFIG = {
   expectedBaseNodes: 0,            // node count measured BEFORE scaffolding (0 = skip)
   titlesFullWidth: false,          // true = every group header must span its group's full width
   numbersScopedPerGroup: false,    // true = Case#N restarts inside each group (DGL) → dup check runs per group
+  screensAlignPerRow: false,       // true = every screen slot in a row must start at the same y (uniform caption block)
 };
 
 const STRICT_RE = /^\s*Case\s*#?\s*(\d+)\s*$/;
@@ -20,6 +21,13 @@ const LOOSE_RE = /^\s*Case\s*#?\s*(\d+)\s*(?:[-–—:.]\s*(.+))?\s*$/s;
 const REQUIRED_PD = ["caseId", "level", "tier", "priority", "status"];
 const SOLID_TYPES = ["FRAME", "SECTION", "GROUP", "COMPONENT", "INSTANCE"]; // overlap check ignores lines
 
+// use_figma blocks setPluginData/getPluginData → scaffold-kit falls back to shared plugin data.
+// Read both so the gate works under either runtime (Bridge writes plain, use_figma writes shared).
+function readPD(n, key) {
+  try { const v = n.getPluginData && n.getPluginData(key); if (v) return v; } catch (e) {}
+  try { const v = n.getSharedPluginData && n.getSharedPluginData("permBuild", key); if (v) return v; } catch (e) {}
+  return "";
+}
 function labelOk(text, style) {
   if (style === "strict") return STRICT_RE.test(text);
   const m = text.match(LOOSE_RE);
@@ -39,7 +47,7 @@ async function verify() {
   // ---- collect cells (nodes stamped with permBuild) ----
   const cells = [];
   (function walk(n) {
-    try { if (n.getPluginData && n.getPluginData("permBuild")) cells.push(n); } catch (e) {}
+    if (readPD(n, "permBuild")) cells.push(n);
     if ("children" in n) n.children.forEach(walk);
   })(board);
 
@@ -47,7 +55,7 @@ async function verify() {
     !!f.findOne(x => x.type === "TEXT" && /awaiting design/i.test(x.characters || ""));
 
   const rows = cells.map(cell => {
-    let pd = null; try { pd = JSON.parse(cell.getPluginData("permBuild")); } catch (e) {}
+    let pd = null; try { pd = JSON.parse(readPD(cell, "permBuild")); } catch (e) {}
     const label = cell.findOne
       ? cell.findOne(x => x.type === "TEXT" && /^\s*Case/i.test(x.characters || "") && LOOSE_RE.test(x.characters))
       : null;
@@ -117,6 +125,33 @@ async function verify() {
       if (CONFIG.expectedBaseNodes > 0 && baseNodes !== CONFIG.expectedBaseNodes)
         F.push("base node count " + baseNodes + " ≠ expected " + CONFIG.expectedBaseNodes + " (base was touched?)");
     }
+  }
+
+  // ---- screens align across a row (uniform caption block — CLICX house style) ----
+  // Designers read a row left-to-right; a caption one line longer shunts its screen down and the row
+  // reads as sloppy. Lock every caption frame in a row to the row's tallest one.
+  if (CONFIG.screensAlignPerRow) {
+    const byRow = {};
+    rows.forEach(r => {
+      if (!r.slot || !r.cell.parent) return;
+      const cap = "children" in r.cell ? r.cell.children[0] : null;
+      (byRow[r.cell.parent.id] = byRow[r.cell.parent.id] || []).push({
+        top: Math.round(r.cell.y + r.slot.y),
+        capH: cap ? Math.round(cap.height) : null,
+        capHug: cap ? cap.layoutSizingVertical === "HUG" : true,
+      });
+    });
+    Object.keys(byRow).forEach(rowId => {
+      const g = byRow[rowId];
+      if (g.length < 2) return;
+      const tops = [...new Set(g.map(x => x.top))];
+      if (tops.length > 1) F.push("row " + rowId + ": screen tops not aligned (" + tops.join(", ") + ")");
+      const caps = [...new Set(g.map(x => x.capH))];
+      if (caps.length > 1) F.push("row " + rowId + ": caption heights differ (" + caps.join(", ") + ")");
+      // heights must come from trailing blank lines in the text, not a locked frame — a FIXED caption
+      // looks identical but silently clips the moment anyone edits the copy.
+      if (g.some(x => !x.capHug)) F.push("row " + rowId + ": caption frame is FIXED — pad the text with trailing newlines instead");
+    });
   }
 
   // ---- titles span full group width (project-dependent) ----

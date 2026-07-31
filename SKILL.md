@@ -90,7 +90,7 @@ Anyone who only wanted the case list stops here.
 2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node)
 3. Placement from `siblingBoards`: pick a column count whose width fits the free span
 4. Per case: label node (project's label style) + caption nodes + `placeholder()` + `stampCase()`
-5. Draw the screen→board link if the project uses one (design files: `elbowLink` + tell the user it doesn't auto-attach)
+5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). `elbowLink`'s VECTOR is the last resort for files with no connector to clone, and it never attaches — say so
 6. Chunks of ~10 cells per call; every call starts with `guard(<file name>)`
 
 ### Phase 5 — Verify + report (gate G5)
