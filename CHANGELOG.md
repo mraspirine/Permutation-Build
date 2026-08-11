@@ -48,15 +48,30 @@
 
 ---
 
-## 2026-08-05 — CLICX fixes จาก build จริง `H.02-01.B`
+## 2026-07-31 — CLICX fixes จาก build จริง `H.02-01.B` (my asset / has pockets, 19 เคส)
 
-- ปรับตามผล build board 19 เคส (my asset / has pockets):
-  แก้รายละเอียด board anatomy + verify config ของ CLICX ให้ตรงงานจริง
+- **เส้นโยงได้เส้นจริงแล้ว** — clone `CONNECTOR` ของทีมแล้วเปลี่ยนปลายทาง
+  แทนการวาด VECTOR ที่ไม่เกาะ node (VECTOR เหลือเป็น fallback
+  กรณีไฟล์ไม่มีเส้นให้ clone)
+- **bg ของ board ต้อง bind variable** ไม่ใช่ใส่ hex ดิบ — CLICX ใช้ `color/bg_permu`
+- **caption สูงเท่ากันทั้งแถว** ด้วยการเติมบรรทัดว่างท้ายข้อความแบบที่ทีมทำ
+  (frame คง `HUG` ไว้) ห้าม fix ความสูง frame เพราะพังทันทีที่มีคนแก้ copy ·
+  เพิ่ม gate `screensAlignPerRow`
+- **caption ใช้ emoji marker** 🔍 ตรวจ · ⚠️ ยืนยันกับ BA · 🔗 ปลายทาง ·
+  🚫 ไม่นับรวม แยกจาก description ด้วยบรรทัดว่าง
+- `harvest-board.js` อ่าน property แบบ defensive — เดิม crash เมื่อเจอ
+  CONNECTOR/VECTOR ในบอร์ด
+- `verify-board.js` + `scan-cases.js` อ่าน pluginData ทั้ง plain และ shared —
+  `use_figma` บล็อก `setPluginData` เลยต้อง fallback ไป `setSharedPluginData`
+- `projects/clicx.md` แก้ตามของจริง: **ไม่มี frame `screen permutation`**
+  (0 ครั้งใน 31 case), caption frame ชื่อ `title` ตัวเล็ก,
+  `numbersScopedPerGroup: true`
 
 ---
 
 ## 2026-07-27 — Restructure v2: gates + scripts-as-enforcement
 
+- รุ่นแรกที่ใช้กับงานจริง — board DGL Revamp 17 เคส
 - pilot NEXT ผ่าน (`ORBIT Landing Permutations` 18 เคส) แต่ pilot CLICX
   โดนตีกลับ 2 รอบเพราะ "เดา style" → เกิดกฎเหล็ก **harvest ก่อน scaffold**
 - rearchitect เป็น gate G0–G5 พร้อมสคริปต์บังคับ:

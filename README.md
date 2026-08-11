@@ -54,6 +54,7 @@ cp -R figma-permutation-build ~/.claude/skills/
 figma-permutation-build/
 ├── SKILL.md                    ตัวคุมเกม: ลำดับงาน 5 เฟส, ด่าน 6 ด่าน, กติกากลาง
 ├── README.md                   เอกสารฉบับนี้
+├── CHANGELOG.md                บันทึกการเปลี่ยนแปลงที่มีผลต่อพฤติกรรม
 ├── references/                 ความรู้กลาง ใช้ได้ทุกโปรเจค
 │   ├── case-library.md         คลังเคส — ระดับจอ + ราย component
 │   ├── archetype-cases.md      ประเภทจอ 6 แบบ + 9 แกนที่ต้องไล่ให้ครบ
@@ -123,22 +124,4 @@ async function ให้อยู่แล้ว) ตั้งใจเขีย
 
 ## Changelog
 
-### 2026-07-31 — CLICX `H.02-01.B` (my asset / has pockets, 19 เคส)
-
-- **เส้นโยงได้เส้นจริงแล้ว** — clone `CONNECTOR` ของทีมแล้วเปลี่ยนปลายทาง แทนการวาด VECTOR
-  ที่ไม่เกาะ node (VECTOR เหลือเป็น fallback กรณีไฟล์ไม่มีเส้นให้ clone)
-- **bg ของ board ต้อง bind variable** ไม่ใช่ใส่ hex ดิบ — CLICX ใช้ `color/bg_permu`
-- **caption สูงเท่ากันทั้งแถว** ด้วยการเติมบรรทัดว่างท้ายข้อความแบบที่ทีมทำ (frame คง `HUG` ไว้)
-  ห้าม fix ความสูง frame เพราะพังทันทีที่มีคนแก้ copy · เพิ่ม gate `screensAlignPerRow`
-- **caption ใช้ emoji marker** 🔍 ตรวจ · ⚠️ ยืนยันกับ BA · 🔗 ปลายทาง · 🚫 ไม่นับรวม
-  แยกจาก description ด้วยบรรทัดว่าง
-- `harvest-board.js` อ่าน property แบบ defensive — เดิม crash เมื่อเจอ CONNECTOR/VECTOR ในบอร์ด
-- `verify-board.js` + `scan-cases.js` อ่าน pluginData ทั้ง plain และ shared —
-  `use_figma` บล็อก `setPluginData` เลยต้อง fallback ไป `setSharedPluginData`
-- `projects/clicx.md` แก้ตามของจริง: **ไม่มี frame `screen permutation`** (0 ครั้งใน 31 case),
-  caption frame ชื่อ `title` ตัวเล็ก, `numbersScopedPerGroup: true`
-
-### 2026-07-27 — DGL Revamp (17 เคส)
-
-รุ่นแรกที่ใช้กับงานจริง — วาง pipeline 6 phase + gate G0–G5, harvest ก่อน scaffold,
-สคริปต์ 4 ตัว, project file 3 โปรเจค (NEXT / DGL / CLICX)
+ย้ายไปอยู่ [CHANGELOG.md](CHANGELOG.md)
