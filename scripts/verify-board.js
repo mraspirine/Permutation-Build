@@ -14,6 +14,9 @@ const CONFIG = {
   titlesFullWidth: false,          // true = every group header must span its group's full width
   numbersScopedPerGroup: false,    // true = Case#N restarts inside each group (DGL) → dup check runs per group
   screensAlignPerRow: false,       // true = every screen slot in a row must start at the same y (uniform caption block)
+  knownCaseIds: [],                // Tier-1/2 caseIds from case-library.md ([] = skip). A tier 1|2 cell whose caseId
+                                   // is not in this list fails — it means a standard case was free-texted (re-worded),
+                                   // which breaks cross-flow consistency ("Session timeout" vs "Network reconnect").
 };
 
 const STRICT_RE = /^\s*Case\s*#?\s*(\d+)\s*$/;
@@ -73,6 +76,8 @@ async function verify() {
     const tag = r.pd && r.pd.caseId ? r.pd.caseId : "cell#" + i;
     if (!r.pd) { F.push(tag + ": missing permBuild pluginData"); return; }
     REQUIRED_PD.forEach(k => { if (r.pd[k] === undefined || r.pd[k] === null) F.push(tag + ": pluginData missing field '" + k + "'"); });
+    if (CONFIG.knownCaseIds.length && (r.pd.tier === 1 || r.pd.tier === 2) && CONFIG.knownCaseIds.indexOf(r.pd.caseId) === -1)
+      F.push(tag + ": tier " + r.pd.tier + " caseId not in case-library (free-texted standard case?)");
     if (!r.label) F.push(tag + ": no Case label text found");
     else if (!labelOk(r.label.characters.split("\n")[0], CONFIG.labelStyle))
       F.push(tag + ": label '" + r.label.characters.split("\n")[0].slice(0, 30) + "' fails style '" + CONFIG.labelStyle + "'");
