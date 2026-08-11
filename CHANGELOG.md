@@ -1,0 +1,78 @@
+# Changelog — figma-permutation-build
+
+บันทึกทุกการเปลี่ยนแปลงที่มีผลต่อพฤติกรรมของ skill เรียงใหม่ → เก่า
+(การแก้ README/เอกสารอย่างเดียวไม่ลงในนี้)
+
+---
+
+## 2026-08-11 — Feedback revision + เทสหลายโมเดล
+
+แก้ 6 จุดจากผลรัน Haiku บนหน้า `AI Test 05` (designer note ลงวันที่ 6 Aug 2026)
+แล้วเทสซ้ำด้วย 3 โมเดล × 3 โจทย์ ก่อน merge
+
+**พฤติกรรมใหม่**
+- **§Screen facts** — project file มี section เก็บ business rule รายจอ
+  (เช่น "หน้า Home เป็น empty ไม่ได้ เพราะมีบัญชี savings แล้วเสมอ")
+  Phase 2 อ่านก่อน enumerate แล้วจัดเคสพวกนี้เป็น ⊘ อัตโนมัติ ·
+  Phase 3 ถ้าผู้ใช้ตัดเคสแบบ "เป็นไปไม่ได้" จะเขียนกลับลงตารางนี้ —
+  รันหน้าเดิมครั้งหน้าไม่เสนอผิดซ้ำ
+- **Captions verbatim** — เคสมาตรฐานต้องใช้ id + caption จาก case-library
+  ตรงตัว ห้ามแต่งชื่อเอง (ต้นเหตุ "Session timeout" vs "Network reconnect"
+  บน board พี่น้องกัน) บังคับด้วยด่านใหม่ `knownCaseIds` ใน verify-board.js
+- **กรอง hidden** — Phase 1 ข้าม subtree ที่ `visible === false`
+  component ที่ปิดตาไว้ไม่งอกเป็นเคสอีก (ต้นเหตุเคสหลอน Announcement /
+  Ads section / Setting overlay)
+- **ตารางเต็มทุกแถว** — Phase 3 ต้องโชว์ทุกแถวของทุก pack รวม ✓ และ ⊘
+  พร้อมเหตุผล ไม่ใช่แค่เคสที่เสนอ — เคสที่หายจะฟ้องตัวเอง
+- **โปรโตคอลหลาย base** — ได้ base เกิน 1 จอ ให้หยุดถามความสัมพันธ์ก่อน
+  (states ของจอเดียว / คนละจอ / template) + ด่านใหม่ใน Phase 4:
+  case set ซ้ำ ≥90% กับ board ข้างเคียงที่คนละ base → หยุดถามผู้ใช้
+- **ชื่อตามทีม + CTA** — caption เรียก component ตามชื่อใน map ของโปรเจค
+  และจอที่มี CTA ได้บรรทัดเตือนให้ระบุปลายทาง navigation (🔗)
+
+**CLICX (`projects/clicx.md`)**
+- เพิ่ม §Screen facts พร้อม 2 กฎแรกจาก note ของทีม
+- แก้ component map: แถว icon-exclusion `/^(gen|cus)_ic_/i` ไว้บนสุด
+  (ปิด false-positive ที่ `gen_ic_my-asset` เคย match เป็น account card) ·
+  เพิ่ม `/savings account/i` และ `/tooltip/i` ·
+  จดข้อยกเว้นว่า eye toggle ซ้อนอยู่ใน `total balance` ได้
+
+**case-library**
+- เพิ่ม 4 id ใหม่ (รอ sync เข้า FigJam ทีม): `empty/section` ·
+  `nav/badge` · `hub/card-set` · `fav/list-count`
+
+**ผลเทส (3 โมเดล × 3 โจทย์ + รันสดบนไฟล์จริง)**
+- ทุก fix ทำงานจริง ไม่มีโมเดลไหนทำผิดซ้ำแบบรอบ 6 Aug
+- Haiku ไม่เหมาะกับ Phase 2 enumerate (ตกทั้ง 2 รอบ คนละอาการ) ·
+  Sonnet = ตัวเลือกหลักงานประจำ · Opus/Fable สำหรับจอซับซ้อน
+
+---
+
+## 2026-08-05 — CLICX fixes จาก build จริง `H.02-01.B`
+
+- ปรับตามผล build board 19 เคส (my asset / has pockets):
+  แก้รายละเอียด board anatomy + verify config ของ CLICX ให้ตรงงานจริง
+
+---
+
+## 2026-07-27 — Restructure v2: gates + scripts-as-enforcement
+
+- pilot NEXT ผ่าน (`ORBIT Landing Permutations` 18 เคส) แต่ pilot CLICX
+  โดนตีกลับ 2 รอบเพราะ "เดา style" → เกิดกฎเหล็ก **harvest ก่อน scaffold**
+- rearchitect เป็น gate G0–G5 พร้อมสคริปต์บังคับ:
+  `harvest-board.js` (เก็บ style board จริง 10 หัวข้อ) ·
+  `scaffold-kit.js` (factory กัน auto-layout พัง + pluginData stamps) ·
+  `verify-board.js` (ด่านตรวจ Phase 5 — เสร็จเมื่อ `pass: true` เท่านั้น) ·
+  `scan-cases.js` v2 (รู้จัก board CLICX + loose label + ancestor-climb)
+- ย้ายตัวเลขเฉพาะโปรเจคทั้งหมดออกจาก references ไปอยู่ `projects/<name>.md`
+- LEARN โปรเจค CLICX ลง `projects/clicx.md`
+
+---
+
+## 2026-07-24 — v1
+
+- skill ตัวแรก: pipeline 6 phase (Profile → Enumerate → Confirm →
+  Scaffold → Verify) หยุดที่ Phase 3 ได้ถ้าต้องการแค่ case list
+- case base 2 ระดับ (screen / component) 3 tier จาก FigJam ทีม + corpus
+- `scan-cases.js` + project file NEXT · แทนที่ `ui-state-edge-generator`
+  (deprecated วันเดียวกัน)
