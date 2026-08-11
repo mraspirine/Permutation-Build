@@ -26,6 +26,10 @@ the screens inside the cases are phase 2 (not built yet)**.
 - Not for: design-quality review (→ `ux-audit`) · raw-value/override QA against the DS (→ `figma-design-qa`) · token binding (→ `figma-design-fix`) · building new screens (→ `figma-design-build`)
 - This skill is about **coverage** (which cases should exist), unlike figma-design-qa which is about **quality** (raw values / overrides)
 - **Only variants of the given base.** Separate module screens (an eKYC chain, a full-screen consent) belong to their own base → tell the user to run this skill on that screen instead; never fan out across screens
+- **More than one base given → STOP and ask the relationship before enumerating anything** (the 2026-08-06 test fed 3 state-screens in and got 3 boards identical to the letter, and a "gen a template" request cloned the previous flow's list wholesale). Three answers, three behaviors:
+  - **states of one screen** → ONE board on the user-designated default base; **diff the given screens first** and add only difference-driven cases (what varies between the states is the case list)
+  - **related but separate screens** → one run per screen, each enumerated from **that screen's own visible components** — never seeded from a sibling's case list
+  - **mockup / template** → ask what the template must parameterize (which slots vary, which are fixed) before enumerating; if the user can't say, deliver the case list for ONE screen and stop
 
 ## Pipeline (stoppable) — each phase has a GATE; do not proceed past a failing gate
 ```
@@ -60,13 +64,15 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 3. Load `projects/<name>.md` in full, plus the references needed (see the References table)
 
 ### Phase 1 — Profile (read-only)
-- Traverse **selection scope only** (never walk the whole page — node cap / slow). Collect: archetype signals, component instances, lists/images, bound variable modes
+- Traverse **selection scope only** (never walk the whole page — node cap / slow), and **skip `visible === false` subtrees** — a hidden component must not produce cases (the 2026-08-06 run generated AIS-widget and banner cases for components that were eye-toggled off). Collect: archetype signals, component instances, lists/images, bound variable modes
 - **Map components → categories** using the `component → category` table in `projects/<name>.md` (key or name pattern). No match → **flag "unmapped component — add it to projects/<name>.md"; never guess**
 - **Find existing cases**: run `scripts/scan-cases.js` (selection / siblings) to locate `Permutation*` containers and `Case#N` labels. If nothing is found with confidence → **ask the user where cases are kept; never assume there are none**
 - Take one screenshot of the base as the visual arbiter
 - **Report the profile**: archetype, components found (+ unmapped), existing cases
 
 ### Phase 2 — Enumerate → matrix
+- **Load §Screen facts from `projects/<name>.md` first** — any case listed there for this screen is pre-bucketed **⊘ with the stored reason** before enumeration starts. The library's Tier-1 states are generic; only the project file knows what this screen can never be (e.g. CLICX Home is never empty — a savings account already exists)
+
 Combine (details in `references/case-library.md` + `references/archetype-cases.md`):
 - **L1 screen-level**: the archetype's states + the FigJam Screen group
 - **L2 component-level**: for each component found in Phase 1, pull its pack (+ chained packs, e.g. a Date Picker also suggests Calendar / Roller)
@@ -79,13 +85,19 @@ Combine (details in `references/case-library.md` + `references/archetype-cases.m
 Show the **matrix inline, in Thai**:
 ```
 N total → minus existing / N-A → M remaining → proposing 🔴x 🟡y ⚪z
-| Case# | level | group | description | priority | source (tier) |
+| Case# | level | group | description | priority | source (tier) | bucket |
 ```
+The table shows **every row of every pack pulled for this screen — ✓ existing and ⊘ N/A (with its reason) included, not just the ✗ proposals**. A row that never appears is where dropped cases hide (the 2026-08-06 run silently omitted `image/asset load fail` even though the Image pack carries it — a full table makes that omission visible instead of silent). ⊘ rows may be grouped at the bottom.
 plus where the board will be placed. **The user trims / adds / reorders, then confirms. Nothing is written before that.**
+
+- **Trims are classified, and "impossible" trims are persisted.** When the user cuts a case, ask which kind it is: **เป็นไปไม่ได้ (business rule)** → append a row to `projects/<name>.md` §Screen facts (screen · caseId · reason · date) so the next run pre-buckets it automatically · **แค่รอบนี้** → drop without persisting. (The 2026-08-06 test grew 7 identical "ต้องให้ข้อมูล ai เพิ่ม" notes because trims were never remembered.)
+- **CTA reminder**: if Phase 1 found CTA buttons on the base, add one line to this message — case specs should state where each CTA navigates (CLICX grammar: the 🔗 marker line). Targets come from the brief; unknown → `⚠️ ยืนยัน target`.
+
 Anyone who only wanted the case list stops here.
 
 ### Phase 4 — Scaffold
 **Gate G1 first (mandatory): run `scripts/harvest-board.js` VERBATIM** against a board the team already made in that file — never a hand-shortened version (a shortened harvest missed a connector in the pilot). It returns all 10 items (shell · spacing per level · font + weight + lineHeight · colors · caption shape · slot sizes · sub-groups · links incl. `otherLinesNearby` · placement + `siblingBoards` · naming). Compare with `projects/<name>.md`; if it differs or is missing, **update the project file first**. Record the base's node count now (for G5). Then build:
+0. **Sibling-duplicate guard**: run `scripts/scan-cases.js` over the sibling boards in the same section first; if the confirmed case set is **≥90% identical (by caseId) to a sibling board whose base is a different screen** → stop and confirm with the user before building — an enumeration that ignores its own base produces exactly this signature (three near-identical boards shipped this way on 2026-08-06)
 1. **Paste `scripts/scaffold-kit.js` as the prelude** of the build call, then write project-specific code with its factories (`alFrame` → append → `finalizeFixed` / `growWithContent`; `placeholder`; `stampCase`/`stampBoard`; `elbowLink`) — the factories encode the auto-layout ordering that silently collapsed frames in both pilots
 2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node)
 3. Placement from `siblingBoards`: pick a column count whose width fits the free span
@@ -119,6 +131,8 @@ Anyone who only wanted the case list stops here.
 ## THE CONTRACT (shared by every file and mode — do not change casually)
 
 **Caption**: there must be a **single label node** whose entire string is `Case#N` / `Case #N` (must satisfy the `renumber-cases` regex `/^\s*Case\s*#?\s*(\d+)\s*$/`). **How many other nodes (case name, description) and which language they use is per-project** — see `projects/<name>.md` §Board anatomy.
+
+**Standard-case naming**: a case that exists in `case-library.md` keeps its library `id` and caption **verbatim** — never re-word a standard situation, and never invent a new name for one ("Session timeout" vs "Network reconnect" on sibling boards came from exactly this). New recurring situation → propose it as a library addition. Captions refer to sections/components by the **team's names from the component → category map** in `projects/<name>.md`, never the model's own labels — an unmapped component is already flagged in Phase 1, so by caption time every name has a source.
 
 > **🔴 Hard rule: harvest before scaffold.** Board style **differs per project** (spacing · weight · lineHeight · node count · link style). Before writing into a file you have not built in before, run **`scripts/harvest-board.js`** on a board the team made, then reconcile `projects/<name>.md`.
 > Never build from memory, from defaults, or from another project. No existing board at all → use the project file's defaults; none there either → **ask the user**.

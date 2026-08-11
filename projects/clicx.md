@@ -100,9 +100,10 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 ## Component → category (Phase 1, L2 detection)
 | If instance.name matches | → category |
 |---|---|
-| `/asset\b/i`, `/acc detail/i`, `/acc type/i` | account card / list item (data states: long name, max amount, zero/negative) |
-| `/gen_ic_eye/i` | hide-balance toggle |
-| `/ic_circle-information/i` | info tooltip |
+| `/^(gen\|cus)_ic_/i` | **icon asset — NOT a pack. Check this row FIRST** (2026-08-11: `gen_ic_my-asset` false-matched the account-card row below) |
+| `/asset\b/i`, `/acc detail/i`, `/acc type/i`, `/savings account/i` | account card / list item (data states: long name, max amount, zero/negative) — pulls Tier-3 **Account list** + **Balance display** packs |
+| `/gen_ic_eye/i` | hide-balance toggle — exception to the icon row: this icon IS the Balance-display trigger. ⚠️ the eye can sit NESTED inside `total balance` and not appear as its own top-level instance (confirmed on `A.01-01.A` 2026-08-11) — if a balance amount is visible, check for the eye inside it before bucketing hide-balance ⊘ |
+| `/tooltip/i`, `/ic_circle-information/i` | info tooltip |
 | `/text group \d+:\d+/i` | label/value pair (max characters, max lines) |
 | `/top bar/i`, `/status bar/i` | OS chrome — not a case pack |
 | `/point note/i` | annotation, not a component under test |
@@ -123,6 +124,14 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | Error | unable to load data · reload more than 3 times · partial error |
 | Home / hub | homepage animation background · image background · pocket widget · loan widget image |
 | Copy | strings are bound to **Frontitude keys** (e.g. `system.error.notification.loading`) |
+
+## Screen facts (business rules per screen — grown by Phase 3 trims)
+> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**. Rows below come from the designer notes on page `AI Test 05` (6 Aug 2026 Haiku run).
+| Screen (name pattern) | Case (`caseId`) | Rule | Learned |
+|---|---|---|---|
+| `home` / `home / intelligent hub` | `screen/empty` | เข้าหน้า Home ได้แปลว่ามีบัญชี savings แล้ว → empty ทั้งจอเกิดไม่ได้ (empty รายส่วน เช่น widget ว่าง ยังมีได้) | 2026-08-11 |
+| `home` / `home / intelligent hub` | `tmpl/session-timeout` | timeout บนจอนี้**ไม่** navigate ไปหน้า login — ⚠️ ยืนยันพฤติกรรมจริง (reload? modal?) กับทีม | 2026-08-11 |
+| `home / intelligent hub` | (หลายเคสใน component-states group) | note 6 Aug 2026 บน `A.01-01.B` แปะ "จะไม่มีเคสนี้ในหน้า home" ไว้หลายจุด — รอบ AUDIT หน้าให้ไล่จับคู่ note → case แล้วเติมเป็นรายแถวในตารางนี้ | pending |
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 ```js

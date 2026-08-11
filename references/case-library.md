@@ -5,6 +5,8 @@
 > **How to use:** whichever components Phase 1 found on the base → pull their packs from §L2 (plus chained packs). Whatever archetype it is → pull the screen-level states from §L1 and `archetype-cases.md`. Every case carries: `id` · level · tier · opt-in · caption.
 > `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → offer it as 🟡/⚪ for the user to decide.
 >
+> **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (the 2026-08-06 Haiku run named the same situation "Session timeout" on one board and "Network reconnect" on its sibling, and the boards stopped being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
+>
 > **Thai strings below are verbatim from the team's FigJam and corpus** — they are the wording the team actually uses on boards, so they stay in Thai.
 
 ## FigJam scope tag → tier
@@ -76,6 +78,15 @@ Default (unselected) · Selected · Selected Disable · Default Disabled
 
 ### Selection (Checkbox+Text)  `id: selection-checkbox/*` · tier 1
 Default (unselected) · Selected · UnSelected · Multiple Select · Selected Disable · Default Disable
+
+### Additions 2026-08-11 (from the AI Test 05 run — **not yet in the team FigJam**; sync there and move into the sections above)
+| id | tier | opt-in | caption (EN — TH) |
+|---|---|---|---|
+| `empty/section` | 1 | | Empty (per section) — กรณี section ว่างขณะที่ทั้งจอยังปกติ (ต่างจาก `screen/empty` ที่ว่างทั้งจอ) |
+| `nav/badge` | 1 | ✓ | Notification badge — กรณีมี badge บน nav / icon แจ้งเตือน |
+| `hub/card-set` | 3 (CLICX) | ✓ | Hub card set — กรณีจำนวน/ลำดับการ์ดใน hub เปลี่ยนตาม personalize (น้อยสุด / มากสุด) |
+| `fav/list-count` | 1 | ✓ | Favorite list count — กรณี favorite 0 / 1 / เต็ม (0 รายการยังต้องแสดงปุ่มเพิ่ม ไม่ใช่ `empty/section`) |
+> ที่มา: board `A.01-01.B` มีเคสจริงที่ไม่มี id รองรับ (Savings account/hub/widgets - empty · Bottom nav - notification badge) ทำให้ถูก free-text ต่างกันทุก board — บรรจุ id เพื่อให้ผ่านด่าน `knownCaseIds`
 
 ---
 

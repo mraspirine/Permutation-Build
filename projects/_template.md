@@ -54,6 +54,12 @@
 |---|---|---|
 | <pack> | <n> | <...> |
 
+## Screen facts (business rules per screen — grown by Phase 3 trims)
+> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason** before anything is proposed. Phase 3 appends a row whenever the user trims a case as "impossible for this screen" (not "skip this time").
+| Screen (name pattern) | Case (`caseId`) | Rule (why it can/can't happen) | Learned |
+|---|---|---|---|
+| `<pattern>` | `<caseId>` | <business reason> | <date> |
+
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 ```js
 labelStyle: "<strict|loose>",   // strict = `Case#N` exactly (renumber-compatible) · loose = `Case #N - name`
