@@ -61,5 +61,13 @@ board                          ← name per project convention; fill/padding fro
 Real boards **mix schools** — record the primary school and the mix in `projects/<name>.md`.
 
 ## Tool limitation (applies to every project)
-**A design file cannot create CONNECTOR nodes through the plugin API** — `figma.createConnector` is undefined, and `clone()` throws *"Cloning CONNECTOR nodes is not supported in the current editor"* (FigJam only · verified 2026-07-27).
-→ If the project links screens to boards with connectors: draw a **VECTOR** elbow with the same stroke and weight instead, **and tell the user it will not auto-attach** — a real connector has to be drawn by hand (`Shift+C`).
+**A design file cannot create CONNECTOR nodes through the plugin API** — `figma.createConnector` is undefined. `clone()` on an existing connector **works in some design files and throws in others** (CLICX file: clone OK, auto-attaches · verified 2026-07-31 — NEXT test file: throws *"Cloning CONNECTOR nodes is not supported in the current editor"* · 2026-07-27, re-confirmed 2026-08-18) → **always try the clone first**; only on a throw fall back to a **VECTOR** that follows the Link rule below, **and tell the user it will not auto-attach** — a real connector has to be drawn by hand (`Shift+C`).
+
+## Link rule — replicate, don't approximate (the most-misdrawn item, in EVERY project)
+The screen→board link keeps getting drawn as "a colored line, close enough" — and it gets rejected every time. Whether it ends up a cloned CONNECTOR or a VECTOR fallback, it must replicate the harvested exemplar on all four counts:
+1. **Anchor** — start at the exact point the project attaches to (the screen FRAME or the main INSTANCE inside it, magnet BOTTOM = bottom-center); never a corner, never the caption
+2. **Route** — screen bottom-center → board top-center: straight when they happen to align, a single elbow when they don't. Judge the route from a **healthy** exemplar (both endpoints bound to real nodes) — loose connectors pinned by position are broken leftovers, not the style
+3. **End caps — the most-missed detail** — real connectors carry a different cap per end (e.g. NEXT: `TRIANGLE_FILLED` at the screen · `ARROW_LINES` into the board). A VECTOR gets per-end caps only via per-vertex `strokeCap` in `setVectorNetworkAsync`; a bare capless line is wrong
+4. **Ink** — color · weight · dash · name, from `projects/<name>.md`
+5. **Attachment** — if the project's links are CONNECTORs, the deliverable is an **attached** connector; an unattached look-alike gets rejected. Escalation ladder: try `clone()`+re-point → clone blocked (it is, in some design files, even on healthy lines) → **re-pointing an existing connector still works** (`connectorStart`/`connectorEnd` are plain property sets): ask the user to hand-draw or **Cmd+D** any exemplar connector, then re-point the duplicate programmatically → only when no human is in the loop leave the capped VECTOR and say explicitly it is a placeholder that does not attach
+Anchor/route/caps are harvest item **8** — if the project file does not record them yet, harvest before drawing.

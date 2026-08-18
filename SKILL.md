@@ -120,7 +120,7 @@ Anyone who only wanted the case list stops here.
 2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node)
 3. Placement from `siblingBoards`: pick a column count whose width fits the free span
 4. Per case: label node (project's label style) + caption nodes + `placeholder()` + `stampCase()`
-5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). `elbowLink`'s VECTOR is the last resort for files with no connector to clone, and it never attaches — say so
+5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). Clone blocked (some design files block it even on healthy lines) → **re-pointing still works**: the user hand-draws or Cmd+D's an exemplar connector, then set `connectorStart`/`connectorEnd` yourself. `elbowLink`'s VECTOR is a placeholder of last resort — it never attaches; when the project's links attach, say so and hand back that one manual step. Either way **replicate the exemplar: anchor (NEXT: the main INSTANCE inside the screen, magnet BOTTOM) · route (screen bottom-center → board top-center) · BOTH end caps** (VECTOR: per-vertex `strokeCap` via `setVectorNetworkAsync`) — the capless unattached "close enough" line is the most-repeated link mistake across projects (`board-grammar.md` §Link rule)
 6. Chunks of ~10 cells per call; every call starts with `guard(<file name>)`
 
 ### Phase 5 — Verify + report (gate G5)

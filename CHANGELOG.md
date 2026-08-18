@@ -26,6 +26,18 @@ scaffold ที่ต้องการ stamp ให้รันบน Bridge; b
 - Required input + พฤติกรรมเมื่อไม่มี selection (When to use)
 - §pluginData note เรื่อง store follows runtime (plain/shared) + ตัวอย่าง import-test ใน LEARN
 
+**Link rule (feedback จาก live run 29.1 — เส้น permutation ถูกวาดผิดบ่อยในหลายโปรเจค)**
+- Phase 4 ข้อ 5 + board-grammar **§Link rule** (checklist 5 ข้อ, cross-project): ลิงก์ต้อง
+  replicate exemplar ที่ healthy — **anchor = main INSTANCE ในจอ (magnet BOTTOM) → board (TOP)** ·
+  route = กลางล่างจอ → กลางบน board · **หัวเส้นทั้งสองปลาย** (`TRIANGLE_FILLED`/`ARROW_LINES`;
+  VECTOR ใช้ per-vertex `strokeCap` ผ่าน `setVectorNetworkAsync`) · **ต้อง attach จริง**
+- ค้นพบใหม่ (พิสูจน์บนไฟล์ NEXT test): clone CONNECTOR throw ทุกเส้นแม้เส้น healthy (3/3)
+  แต่ **re-point `connectorStart`/`connectorEnd` ของเส้นที่มีอยู่ทำได้** → recovery:
+  ให้ user วาดมือ/Cmd+D เส้น exemplar แล้ว plugin re-point ให้เป๊ะ; VECTOR เป็นแค่
+  placeholder (ไม่ attach → โดนตีกลับ)
+- exemplar เสีย (endpoints ชี้ SECTION / ผูก FRAME แทน instance) ห้ามใช้เป็นแบบ —
+  276:304468 / 276:304854 คือตัวอย่าง outlier ในไฟล์ทดสอบ
+
 **G1 scope alignment (audit รอบสอง — แก้ drift)**
 - Phase 4 บรรทัดเปิด: เงื่อนไข harvest เขียนตาม gate table G1 ตรง ๆ —
   §Board anatomy ต้อง verified กับ live board ในไฟล์นี้; ยังไม่เคย (หรือทีมเปลี่ยน
