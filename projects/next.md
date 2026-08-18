@@ -14,30 +14,34 @@
 
 ```
 FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  fill #E5E7EB   parent = the flow's SECTION
-└── FRAME 'case'                         [V · gap 24]                    ← one group per case category
+└── FRAME 'case'                         [V · gap 64]                    ← one group per case category
     ├── TEXT '<Category> Permutations'    32px                           ← sub-group title
     │   (a further nested category → 24px)
     └── FRAME 'case'                     [H · gap 64 · WRAP]             ← row (fixed width)
-        └── FRAME 'case'                 [V · gap 24]                    ← case column
-            ├── FRAME 'case'             [V · gap 24]                    ← caption block
+        └── FRAME 'case'                 [V · gap 40]                    ← case column
+            ├── FRAME 'Description'      [V · gap 24]                    ← caption block
             │   ├── FRAME 'case'         [V · gap 0]                     ← label group
             │   │   ├── TEXT 'Case#N'                ← no space
             │   │   └── TEXT '<case name, EN>'
             │   └── TEXT '<Thai description "กรณี…">'   width 375
-            └── <screen slot 390×844>    (small 360 · legacy 375×812)
+            └── <screen slot 390×844>    (small 360 · legacy 375×812 · tall scroll screens keep the base height)
 ```
 
 | Role | Font | Size / line-height | Color |
 |---|---|---|---|
 | Sub-group title | Krungthai Next **SemiBold** | 32 / **48px** | `#020617` |
 | `Case#N` + case name (EN) | Krungthai Next **SemiBold** | 24 / **36px** | `#475569` |
-| Thai description | Krungthai Next Regular | 16 / **24px** | `#000000` |
+| Thai description | Krungthai Next Regular | 16 / **24px** | `#020617` |
+
+> **Re-harvested 2026-08-11** (board `Permutation_JUN26.02.1.14.1_…Input Information Top-Up_Filled`, same file):
+> case column gap is **40** (not 24 — 24 is the caption block's inner gap) · Thai description is `#020617` (a single legacy node uses `#000000`) · group gap is **64** · slot heights follow the base screen, so a tall scroll screen gets a tall slot (390×1381 seen there).
 
 - **line-height is always PIXELS** (1.5×), never AUTO
 - Fonts seen inside legacy screens (`Krungthai Fast`) belong to **the screens, not the captions** — do not mix
 - Internal layer names: the team reuses `case` at every level (or auto names like `Frame 10000xxx`)
 - **Link:** CONNECTOR named `Permutation` · `#FAB900` · weight 5 · `ELBOWED` · from the **main INSTANCE inside the screen (magnet BOTTOM)** → **board (magnet TOP)** · parent = SECTION
   (the plugin API cannot create connectors in a design file → draw a VECTOR instead and tell the user — see board-grammar.md)
+  **2026-08-11:** `CONNECTOR.clone()` also throws here — *"Cloning CONNECTOR nodes is not supported in the current editor"* — and `figma.createConnector` is not a function. In a **design** file the VECTOR fallback is the only option; it does not attach, so say so in the report. Cloning may still work on a FigJam board.
 - **Placement:** flow band at `y≈147–4200` · permutation band at **`y≈6176`** · boards ordered by x following the screen order in the flow (leaving gaps for screens that have no board yet)
 - **Board width:** choose a column count that fits the gap between neighbours — `n×390 + (n-1)×64 + 128`
 
@@ -72,8 +76,12 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | `/toast\|snackbar/i` | `toast/*` |
 | `/radio/i` | `selection-radio/*` |
 | `/checkbox/i` | `selection-checkbox/*` |
-| `/image\|banner\|thumbnail/i` | `image/*` |
+| `/image\|banner\|thumbnail\|logo/i` | `image/*` |
 | `/button\|cta/i` | interaction states (Default/Pressed/Disabled) — not a separate pack |
+| `/search ?bar\|search/i` | `textfield/*` (search field — no validation pack, no mandatory/optional) · confirmed 2026-08-11 |
+| `/switch\|segment\|tab ?bar/i` | navigation — tab change (axis 9), not a component pack · confirmed 2026-08-11 |
+| `/quick ?(button\|menu)\|shortcut/i` | `fav/list-count` + `scrolling/*` (horizontal rail) · confirmed 2026-08-11 |
+| `/^list$\|list ?item\|row/i` | list rows → `empty/section` · `text/*` (long name) · `image/*` (row logo) · `tmpl/entitlement` (row disabled) · confirmed 2026-08-11 |
 
 ## Anchors (READ-ONLY — for harvesting and comparison)
 - File `lN13minj5i19c2fEyBSF3q`: **Apply LOC** `0:1` · **Coupon** `16:20211` · Universal Payment section `Revamp Payment` `129:187281`
@@ -97,6 +105,18 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | Bill payment input | 5 | empty stage · multiple fields · biller to favorite · field display |
 | Bill payment error handling | 5 | reference number incorrect · incorrect biller code · outstanding payment |
 | Face liveness | 12+5+3 | error catalog · motion challenge · environment — **module: run on the eKYC screen itself** |
+
+## Screen facts (persisted ⊘ — pre-bucket these before enumerating; do not re-propose)
+| Screen | caseId | reason | date |
+|---|---|---|---|
+| `*` (whole USP Revamp Top-Up flow) | `tmpl/server-down` · `tmpl/session-timeout` · repeat transaction | covered once by the flow's `Permutation_JUN26.02.1.12.1_…_Common Handling` board (Case#1–5) | 2026-08-11 |
+| `1.13.1 Select Top-Up` | `screen/empty` | the biller list is server master data and always has rows — "no rows" only happens as a fetch failure → `screen/error-full` | 2026-08-11 |
+| `1.13.1 Select Top-Up` | `screen/loading-spinner` | list screens in this flow load with a skeleton, never a full-screen spinner | 2026-08-11 |
+| `1.13.1 Select Top-Up` | `screen/loading-lazy` · `screen/block-retry` | the biller list is fetched once in full, no pagination | 2026-08-11 |
+| `1.13.1 Select Top-Up` | `textfield/disabled` · `textfield/mandatory` · `textfield/error-*` | the search bar is a filter, not a form field — no validation, never disabled | 2026-08-11 |
+| `1.13.1 Select Top-Up` | `datepicker/*` · `datecalendar/*` · `dateroller/*` · `selection-radio/*` · `selection-checkbox/*` · `toast/*` · `nav/badge` | those components are not on this screen | 2026-08-11 |
+| `1.13.1 Select Top-Up` | `tmpl/threshold` · `tmpl/insufficient` · `tmpl/validation-inline` · `tmpl/dropdown-dismiss` · `tmpl/sof-eligibility` | no money input on this screen — they belong to `1.14.1 Input Information Top-Up` | 2026-08-11 |
+| `1.13.1 Select Top-Up` | `tmpl/ekyc` · `tmpl/consent` · `tmpl/retry-lockout` | separate modules with their own bases (Fraud Engine 1.34–1.56 · Session PIN 1.8/1.10/1.11) | 2026-08-11 |
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 ```js

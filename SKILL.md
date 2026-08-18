@@ -17,12 +17,21 @@ compatibility: "Reading the base and writing the scaffold work through the offic
 
 # figma-permutation-build
 
+## About
+- **Role**: Permutation planner — enumerate a base screen's cases from the team's
+  library and scaffold its board on canvas. Coverage auditor, never a screen designer.
+- **Version**: 2026-08-18 (history in CHANGELOG.md)
+- **Author / Editor**: Tle UID
+- **Maintenance**: behavior changes bump this date + add a CHANGELOG entry; doc-only edits don't.
+
 Enumerate a screen's cases and scaffold its Permutation board — **phase 1 = structure + cases only;
-the screens inside the cases are phase 2 (not built yet)**.
+filling the screens inside the cases is phase 2 → `figma-permutation-fill`**.
 **Reply to the user in Thai**; keep layer / token / technical names in English.
+Keep replies concise — use the report shapes defined per phase, no extra prose.
 
 ## When to use / not use
 - Use: there is one base screen, and you want to know which cases it should have, and/or want the board scaffolded on canvas
+- **Required input**: one base screen (selection or node id). Nothing selected or named → ask which screen first; never walk the page to find one
 - Not for: design-quality review (→ `ux-audit`) · raw-value/override QA against the DS (→ `figma-design-qa`) · token binding (→ `figma-design-fix`) · building new screens (→ `figma-design-build`)
 - This skill is about **coverage** (which cases should exist), unlike figma-design-qa which is about **quality** (raw values / overrides)
 - **Only variants of the given base.** Separate module screens (an eKYC chain, a full-screen consent) belong to their own base → tell the user to run this skill on that screen instead; never fan out across screens
@@ -68,7 +77,11 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 - **Map components → categories** using the `component → category` table in `projects/<name>.md` (key or name pattern). No match → **flag "unmapped component — add it to projects/<name>.md"; never guess**
 - **Find existing cases**: run `scripts/scan-cases.js` (selection / siblings) to locate `Permutation*` containers and `Case#N` labels. If nothing is found with confidence → **ask the user where cases are kept; never assume there are none**
 - Take one screenshot of the base as the visual arbiter
-- **Report the profile**: archetype, components found (+ unmapped), existing cases
+- **Report the profile** in this shape (values are an example):
+```
+Profile — [archetype] form+list · [components] 6 mapped · 1 unmapped ⚠️ "AIS widget" → add to projects/next.md
+[existing] "Permutation: Home" 12 cases (scan-cases.js) · [base] 12:345 · screenshot ✓
+```
 
 ### Phase 2 — Enumerate → matrix
 - **Load §Screen facts from `projects/<name>.md` first** — any case listed there for this screen is pre-bucketed **⊘ with the stored reason** before enumeration starts. The library's Tier-1 states are generic; only the project file knows what this screen can never be (e.g. CLICX Home is never empty — a savings account already exists)
@@ -86,7 +99,12 @@ Show the **matrix inline, in Thai**:
 ```
 N total → minus existing / N-A → M remaining → proposing 🔴x 🟡y ⚪z
 | Case# | level | group | description | priority | source (tier) | bucket |
+| Case#4 | S | Screen | Error (full screen) — กรณีโหลด/ดึงข้อมูลไม่ได้ทั้งจอ (`screen/error-full`) | 🔴 | T1 archetype | ✗ |
+| Case#7 | C | Text Field | Error — ไม่กรอก (`textfield/*`) | 🟡 | T1 pack | ✗ |
+| — | S | Screen | Default — กรณีเข้าจอครั้งแรก (`screen/default`) | — | T1 | ✓ มีแล้ว |
+| — | S | Screen | Empty (`screen/empty`) — เป็นไปไม่ได้: มีบัญชี savings เสมอ | — | §Screen facts | ⊘ |
 ```
+(rows are examples — real ids and captions always come verbatim from `case-library.md` / §Screen facts)
 The table shows **every row of every pack pulled for this screen — ✓ existing and ⊘ N/A (with its reason) included, not just the ✗ proposals**. A row that never appears is where dropped cases hide (the 2026-08-06 run silently omitted `image/asset load fail` even though the Image pack carries it — a full table makes that omission visible instead of silent). ⊘ rows may be grouped at the bottom.
 plus where the board will be placed. **The user trims / adds / reorders, then confirms. Nothing is written before that.**
 
@@ -96,7 +114,7 @@ plus where the board will be placed. **The user trims / adds / reorders, then co
 Anyone who only wanted the case list stops here.
 
 ### Phase 4 — Scaffold
-**Gate G1 first (mandatory): run `scripts/harvest-board.js` VERBATIM** against a board the team already made in that file — never a hand-shortened version (a shortened harvest missed a connector in the pilot). It returns all 10 items (shell · spacing per level · font + weight + lineHeight · colors · caption shape · slot sizes · sub-groups · links incl. `otherLinesNearby` · placement + `siblingBoards` · naming). Compare with `projects/<name>.md`; if it differs or is missing, **update the project file first**. Record the base's node count now (for G5). Then build:
+**Gate G1 first: §Board anatomy in `projects/<name>.md` must be verified against a live board in THIS file — not yet (or the team's style changed) → run `scripts/harvest-board.js` VERBATIM** against a board the team already made in that file — never a hand-shortened version (a shortened harvest missed a connector in the pilot). It returns all 10 items (shell · spacing per level · font + weight + lineHeight · colors · caption shape · slot sizes · sub-groups · links incl. `otherLinesNearby` · placement + `siblingBoards` · naming). Compare with `projects/<name>.md`; if it differs or is missing, **update the project file first**. Record the base's node count now (for G5). Then build:
 0. **Sibling-duplicate guard**: run `scripts/scan-cases.js` over the sibling boards in the same section first; if the confirmed case set is **≥90% identical (by caseId) to a sibling board whose base is a different screen** → stop and confirm with the user before building — an enumeration that ignores its own base produces exactly this signature (three near-identical boards shipped this way on 2026-08-06)
 1. **Paste `scripts/scaffold-kit.js` as the prelude** of the build call, then write project-specific code with its factories (`alFrame` → append → `finalizeFixed` / `growWithContent`; `placeholder`; `stampCase`/`stampBoard`; `elbowLink`) — the factories encode the auto-layout ordering that silently collapsed frames in both pilots
 2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node)
@@ -108,16 +126,21 @@ Anyone who only wanted the case list stops here.
 ### Phase 5 — Verify + report (gate G5)
 - **Run `scripts/verify-board.js`** with CONFIG from `projects/<name>.md` §Verify config (label style · slot sizes · expected case count · baseNodeId + node count from G1). **The scaffold is done only when `pass: true`.** Never hand-write a subset of these checks
 - Screenshot the board (≤3 rounds) and eyeball against the matrix — the script checks structure, the screenshot checks looks
-- Report in Thai: counts by tier / level / priority · deep link · rollback recipe · **suggested fill order (Must first)** · renumber-compat note (from scan stats) · other module screens in the flow worth running next
+- Report in Thai, in this shape (values are an example):
+```
+สรุป: 14 cells → 🔴5 🟡6 ⚪3 · S:8 C:6 · T1:10 T2:3 T3:1
+🔗 figma.com/design/…?node-id=… · rollback: ลบ node "Permutation: Home" ก้อนเดียว
+fill ต่อ: Case#2 #5 #9 (🔴 ก่อน) · renumber-cases: ใช้ได้ (strict) · จอถัดไป: eKYC intro
+```
 
 ---
 
 ## MODE: LEARN (teach a new project / refresh its layout)
 1. The user points at an existing permutation board for that project (URL / node id) + its FigJam if any
-2. Read the board (**Bridge required** — large boards overflow the official MCP) → run `harvest-board.js` → capture **school + grammar** (described in words and ratios, never per-screen geometry) and one exemplar's default cell/gap dimensions
+2. Read the board (**Bridge required** — see Runtime table) → run `harvest-board.js` → capture **school + grammar** (described in words and ratios, never per-screen geometry) and one exemplar's default cell/gap dimensions
 3. Harvest **Tier-3 packs** from the captions on the board (grouped by screen / component / module)
 4. Draft `projects/<name>.md` from `projects/_template.md` → **user confirms** → save with the date
-5. Import-test: open 2–3 anchor nodes and confirm they resolve before saving
+5. Import-test: open 2–3 anchor nodes and confirm they resolve before saving — report e.g. `import-test 3/3 anchors ✓ (board 12:88 · label 12:91 · connector 12:99) → saved projects/<name>.md`
 
 ## MODE: AUDIT (idempotent re-run + fill progress)
 `scripts/scan-cases.js` reads `pluginData("permBuild")` inside the board and diffs against the current matrix:
@@ -125,6 +148,14 @@ Anyone who only wanted the case list stops here.
 - **Stale** (base changed after the build; compare baseNodeId + date) → offer to refresh the caption
 - **Orphan** (on the board, not in the matrix) → **report only, never delete**
 - **Fill progress**: count `status:"spec"` vs `"designed"` per priority (designed = the cell holds real content beyond the placeholder)
+
+Report in this shape (values are an example):
+```
+AUDIT "Permutation: Home" — matrix 14 · board 13
+missing 2 (`screen/error-full`, `textfield/*` error) → เสนอเพิ่ม cell
+stale 1 (Case#3 — base แก้หลัง build) → เสนอ refresh caption
+orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/6 ⚪ 0/3 designed
+```
 
 ---
 
@@ -134,7 +165,7 @@ Anyone who only wanted the case list stops here.
 
 **Standard-case naming**: a case that exists in `case-library.md` keeps its library `id` and caption **verbatim** — never re-word a standard situation, and never invent a new name for one ("Session timeout" vs "Network reconnect" on sibling boards came from exactly this). New recurring situation → propose it as a library addition. Captions refer to sections/components by the **team's names from the component → category map** in `projects/<name>.md`, never the model's own labels — an unmapped component is already flagged in Phase 1, so by caption time every name has a source.
 
-> **🔴 Hard rule: harvest before scaffold.** Board style **differs per project** (spacing · weight · lineHeight · node count · link style). Before writing into a file you have not built in before, run **`scripts/harvest-board.js`** on a board the team made, then reconcile `projects/<name>.md`.
+> **🔴 Hard rule: harvest before scaffold.** Board style **differs per project** (spacing · weight · lineHeight · node count · link style). Before writing into a file you have not built in before, run **Gate G1** (Phase 4) first.
 > Never build from memory, from defaults, or from another project. No existing board at all → use the project file's defaults; none there either → **ask the user**.
 > *(Pilot 2026-07-27 got this wrong twice by guessing: caption shape first, then weight/lineHeight — one harvest would have caught both.)*
 
@@ -144,6 +175,7 @@ Anyone who only wanted the case list stops here.
 **pluginData** — written ONLY through `scaffold-kit.js` stamps:
 - cell key `"permBuild"`: `{ caseId, level:"S"|"C", tier:1|2|3, priority:"must"|"should"|"edge", status:"spec"|"designed", baseNodeId, configVer, date }` — `caseId` = the stable semantic id from `case-library.md` (stable across renumbering, not the Case# number)
 - board key `"permBuildBoard"`: `{ project, baseNodeId, configVer, date }` — lets AUDIT find boards even if renamed, and ties a board to its base
+- **Store note**: `scaffold-kit.js` writes *plain* pluginData only (pilot-tested — do not change casually). Plain is blocked under use_figma → stamps are only guaranteed when scaffolding runs on the Bridge; a stampless use_figma build fails G5 loudly (`verify-board.js` reads both stores). AUDIT/FILL on a plain-stamped board must also run via the Bridge (see `figma-permutation-fill` F0.3)
 
 **Label styles** (per project, in `projects/<name>.md` §Verify config):
 - `strict` = the label node is exactly `Case#N` → **renumber-cases compatible** (NEXT)

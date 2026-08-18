@@ -5,6 +5,37 @@
 
 ---
 
+## 2026-08-18 — Audit fixes (skill-md-auditor 9.5/12 → pass)
+
+แก้ตามผล audit โดยไม่เปลี่ยน pipeline/gate ใด ๆ
+
+**พฤติกรรมใหม่**
+- **Report shapes บังคับ** — Phase 1 profile / Phase 3 matrix ตัวอย่างแถว /
+  Phase 5 summary / AUDIT ต้องตอบตามบล็อก format ที่กำหนด (เดิมปล่อยอิสระ)
+- **Conciseness rule** — ตอบกระชับตาม report shape ไม่มี prose เกิน
+
+**Known issue (บันทึกไว้ ไม่แก้ — script ผ่าน pilot แล้ว):** scaffold-kit เขียน
+stamp เป็น plain pluginData อย่างเดียว ซึ่ง use_figma เขียน/อ่านไม่ได้ →
+scaffold ที่ต้องการ stamp ให้รันบน Bridge; build ที่ stamp ไม่ติดจะตกที่ G5
+(verify-board อ่านทั้งสอง store) — ดู §pluginData Store note ใน SKILL.md
+
+**เอกสาร**
+- เพิ่ม §About (role · version · author · maintenance rule)
+- Hard rule "harvest before scaffold" ชี้กลับ Gate G1 แทนเขียนคำสั่งซ้ำ
+- intro ชี้ phase 2 → figma-permutation-fill (เดิมเขียน "not built yet" ซึ่ง stale)
+- Required input + พฤติกรรมเมื่อไม่มี selection (When to use)
+- §pluginData note เรื่อง store follows runtime (plain/shared) + ตัวอย่าง import-test ใน LEARN
+
+**G1 scope alignment (audit รอบสอง — แก้ drift)**
+- Phase 4 บรรทัดเปิด: เงื่อนไข harvest เขียนตาม gate table G1 ตรง ๆ —
+  §Board anatomy ต้อง verified กับ live board ในไฟล์นี้; ยังไม่เคย (หรือทีมเปลี่ยน
+  style) → รัน `harvest-board.js` verbatim. เดิมอ่านได้ว่า "บังคับทุกครั้ง" ซึ่ง
+  ขัดกับ CONTRACT / board-grammar / projects/next.md ("re-harvest if style changed")
+- LEARN step 2: ตัด rationale ที่ซ้ำกับ Runtime table เหลือ pointer
+  ("Bridge required — see Runtime table") — เหตุผล+proof date อยู่ที่ตารางที่เดียว
+
+---
+
 ## 2026-08-11 — Feedback revision + เทสหลายโมเดล
 
 แก้ 6 จุดจากผลรัน Haiku บนหน้า `AI Test 05` (designer note ลงวันที่ 6 Aug 2026)
