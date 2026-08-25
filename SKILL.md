@@ -120,7 +120,7 @@ Anyone who only wanted the case list stops here.
 2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node)
 3. Placement from `siblingBoards`: pick a column count whose width fits the free span
 4. Per case: label node (project's label style) + caption nodes + `placeholder()` + `stampCase()`
-5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). Clone blocked (some design files block it even on healthy lines) → **re-pointing still works**: the user hand-draws or Cmd+D's an exemplar connector, then set `connectorStart`/`connectorEnd` yourself. `elbowLink`'s VECTOR is a placeholder of last resort — it never attaches; when the project's links attach, say so and hand back that one manual step. Either way **replicate the exemplar: anchor (NEXT: the main INSTANCE inside the screen, magnet BOTTOM) · route (screen bottom-center → board top-center) · BOTH end caps** (VECTOR: per-vertex `strokeCap` via `setVectorNetworkAsync`) — the capless unattached "close enough" line is the most-repeated link mistake across projects (`board-grammar.md` §Link rule)
+5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). **The clone gate is per-RUNTIME**: the desktop Bridge may throw *"Cloning CONNECTOR nodes is not supported"* where `use_figma` clones the very same line fine (proven 2026-08-18) → on a Bridge throw, run the clone + re-point through **`use_figma`** instead; re-pointing works on both runtimes. Every runtime blocked → the user hand-draws or Cmd+D's an exemplar and you re-point it. `elbowLink`'s VECTOR is a placeholder of last resort — it never attaches; when the project's links attach, say so. Either way **replicate the exemplar: anchor (NEXT: the main INSTANCE inside the screen, magnet BOTTOM) · route (screen bottom-center → board top-center) · BOTH end caps** (VECTOR: per-vertex `strokeCap` via `setVectorNetworkAsync`) — the capless unattached "close enough" line is the most-repeated link mistake across projects (`board-grammar.md` §Link rule)
 6. Chunks of ~10 cells per call; every call starts with `guard(<file name>)`
 
 ### Phase 5 — Verify + report (gate G5)
@@ -192,6 +192,7 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 |---|---|
 | Profile a single base screen + write the scaffold | **official MCP `use_figma` (primary)** · Bridge as fallback |
 | Read / audit a large existing permutation board | **figma-console Bridge required** (official MCP overflows on big boards — proven 2026-07-24) |
+| Clone + re-point the screen→board CONNECTOR | **try the active runtime; Bridge throws in some files where `use_figma` succeeds (proven 2026-08-18)** — note the flip side: stamps are Bridge-only |
 
 - **`if (figma.root.name !== "<EXPECTED>") throw "wrong file";`** at the top of every write batch (the desktop's active file can drift)
 - **Only touch what this skill created; never modify the base** — phase 1 does not even clone screens

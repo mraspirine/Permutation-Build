@@ -37,6 +37,11 @@ scaffold ที่ต้องการ stamp ให้รันบน Bridge; b
   placeholder (ไม่ attach → โดนตีกลับ)
 - exemplar เสีย (endpoints ชี้ SECTION / ผูก FRAME แทน instance) ห้ามใช้เป็นแบบ —
   276:304468 / 276:304854 คือตัวอย่าง outlier ในไฟล์ทดสอบ
+- **ค้นพบเพิ่ม (2026-08-18 รอบสาม): clone gate เป็นราย RUNTIME** — Bridge clone throw
+  ในไฟล์ NEXT test แต่ **`use_figma` (official MCP, remote) clone + re-point เส้นเดิมได้สำเร็จ**
+  (พิสูจน์: mint เส้นสมบูรณ์ 365:494 — section/caps/endpoints ถูกครบ — แล้วลบตัวพิสูจน์)
+  → ladder ใหม่: clone runtime ปัจจุบัน → clone อีก runtime → human duplicate + re-point →
+  VECTOR placeholder · เพิ่มแถว Runtime table (ด้านกลับ: stamps ยังเป็น Bridge-only)
 
 **G1 scope alignment (audit รอบสอง — แก้ drift)**
 - Phase 4 บรรทัดเปิด: เงื่อนไข harvest เขียนตาม gate table G1 ตรง ๆ —
