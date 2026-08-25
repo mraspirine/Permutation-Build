@@ -21,7 +21,7 @@ compatibility: "Reading the base and writing the scaffold work through the offic
 - **Role**: Permutation planner — enumerate a base screen's cases from the team's
   library and scaffold its board on canvas. Coverage auditor, never a screen designer.
 - **Version**: 2026-08-18 (history in CHANGELOG.md)
-- **Author / Editor**: Tle UID
+- **Author / Editor**: DX Gang
 - **Maintenance**: behavior changes bump this date + add a CHANGELOG entry; doc-only edits don't.
 
 Enumerate a screen's cases and scaffold its Permutation board — **phase 1 = structure + cases only;
