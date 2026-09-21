@@ -155,4 +155,27 @@ A(!isContainer({ type: 'TEXT', name: 'Permutation: X' }), 'reject TEXT title nod
 A(isContainer({ type: 'FRAME', name: 'G.03-01.B' }), 'FRAME CLICX board');
 // dup detection
 A(JSON.stringify(findDupNumbers([1, 2, 2, 3, 3, 3])) === '[2,3]', 'dup detection');
+// scanCases() end to end on a mocked page: two UNSTAMPED team-style boards (NEXT anatomy),
+// each numbered from Case#1, one designed screen + one empty slot per board
+const N = (type, name, children, extra) => {
+  const n = Object.assign({ type, name, children: children || [], height: 0 }, extra || {});
+  n.children.forEach(c => { c.parent = n; });
+  n.findOne = pred => {
+    let hit = null;
+    (function w(x) { (x.children || []).forEach(c => { if (hit) return; if (pred(c)) hit = c; else w(c); }); })(n);
+    return hit;
+  };
+  return n;
+};
+const T = s => ({ type: 'TEXT', name: s, characters: s });
+const col = (num, slot) => N('FRAME', 'case', [N('FRAME', 'Description', [N('FRAME', 'case', [T('Case#' + num), T('Name')])]), slot]);
+const designedScreen = () => N('INSTANCE', 'screen', [T('content')], { height: 844 });
+const emptySlot = () => N('FRAME', 'placeholder', [T('◻︎ Case Spec — awaiting design')], { height: 844 });
+const teamBoard = name => N('FRAME', name, [N('FRAME', 'case', [T('Group Permutations'),
+  N('FRAME', 'case', [col(1, designedScreen()), col(2, emptySlot())])])]);
+globalThis.figma = { currentPage: { selection: [], children: [teamBoard('Permutation_A'), teamBoard('Permutation_B')] } };
+const scan = scanCases();
+delete globalThis.figma;
+A(scan.counts.cases === 4 && scan.counts.designed === 2, 'unstamped team board: designed screens counted, got ' + scan.counts.designed + '/4');
+A(scan.counts.dupNumbers.length === 0 && scan.counts.renumberCompatible === true, 'numbering restarts per board: no cross-board dup alarm, got ' + JSON.stringify(scan.counts.dupNumbers));
 console.log('scan-cases v2 self-check OK');
