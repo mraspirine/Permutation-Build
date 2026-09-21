@@ -39,7 +39,7 @@ FRAME '<FLOW>.<SS>-<SS>.B'        [V · gap 100 · padding 100]  fill #EAEEF4   
 | `type=note` | Thai description | 16px Regular · lh 24 |
 | `type=note -bold` | emphasized note | 14–16px Medium |
 Boolean prop `Show Description#1:3` toggles the secondary line.
-> The set did not resolve through `importComponentSetByKeyAsync` (it behaves as local) → **clone an existing instance in the file instead**.
+> The set did not resolve through `importComponentSetByKeyAsync` (it behaves as local) → **make a fresh instance from one already in the file: `freshInstance(<that instance>)` (scaffold-kit) — never `clone()` it**.
 
 | Role | Font | Size / line-height | Color |
 |---|---|---|---|
@@ -54,7 +54,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
   Every existing board (`C.01-01.B` … `G.03-01.B`) is bound; resolve it off an exemplar's
   `fills[0].boundVariables.color.id` → `getVariableByIdAsync` → `setBoundVariableForPaint`.
   A matching hex without the binding is still wrong.
-- Title block fill `#CDD5DF` — comes free when you clone an existing instance
+- Title block fill `#CDD5DF` — comes free with `freshInstance` of an existing instance
 - Internal layer names: `permutation` → `container` → `case` → `Title` / `screen permutation`
 - **Every `permutation` frame has the SAME width** = board inner width (board width − 2×100), regardless of how many cases its row holds. The section-title instance is set to **`layoutSizingHorizontal = "FILL"`** so the grey header bar spans the full frame. Only the inner `container` row hugs its content.
 - **Link from screen to board: CONNECTOR named `Permutation`** · stroke **`#F79009`** · weight **4** · `ELBOWED` · no dash · start = **the main screen INSTANCE inside the `.A` frame** (e.g. `my asset screen`, `home master screen`), magnet **BOTTOM** — **except when that instance is taller than the clipping 812px frame** (`home master screen` is 1509 tall): anchor the `.A` FRAME itself, or the line starts ~700px below the visible screen → end = **the `.B` board frame**, magnet **TOP** · parent = the SECTION

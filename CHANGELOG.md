@@ -53,6 +53,16 @@
 - ตรวจซ้ำบนไฟล์จริง: `scan-cases.js` 5 จุด ตัวเลขเท่ารอบสองทุก board · `harvest-board.js` 5 board (strict / strict / loose / indexed / indexed) ·
   `verify-board.js` บน board 13.1 ที่ stamp ไว้ → `pass: true`, `skipped` รายงานเฉพาะ `knownCaseIds`
 
+**รอบสี่ (วันเดียวกัน) — audit ซ้ำโดยคนนอก (Opus บริบทใหม่ อ่านอย่างเดียว เปิดไฟล์อ้างอิงครบ): 11/12**
+- ❌ `clicx.md` สั่ง "clone an existing instance" ขัดกับ `scaffold-kit.js` ("Never `src.clone()`") และ `ptp.md` → ใช้ `freshInstance(<instance ที่มีอยู่>)`
+- Project index: NEXT ใช้สัญญาณแบบชื่อ variable (official MCP ไม่คืนชื่อ collection) · PTP มี dialect B ด้วย · label `loose` = CLICX และ DGL
+- Phase 2: Multiply มาก่อนการแจก bucket · fintech modifier ชี้ไป `case-library.md` §Priority (สำเนาเดิมขาดประโยค idempotency / timeout = Must)
+- Phase 3: CTA reminder อยู่ก่อนประโยคยืนยัน · แผนภาพ pipeline มี `[0]Detect`
+- G5: รายการ per-run CONFIG พูดครั้งเดียว และมี `linkCaps` (ว่างไว้ = จับได้แค่หัวเส้นหาย ไม่จับหัวเส้นผิดแบบ)
+- LEARN ตรงกับตาราง Runtime (Bridge เมื่อ board ใหญ่) · AUDIT กับตาราง References พูดเรื่อง `DETAIL` ตรงกัน · เอ่ยชื่อ `BOARD_HINT` / `boardId`
+- `dgl.md`: ความกว้างขั้นต่ำ 1 คอลัมน์ = 503 (จากสูตรในไฟล์) — กฎ STOP ของ Phase 4 step 3 ใช้กับ DGL ได้แล้ว
+- ไม่ทำตาม: ตัด `compatibility` ใน frontmatter (เป็นฟิลด์ในสเปก) · เริ่ม Phase 4 ที่ 1 (project file อ้าง "step 3" อยู่) · แตกย่อหน้า G1 เป็นข้อย่อย
+
 **กฎ**
 - Phase 1: **board เป็นของ base นี้เมื่อ stamp `baseNodeId` หรือ `linkedFrom` ตรงกับ base เท่านั้น — ไม่ใช่ตามชื่อ** ·
   base อาจเป็น variant/state ของจอที่มี board อยู่แล้ว → เข้ากรณี states-of-one-screen

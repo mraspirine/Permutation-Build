@@ -39,7 +39,7 @@ FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F
   The plugin API cannot create connectors in a design file → draw a VECTOR and tell the user
 - **Placement:** flow band `y≈977` · permutation band **`y≈12074`** (Accept Offer sub-flow sits at `y≈5073`) ·
   boards ordered by x following the screen order in the flow, ~178px apart
-- **Board width:** `n×375 + (n-1)×64 + 128` → 3 cols = 1381 · 4 cols = 1820. Pick the count that fits the free span
+- **Board width:** `n×375 + (n-1)×64 + 128` → 3 cols = 1381 · 4 cols = 1820 · **minimum = 1 column = 503** — a narrower slot is "no free span" (Phase 4 step 3). Pick the count that fits the free span
 
 ## Layout (school and conventions)
 - **School A** (flow + permutation band + link)
