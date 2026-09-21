@@ -224,4 +224,12 @@ globalThis.figma = { currentPage: { selection: [], children: [N('FRAME', 'Permut
 const hscan = scanCases();
 delete globalThis.figma;
 A(hscan.counts.cases === 2 && hscan.counts.designed === 2, 'group header sharing the label grammar is not a case, got ' + JSON.stringify(hscan.counts));
+// a component-level case holds a CROP (PTP `SOFCard_CASA` 390x108), not a screen — it is still designed
+const crop = () => N('INSTANCE', 'SOFCard_CASA', [T('KTB')], { height: 108 });
+globalThis.figma = { currentPage: { selection: [], children: [N('FRAME', 'Permutation: Pg_Setting', [N('FRAME', 'Case',
+  [icol('1.1 | Default', crop()), icol('1.2 | Long Name', crop()), icol('2.1 | Link 1 Acc', emptySlot())])])] } };
+const cscan = scanCases();
+A(cscan.counts.designed === 2 && cscan.counts.spec === 1, 'component crops count as designed, placeholders do not, got ' + JSON.stringify(cscan.counts));
+A(Array.isArray(cscan.containers[0].cases) && cscan.containers[0].designed === 2, 'DETAIL on: per-case rows + per-board designed count');
+delete globalThis.figma;
 console.log('scan-cases v2 self-check OK');

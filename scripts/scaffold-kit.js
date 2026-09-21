@@ -142,5 +142,18 @@ if (typeof figma === "undefined") {
   globalThis.figma = { root: { name: "Document" }, fileKey: "KEY123" };
   A(!throws(() => guard("KEY123")) && throws(() => guard("OTHERKEY")), "use_figma: root.name is always 'Document' → guard matches the fileKey");
   delete globalThis.figma;
+  // caption helpers — two of four projects build captions from library instances
+  const mkText = (chars, lh) => { const t = { type: "TEXT", visible: true, _c: chars, lh, getRangeAllFontNames: () => [], get characters() { return this._c; }, set characters(v) { this._c = v; }, get height() { return this._c.split("\n").length * this.lh; } }; return t; };
+  const a = mkText("Case #1 - Short\n", 36), b = mkText("Case #2 - A label that wraps\nonto a second line\n", 36);
+  equalizeRow([a, b], 72);
+  A(a.height === b.height && a.height === 108, "equalizeRow pads with trailing newlines up to the tallest, got " + a.height + "/" + b.height);
+  const solo = mkText("Case #1", 36); equalizeRow([solo], 72);
+  A(solo.height === 72, "equalizeRow honours the floor");
+  const calls = [];
+  const gridMock = { appendChildAt(n, r, c) { calls.push("at " + r + "," + c + " span" + n.gridColumnSpan); } };
+  const header = { gridColumnSpan: 4 };            // a span carried over from somewhere else must not reach the grid
+  placeInGrid(gridMock, header, 0, 0, 3);
+  A(calls[0] === "at 0,0 span1" && header.gridColumnSpan === 3, "placeInGrid appends at span 1, then widens");
+  A(typeof freshInstance === "function" && typeof setInstanceTexts === "function" && typeof gridFrame === "function", "instance + grid factories");
   console.log("scaffold-kit self-check OK");
 }

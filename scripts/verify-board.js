@@ -206,4 +206,15 @@ A(!labelOk("Case#3", "indexed") && !labelOk("1 | Group header", "indexed") && !l
 A(isLabelText("Case#3") && isLabelText("Case #1 - Name") && isLabelText("1.1 | Default") && !isLabelText("Permutation:") && !isLabelText("1 | CASA"), "label finder covers all three styles");
 A(labelOk("#1 No E-Saving (PMT)", "indexed") && labelOk("#2.1 Savings account limit unreached", "indexed") && !labelOk("# tag", "indexed"), "hash-indexed (PTP dialect B)");
 A(labelKey("#2.1 Savings") === "2.1" && labelKey("1.2 | Name") === "1.2" && labelKey("Case#7") === 7, "label keys");
+// link checks — the most-rejected part of a build
+const okLink = { type: "CONNECTOR", connectorStart: { endpointNodeId: "base", magnet: "BOTTOM" }, connectorEnd: { endpointNodeId: "board", magnet: "TOP" }, connectorStartStrokeCap: "TRIANGLE_FILLED", connectorEndStrokeCap: "ARROW_LINES" };
+const ctx = { inBoard: new Set(["board", "head"]), inBase: new Set(["base", "inst"]), baseBottom: 1693, lineTop: 1698, tolerance: 12 };
+A(linkFailures(okLink, ctx).length === 0, "healthy link passes");
+A(linkFailures({ type: "VECTOR" }, ctx).length === 1, "a VECTOR line cannot attach");
+A(linkFailures(Object.assign({}, okLink, { connectorStart: { magnet: "BOTTOM" } }), ctx).some(f => /start is loose/.test(f)), "loose start");
+A(linkFailures(Object.assign({}, okLink, { connectorEnd: { endpointNodeId: "other" } }), ctx).some(f => /does not end on this board/.test(f)), "wrong board");
+A(linkFailures(Object.assign({}, okLink, { connectorEndStrokeCap: "NONE" }), ctx).some(f => /end cap/.test(f)), "capless line");
+A(linkFailures(okLink, Object.assign({}, ctx, { lineTop: 2395 })).some(f => /702px/.test(f)), "line starting below the visible screen (instance overflows the frame)");
+A(outsideParent({ x: 152, y: 3810, width: 1650, height: 3580 }, { type: "SECTION", width: 8528, height: 7386 }) === 4, "board leaves its section by 4px");
+A(outsideParent({ x: 152, y: 3810, width: 1650, height: 3556 }, { type: "SECTION", width: 8528, height: 7386 }) === 0 && outsideParent({ x: -5, y: 0, width: 10, height: 10 }, { type: "PAGE" }) === 0, "inside / not a section");
 console.log("verify-board self-check OK");
