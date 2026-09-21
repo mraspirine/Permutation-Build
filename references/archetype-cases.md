@@ -9,8 +9,8 @@
 | **Form / multi-step** | input fields, labels, submit, validation hints, sliders | Apply LOC |
 | **Transaction / payment** | amount, confirm, source/destination, fee, slip | Coupon |
 | **Dashboard / summary** | several widgets, totals, graphs, tabs, filters | SUMMARY |
-| **Home / hub** | asset cards, module tiles, greeting, skeletons | Im (CLICX) |
-| **Account list / tabs** | tab bar, per-tab lists, per-tab empty states | Poon (Connext) |
+| **Home / hub** | asset cards, module tiles, greeting, skeletons | CLICX |
+| **Account list / tabs** | tab bar, per-tab lists, per-tab empty states | Connext |
 | **Detail** | one item, hero, entitlement, action at the bottom | Play Card |
 
 Hybrid screens: pick the primary archetype by the screen's core task, then add one secondary set.

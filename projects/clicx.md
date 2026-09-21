@@ -1,6 +1,6 @@
-# Project: CLICX (Im / PB) — permutation profile
+# Project: CLICX (PB) — permutation profile
 
-> Learned 2026-07-27 by harvesting `G.02-01.B` in `[Test Case] UI State & Edge Case Generator`, page `AI Test 02`, section `Home`. Corpus reference: `permutation-reference.md` §4 (Im / CLICX).
+> Learned 2026-07-27 by harvesting `G.02-01.B` in `[Test Case] UI State & Edge Case Generator`, page `AI Test 02`, section `Home`. Corpus reference: `permutation-reference.md` §4 (CLICX).
 
 ## About / recognition
 - Product: CLICX — KTB / Infinitas digital bank app
@@ -126,7 +126,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | Copy | strings are bound to **Frontitude keys** (e.g. `system.error.notification.loading`) |
 
 ## Screen facts (business rules per screen — grown by Phase 3 trims)
-> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**. Rows below come from the designer notes on page `AI Test 05` (6 Aug 2026 Haiku run).
+> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**. Rows below come from the designer notes on page `AI Test 05` (6 Aug 2026 test run).
 | Screen (name pattern) | Case (`caseId`) | Rule | Learned |
 |---|---|---|---|
 | `home` / `home / intelligent hub` | `screen/empty` | เข้าหน้า Home ได้แปลว่ามีบัญชี savings แล้ว → empty ทั้งจอเกิดไม่ได้ (empty รายส่วน เช่น widget ว่าง ยังมีได้) | 2026-08-11 |

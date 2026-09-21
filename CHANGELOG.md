@@ -5,6 +5,26 @@
 
 ---
 
+## 2026-09-21 — เตรียมแชร์: ตัดชื่อบุคคล / ชื่อ skill อื่น / ตัวชี้ phase 2
+
+ไม่เปลี่ยน pipeline / gate / script ใด ๆ
+
+**พฤติกรรมใหม่**
+- **Phase 2 กลับเป็น "planned — not built yet"** — skill เติมจอตัวเดิมเลิกพัฒนา
+  (ไม่ตอบโจทย์) จะออกแบบใหม่ภายหลัง · intro และ §pluginData Store note ไม่ชี้ไป skill อื่นแล้ว
+- **"Not for" ไม่ระบุชื่อ skill ปลายทาง** — คงขอบเขตงานไว้ (design review · DS QA ·
+  token binding · สร้างจอใหม่) แต่ไม่ route ด้วยชื่อ ใช้ได้แม้ไม่ได้ติดตั้ง skill เหล่านั้น
+- **FigJam scope tag → tier เป็นกฎทั่วไป** — tag รูป `<name> UI` ใดก็ตาม = Tier 1
+  (เดิมระบุ tag รายตัว)
+
+**เอกสาร**
+- ตัดชื่อบุคคลออกจากทุกไฟล์ ใช้ชื่อโปรเจคแทน
+- ตัวอย่างใน report shape ไม่ใช้ชื่อแบรนด์ · อ้างถึงรอบเทสโดยไม่ระบุชื่อโมเดล
+  (ยกเว้นบันทึกย้อนหลังในไฟล์นี้)
+- description ตัด "(replaces …)" ออก
+
+---
+
 ## 2026-08-18 — Audit fixes (skill-md-auditor 9.5/12 → pass)
 
 แก้ตามผล audit โดยไม่เปลี่ยน pipeline/gate ใด ๆ
@@ -22,7 +42,7 @@ scaffold ที่ต้องการ stamp ให้รันบน Bridge; b
 **เอกสาร**
 - เพิ่ม §About (role · version · author · maintenance rule)
 - Hard rule "harvest before scaffold" ชี้กลับ Gate G1 แทนเขียนคำสั่งซ้ำ
-- intro ชี้ phase 2 → figma-permutation-fill (เดิมเขียน "not built yet" ซึ่ง stale)
+- intro ชี้ phase 2 ไปยัง skill เติมจอ (เดิมเขียน "not built yet") — ยกเลิกแล้วใน 2026-09-21
 - Required input + พฤติกรรมเมื่อไม่มี selection (When to use)
 - §pluginData note เรื่อง store follows runtime (plain/shared) + ตัวอย่าง import-test ใน LEARN
 

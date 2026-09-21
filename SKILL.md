@@ -11,7 +11,7 @@ description: |
   Use when: "แตกเคส", "สร้าง permutation", "วางโครง permutation board", "generate cases",
   "generate state", "คิด state ให้หน่อย", "จอนี้ลืม state อะไรไหม", "state ครบยัง",
   "edge case มีอะไรบ้าง", "ก่อนส่ง dev ขาดอะไร", "เช็ค state ก่อน handoff",
-  "list state ที่ต้องทำ", "empty/error/loading มีหมดยัง". (replaces ui-state-edge-generator)
+  "list state ที่ต้องทำ", "empty/error/loading มีหมดยัง".
 compatibility: "Reading the base and writing the scaffold work through the official Figma MCP (use_figma). Reading/auditing large existing permutation boards requires the figma-console Desktop Bridge (official MCP overflows on big boards)."
 ---
 
@@ -20,20 +20,20 @@ compatibility: "Reading the base and writing the scaffold work through the offic
 ## About
 - **Role**: Permutation planner — enumerate a base screen's cases from the team's
   library and scaffold its board on canvas. Coverage auditor, never a screen designer.
-- **Version**: 2026-08-18 (history in CHANGELOG.md)
+- **Version**: 2026-09-21 (history in CHANGELOG.md)
 - **Author / Editor**: DX Gang
 - **Maintenance**: behavior changes bump this date + add a CHANGELOG entry; doc-only edits don't.
 
 Enumerate a screen's cases and scaffold its Permutation board — **phase 1 = structure + cases only;
-filling the screens inside the cases is phase 2 → `figma-permutation-fill`**.
+filling the screens inside the cases is phase 2 (planned — not built yet)**.
 **Reply to the user in Thai**; keep layer / token / technical names in English.
 Keep replies concise — use the report shapes defined per phase, no extra prose.
 
 ## When to use / not use
 - Use: there is one base screen, and you want to know which cases it should have, and/or want the board scaffolded on canvas
 - **Required input**: one base screen (selection or node id). Nothing selected or named → ask which screen first; never walk the page to find one
-- Not for: design-quality review (→ `ux-audit`) · raw-value/override QA against the DS (→ `figma-design-qa`) · token binding (→ `figma-design-fix`) · building new screens (→ `figma-design-build`)
-- This skill is about **coverage** (which cases should exist), unlike figma-design-qa which is about **quality** (raw values / overrides)
+- Not for: design-quality review · raw-value/override QA against the DS · token binding · building new screens
+- This skill is about **coverage** (which cases should exist), not **quality** (raw values / overrides)
 - **Only variants of the given base.** Separate module screens (an eKYC chain, a full-screen consent) belong to their own base → tell the user to run this skill on that screen instead; never fan out across screens
 - **More than one base given → STOP and ask the relationship before enumerating anything** (the 2026-08-06 test fed 3 state-screens in and got 3 boards identical to the letter, and a "gen a template" request cloned the previous flow's list wholesale). Three answers, three behaviors:
   - **states of one screen** → ONE board on the user-designated default base; **diff the given screens first** and add only difference-driven cases (what varies between the states is the case list)
@@ -61,7 +61,7 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 |---|---|---|
 | **NEXT** | collections `❖ NEXT` + `3. Size` + `4. Typography` · file name contains "NEXT" | `projects/next.md` |
 | **DGL Revamp** | screens named `[MMM][YY].[EPIC].[N].[N]_DGL Revamp_NX_…` · legacy 375-wide · `Krungthai Fast` — **runs in the NEXT app but is NOT NEXT** | `projects/dgl.md` |
-| **CLICX** (PB / Im) | collections `color` `spacing` `radius` `size-generic` · screens named `X.NN-NN.A \| name` | `projects/clicx.md` |
+| **CLICX** (PB) | collections `color` `spacing` `radius` `size-generic` · screens named `X.NN-NN.A \| name` | `projects/clicx.md` |
 
 ---
 
@@ -73,13 +73,13 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 3. Load `projects/<name>.md` in full, plus the references needed (see the References table)
 
 ### Phase 1 — Profile (read-only)
-- Traverse **selection scope only** (never walk the whole page — node cap / slow), and **skip `visible === false` subtrees** — a hidden component must not produce cases (the 2026-08-06 run generated AIS-widget and banner cases for components that were eye-toggled off). Collect: archetype signals, component instances, lists/images, bound variable modes
+- Traverse **selection scope only** (never walk the whole page — node cap / slow), and **skip `visible === false` subtrees** — a hidden component must not produce cases (the 2026-08-06 run generated widget and banner cases for components that were eye-toggled off). Collect: archetype signals, component instances, lists/images, bound variable modes
 - **Map components → categories** using the `component → category` table in `projects/<name>.md` (key or name pattern). No match → **flag "unmapped component — add it to projects/<name>.md"; never guess**
 - **Find existing cases**: run `scripts/scan-cases.js` (selection / siblings) to locate `Permutation*` containers and `Case#N` labels. If nothing is found with confidence → **ask the user where cases are kept; never assume there are none**
 - Take one screenshot of the base as the visual arbiter
 - **Report the profile** in this shape (values are an example):
 ```
-Profile — [archetype] form+list · [components] 6 mapped · 1 unmapped ⚠️ "AIS widget" → add to projects/next.md
+Profile — [archetype] form+list · [components] 6 mapped · 1 unmapped ⚠️ "promo widget" → add to projects/next.md
 [existing] "Permutation: Home" 12 cases (scan-cases.js) · [base] 12:345 · screenshot ✓
 ```
 
@@ -175,7 +175,7 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 **pluginData** — written ONLY through `scaffold-kit.js` stamps:
 - cell key `"permBuild"`: `{ caseId, level:"S"|"C", tier:1|2|3, priority:"must"|"should"|"edge", status:"spec"|"designed", baseNodeId, configVer, date }` — `caseId` = the stable semantic id from `case-library.md` (stable across renumbering, not the Case# number)
 - board key `"permBuildBoard"`: `{ project, baseNodeId, configVer, date }` — lets AUDIT find boards even if renamed, and ties a board to its base
-- **Store note**: `scaffold-kit.js` writes *plain* pluginData only (pilot-tested — do not change casually). Plain is blocked under use_figma → stamps are only guaranteed when scaffolding runs on the Bridge; a stampless use_figma build fails G5 loudly (`verify-board.js` reads both stores). AUDIT/FILL on a plain-stamped board must also run via the Bridge (see `figma-permutation-fill` F0.3)
+- **Store note**: `scaffold-kit.js` writes *plain* pluginData only (pilot-tested — do not change casually). Plain is blocked under use_figma → stamps are only guaranteed when scaffolding runs on the Bridge; a stampless use_figma build fails G5 loudly (`verify-board.js` reads both stores). AUDIT on a plain-stamped board must also run via the Bridge
 
 **Label styles** (per project, in `projects/<name>.md` §Verify config):
 - `strict` = the label node is exactly `Case#N` → **renumber-cases compatible** (NEXT)

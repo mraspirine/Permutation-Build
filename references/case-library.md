@@ -5,12 +5,12 @@
 > **How to use:** whichever components Phase 1 found on the base → pull their packs from §L2 (plus chained packs). Whatever archetype it is → pull the screen-level states from §L1 and `archetype-cases.md`. Every case carries: `id` · level · tier · opt-in · caption.
 > `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → offer it as 🟡/⚪ for the user to decide.
 >
-> **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (the 2026-08-06 Haiku run named the same situation "Session timeout" on one board and "Network reconnect" on its sibling, and the boards stopped being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
+> **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (the 2026-08-06 test run named the same situation "Session timeout" on one board and "Network reconnect" on its sibling, and the boards stopped being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
 >
 > **Thai strings below are verbatim from the team's FigJam and corpus** — they are the wording the team actually uses on boards, so they stay in Thai.
 
 ## FigJam scope tag → tier
-`DX - NEXT (Shared)` / `Im UI` / `poon. UI` all mean "originated in that project but the team promoted it to shared" → treat as **Tier 1** (applies to any screen carrying that component). Cases that genuinely cannot be shared are Tier 3, in `projects/<name>.md`.
+`DX - NEXT (Shared)` or any `<name> UI` tag (the board the case originated on) all mean "originated in that project but the team promoted it to shared" → treat as **Tier 1** (applies to any screen carrying that component). Cases that genuinely cannot be shared are Tier 3, in `projects/<name>.md`.
 
 ---
 
