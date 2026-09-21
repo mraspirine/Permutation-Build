@@ -61,6 +61,7 @@
 | `<pattern>` | `<caseId>` | <business reason> | <date> |
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
+> Per run, add: `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` · `linkId` (+ `linkCaps` from the harvest) · `knownCaseIds`. G5 lists whatever is left empty in `stats.skipped`.
 ```js
 labelStyle: "<strict|loose|indexed>",   // strict = `Case#N` exactly (renumber-compatible) · loose = `Case #N - name` · indexed = `1.2 | name`
 slotSizes: ["<WxH>", ...],

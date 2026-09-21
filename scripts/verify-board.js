@@ -12,6 +12,8 @@ const CONFIG = {
   baseNodeId: "",                  // the base screen ("" = skip base-intact check)
   linkId: "",                      // the screen→board link ("" = skip). Must be an attached CONNECTOR with both caps
   linkMagnets: ["BOTTOM", "TOP"],  // [start, end] the project's links use · null = do not check magnets
+  linkCaps: null,                  // e.g. ["TRIANGLE_FILLED", "ARROW_LINES"] from the harvest · null = only reject a missing cap
+  componentCrops: false,           // true = a DESIGNED level-"C" cell may hold a component crop of any size (CLICX, PTP)
   expectedBaseNodes: 0,            // node count measured BEFORE scaffolding (0 = skip)
   titlesFullWidth: false,          // true = every group header must span its group's full width
   numbersScopedPerGroup: false,    // true = Case#N restarts inside each group (DGL) → dup check runs per group
@@ -48,6 +50,17 @@ function labelKey(text) {
   const i = text.match(INDEXED_RE); if (i) return i[1] || i[2];
   const m = text.match(LOOSE_RE); return m ? Number(m[1]) : null;
 }
+// Checks an empty CONFIG value switches off — returned as stats.skipped so a silent skip is visible at G5.
+function skippedChecks(cfg) {
+  const s = [];
+  if (!cfg.linkId) s.push("link (linkId empty)");
+  if (!cfg.baseNodeId || !cfg.expectedBaseNodes) s.push("base intact (baseNodeId / expectedBaseNodes empty)");
+  if (!cfg.knownCaseIds || !cfg.knownCaseIds.length) s.push("standard-case ids (knownCaseIds empty)");
+  if (!cfg.expectedCases) s.push("case count (expectedCases empty)");
+  return s;
+}
+// Only a DESIGNED level-"C" cell is exempt from slotSizes, and only where the project's component cases are crops.
+function sizeExempt(pd, slotIsPlaceholder, cfg) { return !!cfg.componentCrops && pd.level === "C" && !slotIsPlaceholder; }
 // How far the board sticks out of its parent SECTION, in px (0 = inside; section children use local coordinates).
 function outsideParent(board, parent) {
   if (!parent || parent.type !== "SECTION") return 0;
@@ -63,6 +76,8 @@ function linkFailures(link, ctx) {
   if (e.endpointNodeId && !ctx.inBoard.has(e.endpointNodeId)) F.push("link does not end on this board");
   if (ctx.inBase && s.endpointNodeId && !ctx.inBase.has(s.endpointNodeId)) F.push("link does not start on the base screen");
   if (link.connectorStartStrokeCap === "NONE" || link.connectorEndStrokeCap === "NONE") F.push("link is missing an end cap");
+  else if (ctx.caps && (link.connectorStartStrokeCap !== ctx.caps[0] || link.connectorEndStrokeCap !== ctx.caps[1]))
+    F.push("link caps are " + link.connectorStartStrokeCap + "→" + link.connectorEndStrokeCap + ", the project uses " + ctx.caps[0] + "→" + ctx.caps[1]);
   const want = ctx.magnets === undefined ? ["BOTTOM", "TOP"] : ctx.magnets;      // null = the project has no fixed magnets
   if (want && (s.magnet !== want[0] || e.magnet !== want[1]))
     F.push("link magnets are " + s.magnet + "→" + e.magnet + ", the project uses " + want[0] + "→" + want[1] + " (an AUTO magnet also hides the anchor check)");
@@ -101,7 +116,7 @@ async function verify() {
     // the slot = the cell's child that is not its caption; component-level cells hold a crop, not a screen
     const holdsLabel = k => k === label || (k.findOne && !!k.findOne(x => x === label));
     const direct = "children" in cell ? cell.children.filter(k => (k.type === "FRAME" || k.type === "INSTANCE") && !holdsLabel(k)) : [];
-    const slot = direct.find(k => k.height > 600) || (pd && pd.level === "C" ? direct[0] : null) ||
+    const slot = direct.find(k => k.height > 600) || (CONFIG.componentCrops && pd && pd.level === "C" ? direct[0] : null) ||
       (cell.findOne ? cell.findOne(x => (x.type === "FRAME" || x.type === "INSTANCE") && x.height > 600) : null);
     return { cell, pd, label, slot };
   });
@@ -122,8 +137,7 @@ async function verify() {
     if (!r.slot) F.push(tag + ": no screen slot (placeholder or screen) found");
     else {
       const size = Math.round(r.slot.width) + "x" + Math.round(r.slot.height);
-      const crop = r.pd.level === "C" && !isPlaceholder(r.slot);   // a designed component crop has no fixed size
-      if (!crop && CONFIG.slotSizes.length && CONFIG.slotSizes.indexOf(size) === -1)
+      if (!sizeExempt(r.pd, isPlaceholder(r.slot), CONFIG) && CONFIG.slotSizes.length && CONFIG.slotSizes.indexOf(size) === -1)
         F.push(tag + ": slot " + size + " not in " + JSON.stringify(CONFIG.slotSizes));
       if (r.pd.status === "spec" && !isPlaceholder(r.slot) && !("children" in r.slot && r.slot.children.length === 0))
         F.push(tag + ": status 'spec' but slot is not a placeholder");
@@ -169,7 +183,7 @@ async function verify() {
       const base = CONFIG.baseNodeId ? await figma.getNodeByIdAsync(CONFIG.baseNodeId) : null;
       const bb = base && base.absoluteBoundingBox, lb = link.absoluteBoundingBox;
       linkFailures(link, { inBoard: ids(board), inBase: base ? ids(base) : null,
-        baseBottom: bb ? bb.y + bb.height : null, lineTop: lb ? lb.y : null, tolerance: 12, magnets: CONFIG.linkMagnets }).forEach(f => F.push(f));
+        baseBottom: bb ? bb.y + bb.height : null, lineTop: lb ? lb.y : null, tolerance: 12, magnets: CONFIG.linkMagnets, caps: CONFIG.linkCaps }).forEach(f => F.push(f));
     }
   }
 
@@ -232,7 +246,7 @@ async function verify() {
       strictLabels: rows.filter(r => r.label && STRICT_RE.test(r.label.characters.split("\n")[0])).length,
       spec: rows.filter(r => r.pd && r.pd.status === "spec").length,
       designed: rows.filter(r => r.pd && r.pd.status === "designed").length,
-      baseNodes, overlaps,
+      baseNodes, overlaps, skipped: skippedChecks(CONFIG),
       board: { w: Math.round(board.width), h: Math.round(board.height), x: Math.round(board.x), y: Math.round(board.y) },
     },
   };

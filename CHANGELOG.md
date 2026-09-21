@@ -23,6 +23,20 @@
   `equalizeRow()` ไม่เติมบรรทัดว่างลง text ที่สูงคงที่
 - **smoke-test: guard ไม่ผ่าน = ไม่เขียนอะไรเลย** (เดิมรายงานแล้วยังสร้าง frame ต่อ)
 
+**รอบสอง (วันเดียวกัน) — เทส 3 โมเดลบนข้อมูลที่จับไว้ (จอ Payment 29.1, ไม่ให้ agent แตะ Figma) + Opus รีวิว diff ของ script**
+- **scan-cases `isDesigned`**: slot เปล่าของทีม (frame ว่าง / "Pending Design") = ยังไม่ออกแบบ แม้มี note วางข้าง ๆ · layer ชื่อ note/tag/annotation
+  ไม่นับเป็นเนื้อหา · self-check เดิมผ่านผิดเหตุ — เขียนใหม่ให้โดน path จริง
+- **grammar ตาม board**: board ที่ใช้คำว่า `Case` ไม่รับ label แบบ indexed (ข้อความ `#2 …` ในจอไม่กลายเป็นเคสหลอน) — ทั้ง scan-cases และ harvest-board
+- **cell ไม่ไต่เกิน board** และหยุดที่ wrapper ลูกเดียว (board ที่มีเคสเดียวเคยอ่าน 0 designed)
+- **ชื่อ board**: รับ `Permutations_…` (พหูพจน์) · ชื่อที่แค่ลงท้ายด้วย "permutation" ไม่ใช่ board — caption ของ CLICX ชื่อ
+  `title block / permutation` เคยทำให้ **ทุก board ของ CLICX อ่านได้ 0 designed** · ผลจริงหลังแก้: 38/38 · 21/15 · 17/17 · 3/1 · 1/1 · 6/6 · 17/17 · 18/18 · 21/21
+- **verify-board**: `componentCrops` เป็น opt-in (CLICX, PTP) — NEXT ยังเช็คขนาด slot ของเคสระดับ component · `stats.skipped` แสดงด่านที่
+  ถูกปิดเพราะ CONFIG ว่าง (link / base / ids / count) · `linkCaps` ตรึงหัวเส้นตามโปรเจคได้ · harvest คืนขนาด section ของ board
+- **กฎ**: G1 เป็นบันได section → flow → project file · board วางใน section ของ base · fintech modifier เฉพาะเคสผลลัพธ์ทางการเงิน ·
+  ⊘ อ้าง "ไม่มี component นี้บนจอ" ได้ · `screen/default` = ✓ เมื่อ base คือ state นั้น · G5 ผ่านเมื่อ `skipped` ว่าง
+- **next.md**: สัญญาณ detect แบบชื่อ variable · ตาราง T3 ระบุ flow (Top-Up) · แถว Common Handling ใช้ได้ทุก flow ที่มี board นั้น ·
+  `button/interaction-states` = 1 เคส · pack ที่ยังไม่มี id ให้ mint แล้วลงตาราง · สูตรความกว้างเป็นค่าเริ่มต้น ไม่ใช่กฎ
+
 **กฎ**
 - Phase 1: **board เป็นของ base นี้เมื่อ stamp `baseNodeId` หรือ `linkedFrom` ตรงกับ base เท่านั้น — ไม่ใช่ตามชื่อ** ·
   base อาจเป็น variant/state ของจอที่มี board อยู่แล้ว → เข้ากรณี states-of-one-screen

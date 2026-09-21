@@ -80,6 +80,7 @@ FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F
 - Edit screens across this flow consistently carry `Small screen` · `Back button` · `Unable to load data`
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
+> Per run, add: `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` · `linkId` (+ `linkCaps` from the harvest) · `knownCaseIds`. G5 lists whatever is left empty in `stats.skipped`.
 ```js
 labelStyle: "loose",                      // Case#N - Name → NOT renumber-compatible
 slotSizes: ["375x812","360x812"],         // legacy · small — ADD the base screen's own height when it scrolls

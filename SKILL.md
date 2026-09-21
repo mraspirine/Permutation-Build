@@ -50,7 +50,7 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 | Gate | Must hold before moving on | Enforced by |
 |---|---|---|
 | **G0** | project resolved (see Project index) · write probe OK — **only when heading for Scaffold**; Phase 1–3 and AUDIT are read-only and need none | Phase 0 |
-| **G1** | board style measured on the **nearest sibling board in the same SECTION** (one call); no sibling → `projects/<name>.md` §Board anatomy, verified in this file | `scripts/harvest-board.js` **run verbatim** |
+| **G1** | board style measured on the **nearest sibling board** (one call): same SECTION → else same FLOW (the outer section) → else `projects/<name>.md` §Board anatomy, verified in this file | `scripts/harvest-board.js` **run verbatim** |
 | **G2** | every row bucketed ✓ / ✗ / ⊘-with-reason | Phase 2 |
 | **G3** | user confirmed matrix + placement | AskUserQuestion |
 | **G4** | build uses `scripts/scaffold-kit.js` factories · chunked · guarded | Phase 4 |
@@ -77,12 +77,12 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 ### Phase 1 — Profile (read-only)
 - Traverse **selection scope only** (never walk the whole page — node cap / slow), and **skip `visible === false` subtrees** — a hidden component must not produce cases. Collect: archetype signals, component instances, lists/images, bound variable modes
 - **Map components → categories** with the `component → category` table of **the screen's OWN design system** (a partner screen inside another project's flow uses its own project's table; the board still follows the flow). Check `case-library.md` §Never a pack first, then the table top-down. No match → **flag "unmapped component — add it to projects/<name>.md"; never guess**
-- **Find existing cases**: run `scripts/scan-cases.js` with `SCOPE_ID` = the base's direct parent SECTION (nested sections: the INNER one). It finds boards by name, by stamp, or by an attached `Permutation` connector, and reports `linkedFrom`. **A board belongs to THIS base only when its stamp's `baseNodeId` or its `linkedFrom` is the base — never by its name.** Check sibling copies of the same screen too: the base may be a variant of a screen that already owns a board → the *states of one screen* case. Boards exist but none for this base → report the counts (`boards in section 5 · for this base 0`); nothing at all → **ask the user where cases are kept; never assume there are none**
+- **Find existing cases**: run `scripts/scan-cases.js` with `SCOPE_ID` = the base's direct parent SECTION (nested sections: the INNER one). It finds boards by name, by stamp, or by an attached `Permutation` connector, and reports `linkedFrom`. **A board belongs to THIS base only when its stamp's `baseNodeId` or its `linkedFrom` is the base — never by its name.** Check sibling copies of the same screen too: the base may be a variant of a screen that already owns a board → the *states of one screen* case. Also name the flow's shared boards outside the section (a `Common Handling` board decides several ⊘). Boards exist but none for this base → report the counts (`boards in section 5 · for this base 0 · elsewhere in the flow 14`); nothing at all → **ask the user where cases are kept; never assume there are none**
 - Take one screenshot of the base as the visual arbiter
 - **Report the profile** in this shape (values are an example):
 ```
 Profile — [archetype] form+list · [components] 6 mapped · 1 unmapped ⚠️ "promo widget" → add to projects/next.md
-[existing] "Permutation: Home" 12 cases (scan-cases.js) · [base] 12:345 · screenshot ✓
+[existing] "Permutation: Home" 12 cases (scan-cases.js) · boards in section 3 · for this base 1 · [base] 12:345 · screenshot ✓
 ```
 
 ### Phase 2 — Enumerate → matrix
@@ -92,8 +92,8 @@ Combine (details in `references/case-library.md` + `references/archetype-cases.m
 - **L1 screen-level**: the archetype's states + the FigJam Screen group
 - **L2 component-level**: for each component found in Phase 1, pull its pack (+ chained packs, e.g. a Date Picker also suggests Calendar / Roller)
 - **Tier 2** templates the flow actually uses (parameterized) + **Tier 3** from `projects/<name>.md`
-- **Walk every row and sort into 3 buckets — never skip silently**: ✓ already exists / ✗ missing (+priority) / ⊘ N/A (+reason). **⊘ needs a reason you can point at** — visible on the screen, or a §Screen facts row; a business assumption ("this list is never empty") goes in as ✗ with `⚠️ ยืนยัน` for the user to trim
-- Priority: 🔴 Must (breaks the flow / user stuck / money at risk) · 🟡 Should · ⚪ Edge · **fintech modifier: money/confirmation cases move up one level**
+- **Walk every row and sort into 3 buckets — never skip silently**: ✓ already exists / ✗ missing (+priority) / ⊘ N/A (+reason). `screen/default` is ✓ when the base itself is that state. **⊘ needs a reason you can point at** — visible on the screen (a component that is simply not there counts), or a §Screen facts row; a business assumption ("this list is never empty") goes in as ✗ with `⚠️ ยืนยัน` for the user to trim
+- Priority: 🔴 Must (breaks the flow / user stuck / money at risk) · 🟡 Should · ⚪ Edge · **fintech modifier: cases about the money outcome (amount, fee, payable, balance, double submission) move up one level** — not every row of a payment screen
 - **Multiply** only along the axes declared in `projects/<name>.md` (device / language / branch / partner / stage) — never explode the full cartesian
 
 ### Phase 3 — Confirm ◄ stopping point
@@ -117,17 +117,17 @@ plus where the board will be placed. **The user trims / adds / reorders, then co
 Anyone who only wanted the case list stops here.
 
 ### Phase 4 — Scaffold
-**Gate G1 first: a sibling board in the same SECTION → run `scripts/harvest-board.js` VERBATIM on the nearest one, every time** (one call; projects run several dialects, so the neighbour outranks the project file — it differs → follow it and record the variant in `projects/<name>.md`). No sibling → §Board anatomy (harvest any team board in the file if it was never verified here). Never a hand-shortened harvest. Record the base's node count now (for G5). Then build:
+**Gate G1 first: a sibling board in the same SECTION → run `scripts/harvest-board.js` VERBATIM on the nearest one, every time** (one call; projects run several dialects, so the neighbour outranks the project file — it differs → follow it and record the variant in `projects/<name>.md`). None in the base's own section → the nearest board of the same FLOW (outer section); none there either → §Board anatomy (harvest any team board in the file if it was never verified here). Never a hand-shortened harvest. Record the base's node count now (for G5). Then build:
 0. **Sibling-duplicate guard**: scan the sibling boards first; the confirmed case set is **≥90% identical (by caseId) to a sibling whose base is a different screen** → stop and confirm with the user — the signature of an enumeration that ignored its own base. Unstamped siblings carry no caseIds → compare case **names**; impossible too → report `guard skipped — siblings unstamped`, never pass silently
 1. **Paste `scripts/scaffold-kit.js` as the prelude** of the build call and build with its factories — frames: `alFrame` → append → `finalizeFixed` / `growWithContent` · `placeholder` · `stampCase` / `stampBoard` · library-component captions: `freshInstance` + `setInstanceTexts` + `equalizeRow` · GRID groups: `gridPlan` → `gridFrame` + `placeInGrid` · `elbowLink`. They encode the ordering that otherwise silently collapses frames
 2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node + its screen→board link, which has to live on the SECTION)
-3. Placement from `siblingBoards`: pick a column count whose width fits the free span. **No free span where the project's ordering puts this board, or a slot narrower than the project's minimum board width → STOP and ask the user where it goes** — never squeeze the board, resize the team's section, or relocate it silently. Read the board's width back after the first group
+3. Placement: **the board goes in the base's direct parent SECTION** (its link lives there too) — from `siblingBoards` and the section size in the harvest, pick a column count whose width fits the free span. The team keeps one shared band in another section → ask. **No free span where the project's ordering puts this board, or a slot narrower than the project's minimum board width → STOP and ask the user where it goes** — never squeeze the board, resize the team's section, or relocate it silently. Read the board's width back after the first group
 4. Per case: label node (project's label style) + caption nodes + `placeholder()` + `stampCase()`
 5. Link (if the project uses one): **clone a healthy team CONNECTOR and re-point `connectorStart` / `connectorEnd`** — anchor, route, caps and the per-runtime clone ladder are in `board-grammar.md` §Link rule. Pass its id to G5 as `linkId`: an unattached, capless or mis-anchored line fails the gate
 6. Chunks of ~10 cells per call; every call starts with `guard(<file name>)` on the Bridge · `guard(<fileKey>)` under use_figma
 
 ### Phase 5 — Verify + report (gate G5)
-- **Run `scripts/verify-board.js`** with CONFIG from `projects/<name>.md` §Verify config (label style · slot sizes · expected case count · baseNodeId + node count from G1 · `linkId`). **The scaffold is done only when `pass: true`.** Never hand-write a subset of these checks
+- **Run `scripts/verify-board.js`** with CONFIG from `projects/<name>.md` §Verify config (label style · slot sizes · expected case count · baseNodeId + node count from G1 · `linkId`). **The scaffold is done only when `pass: true` AND `stats.skipped` is empty** (a project without links may skip the link check — say so). Per-run CONFIG values the project file cannot hold: `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` · `linkId` · `knownCaseIds`. Never hand-write a subset of these checks
 - Screenshot the board (≤3 rounds) and eyeball against the matrix — the script checks structure, the screenshot checks looks
 - Report in Thai, in this shape (values are an example):
 ```

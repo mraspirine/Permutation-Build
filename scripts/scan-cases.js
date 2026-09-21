@@ -24,12 +24,12 @@ const INDEXED_RE = /^\s*(?:#\s*(\d+(?:\.\d+)*)\s+|(\d+\.\d+)\s*\|\s*)(.+?)\s*$/s
 const byLabel = (a, b) => String(a).localeCompare(String(b), undefined, { numeric: true });
 
 // Board-name forms seen on real team boards: colon `Permutation: X`, underscore `Permutation_X`,
-// suffix `X Permutations` (NEXT), and CLICX state suffix `G.03-01.B` (.A = screen, .B/.C = boards).
+// plural prefix `Permutations_X`, suffix `X Permutations` (NEXT), and CLICX state suffix `G.03-01.B` (.A = screen, .B/.C = boards).
 // Type filter is load-bearing: a TITLE TEXT named "Permutation: X" must not count as a container.
 const CONTAINER_TYPES = ['FRAME', 'SECTION', 'GROUP', 'COMPONENT', 'COMPONENT_SET', 'INSTANCE'];
 function isContainerName(name) {
   return typeof name === 'string' &&
-    (/^Permutation[:_]/i.test(name) || /\bPermutations?\s*$/i.test(name) ||
+    (/^Permutations?[:_]/i.test(name) || /\bPermutations\s*$/i.test(name) ||   // suffix form is PLURAL: `title block / permutation` is a caption
      /^[A-Z]{1,4}\.\d{1,3}-\d{1,3}\.[B-Z]$/.test(name));
 }
 function isContainer(node) {
@@ -53,6 +53,7 @@ function parseLabel(text) {
   return { n: Number(m[1]), name: m[2] ? m[2].trim() : null, strict, style: strict ? 'strict' : 'loose' };
 }
 const isLabelText = text => parseLabel(text) !== null;
+const isCaseWord = text => typeof text === 'string' && /^\s*Case/i.test(text) && LOOSE_RE.test(text);
 
 function findDupNumbers(nums) {
   const seen = new Set(), dup = new Set();
@@ -75,11 +76,14 @@ function scanCases(roots, linked) {
     'children' in frame && frame.findOne &&
     !!frame.findOne(x => x.type === 'TEXT' && /awaiting design/i.test(x.characters || ''));
 
+  // Set per board: a board that labels its cases with "Case" does not speak the indexed grammar, so a stray
+  // "#2 …" text inside one of its screens is not a case. Boards without any "Case" label accept both.
+  let isLabel = isLabelText;
   function labelCount(n, cap) {
     let c = 0;
     (function w(x) {
       if (c >= cap) return;
-      if (x.type === 'TEXT') { if (isLabelText(x.characters)) c++; }
+      if (x.type === 'TEXT') { if (isLabel(x.characters)) c++; }
       else if ('children' in x) x.children.forEach(w);
     })(n);
     return c;
@@ -90,10 +94,13 @@ function scanCases(roots, linked) {
   // (PTP `SOFCard_CASA` 390x108), not a screen.
   function isDesigned(cell, labelNode) {
     if (!('children' in cell)) return false;
-    if (cell.children.some(isPlaceholder)) return false;       // still holds its empty slot → spec, whatever sits beside it
+    const isEmptySlot = f => (f.type === 'FRAME' || f.type === 'INSTANCE') && f.height > 600 &&
+      (!('children' in f) || f.children.length === 0 || (f.findOne && !!f.findOne(x => x.type === 'TEXT' && /pending design/i.test(x.characters || ''))));
+    if (cell.children.some(f => isPlaceholder(f) || isEmptySlot(f))) return false;   // still holds an empty slot → spec, whatever sits beside it
+    const isAnnotation = f => /(^|[^a-z])(note|tag|annotation|remark)s?($|[^a-z])/i.test(f.name || '') && f.height <= 600;
     const holdsLabel = k => k === labelNode || labelCount(k, 1) > 0;   // any caption — a cell may carry several
     return cell.children.some(f =>
-      (f.type === 'FRAME' || f.type === 'INSTANCE') && !holdsLabel(f) &&
+      (f.type === 'FRAME' || f.type === 'INSTANCE') && !holdsLabel(f) && !isAnnotation(f) &&
       !isPlaceholder(f) && 'children' in f && f.children.length > 0);
   }
 
@@ -101,19 +108,25 @@ function scanCases(roots, linked) {
   // that actually carries the permBuild stamp. Unstamped (team-made) board: the cell is the LARGEST
   // ancestor that still holds only this one label, i.e. the case column — the label's own wrapper
   // holds no screen, so stopping there reads every team board as 0 designed.
-  function findCell(labelNode) {
+  function findCell(labelNode, boardNode) {
     let p = labelNode.parent, hops = 0;
     while (p && hops < 6) {
       if (readPD(p, 'permBuild')) return p;
       p = p.parent; hops++;
     }
     let cell = labelNode.parent;
-    while (cell && cell.parent && !isContainer(cell.parent) && labelCount(cell.parent, 2) === 1) cell = cell.parent;
+    // A row that holds a single case is a wrapper, not the cell: stop once the cell already carries content beside
+    // its caption and the parent adds nothing but itself (otherwise a one-case board climbs all the way up).
+    const complete = n => 'children' in n && n.children.some(k => (k.type === 'FRAME' || k.type === 'INSTANCE') && labelCount(k, 1) === 0);
+    while (cell && cell.parent && (boardNode ? cell.parent !== boardNode : !isContainer(cell.parent)) && labelCount(cell.parent, 2) === 1) {
+      if (cell.parent.children.length === 1 && complete(cell)) break;
+      cell = cell.parent;
+    }
     return cell;
   }
 
-  function readCell(labelNode, sharedCell) {
-    const cell = sharedCell || findCell(labelNode);
+  function readCell(labelNode, sharedCell, boardNode) {
+    const cell = sharedCell || findCell(labelNode, boardNode);
     let pd = null;
     try { pd = JSON.parse(readPD(cell, 'permBuild') || 'null'); } catch (e) {}
     const lab = parseLabel(labelNode.characters);
@@ -137,18 +150,20 @@ function scanCases(roots, linked) {
     let boardStamp = null;
     try { boardStamp = JSON.parse(readPD(c, 'permBuildBoard') || 'null'); } catch (e) {}
     const cases = [];
+    const usesCaseWord = !!(c.findOne && c.findOne(x => x.type === 'TEXT' && isCaseWord(x.characters)));
+    isLabel = usesCaseWord ? isCaseWord : isLabelText;
     (function walk(n) {
       // A group header can share the label grammar (PTP `#1 E-Saving Account`): its "cell" resolves to the
       // title instance itself — nothing sits beside the label — so it is not a case.
       // Several captions can also SHARE one cell (two callouts on the same screen, in a loose group): every other
       // label holder beside this one is a bare caption too → a case whose cell is that shared parent. A header's
       // neighbour is a container of cases (FRAME / GROUP), never a bare caption.
-      if (n.type === 'TEXT' && isLabelText(n.characters)) {
-        const c = findCell(n);
-        if (c && c.type !== 'INSTANCE' && c.type !== 'TEXT') cases.push(readCell(n));
-        else if (c && c.parent && !isContainer(c.parent)) {
-          const others = c.parent.children.filter(k => k !== c && labelCount(k, 1) > 0);
-          if (others.length && others.every(k => k.type === 'INSTANCE' || k.type === 'TEXT')) cases.push(readCell(n, c.parent));
+      if (n.type === 'TEXT' && isLabel(n.characters)) {
+        const cell = findCell(n, c);
+        if (cell && cell.type !== 'INSTANCE' && cell.type !== 'TEXT') cases.push(readCell(n, null, c));
+        else if (cell && cell.parent && cell.parent !== c) {
+          const others = cell.parent.children.filter(k => k !== cell && labelCount(k, 1) > 0);
+          if (others.length && others.every(k => k.type === 'INSTANCE' || k.type === 'TEXT')) cases.push(readCell(n, cell.parent, c));
         }
       }
       if ('children' in n) n.children.forEach(walk);
@@ -318,4 +333,12 @@ A(mixed.counts.cases === 2 && mixed.counts.indexedLabels === 0, 'a "#2 …" text
 const solo = N('FRAME', 'Guideline: One', [cap('Permutation:'), N('FRAME', 'Content', [N('FRAME', 'row', [hcell('#1 Only case', designedScreen())])])]);
 const sscan = scanCases([N('SECTION', 'flow', [solo])], new Map([[solo, [{ id: '9:9', name: 'screen' }]]]));
 A(sscan.counts.cases === 1 && sscan.counts.designed === 1, 'one-case board found by its link: the cell stops below the board, got ' + JSON.stringify(sscan.counts));
+// live regression on the CLICX boards: the caption is an INSTANCE named `title block / permutation` — a name that ENDS in
+// "permutation" looked like a board, the cell climb stopped inside the caption, and every CLICX board read 0 designed
+const tb = s => N('INSTANCE', 'title block / permutation', [N('FRAME', 'Content', [T(s)])]);
+const ccase = (n, slot) => N('FRAME', 'case', [N('FRAME', 'title', [tb('Case #' + n + ' - Account sorting\n'), N('INSTANCE', 'title block / permutation', [N('FRAME', 'Content', [T('คำอธิบาย')])])]), slot]);
+const clicx = N('FRAME', 'G.02-01.B', [N('FRAME', 'permutation', [tb('Permutation:'), N('FRAME', 'container', [ccase(1, designedScreen()), ccase(2, designedScreen()), ccase(3, emptySlot())])])]);
+const kscan = scanCases([N('SECTION', 'Home', [clicx])]);
+A(kscan.counts.cases === 3 && kscan.counts.designed === 2 && kscan.counts.looseLabels === 3, 'CLICX instance captions: 3 cases, 2 designed, got ' + JSON.stringify(kscan.counts));
+A(!isContainerName('title block / permutation') && !isContainerName('permutation') && isContainerName('Permutations_JUN26.02.1.13.1_X') && isContainerName('Loan Amount Permutations'), 'a name that merely ends in "permutation" is not a board; the plural prefix form is');
 console.log('scan-cases v2 self-check OK');

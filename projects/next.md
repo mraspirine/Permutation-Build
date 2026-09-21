@@ -4,7 +4,7 @@
 
 ## About / recognition
 - Product: Krungthai NEXT — Thai mobile banking (iOS-first)
-- Detect: nodes in the base bind to variable collection `❖ NEXT` (key `e03564337abb1e70e48a18da6dd9084714728372`), usually alongside `3. Size` and `4. Typography`; or the file name contains "NEXT"
+- Detect (the official MCP returns variable NAMES, not collections): `Typography/font family` = Krungthai Next · `Primary/KTBlue` · `Text/Default/*` · `Spacing/<n>` — on the Bridge: nodes in the base bind to variable collection `❖ NEXT` (key `e03564337abb1e70e48a18da6dd9084714728372`), usually alongside `3. Size` and `4. Typography`; or the file name contains "NEXT"
 - **Default screen size:** 390 × 844 (legacy 375 × 812) · Small = 360 wide · Large = 440
 - Font in the product: Krungthai Next (Regular / SemiBold only). Legacy screens use `Krungthai Fast`
 
@@ -42,7 +42,7 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 - **Link:** CONNECTOR named `Permutation` · `#FAB900` · weight 5 · `ELBOWED` · from the **main INSTANCE inside the screen (magnet BOTTOM)** → **board (magnet TOP)** · parent = SECTION
   **2026-08-18 (verified on healthy team lines 302749/302753 + a hand-drawn exemplar):** caps **`TRIANGLE_FILLED` at the screen end · `ARROW_LINES` into the board**. **Anchor = the main screen INSTANCE inside the frame (magnet BOTTOM) → the board frame (magnet TOP)** — 276:304854 (frame-bound) and 276:304468 (endpoints → SECTION, loose) are broken outliers; never pick them as the exemplar. Route = screen bottom-center → board top-center (straight when aligned, elbow when not — no need to move the board). In this file the **desktop Bridge cannot clone ANY connector** (healthy ones included, 3/3 throw) and `createConnector` is undefined in both runtimes — **but `use_figma` (official MCP) clones + re-points the same lines fine** (proven 2026-08-18). Recovery ladder: ① clone + re-point via `use_figma` ② human hand-draw/Cmd+D + plugin re-point ③ capped VECTOR placeholder. The VECTOR fallback (per-vertex caps via `setVectorNetworkAsync`) is a visual placeholder only — it does not attach, and **an unattached line gets rejected**. Full checklist: board-grammar §Link rule.
 - **Placement:** flow band at `y≈147–4200` · permutation band at **`y≈6176`** · boards ordered by x following the screen order in the flow (leaving gaps for screens that have no board yet)
-- **Board width:** choose a column count that fits the gap between neighbours — `n×390 + (n-1)×64 + 128` · **minimum = 1 column = 518** — a slot narrower than that is "no free span" (Phase 4 step 3)
+- **Board width:** choose a column count that fits the gap between neighbours — `n×390 + (n-1)×64 + 128` · **minimum = 1 column = 518** — a slot narrower than that is "no free span" (Phase 4 step 3) · the formula is the default, not a law: team boards also run off-grid widths (1411 / 2289 / 3708) and leave 88–455 between boards — match the neighbours, default gap ≈ 100
 
 > **Not to be confused with DGL Revamp** — screens named `…_DGL Revamp_NX_…` run in the NEXT app but are a **separate project** with their own board style → `projects/dgl.md`.
 
@@ -109,23 +109,24 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | Face liveness | 12+5+3 | error catalog · motion challenge · environment — **module: run on the eKYC screen itself** |
 
 ### Tier-3 ids already on boards — reuse id + caption **verbatim** (read back from the canvas 2026-09-21)
-> A Tier-3 case that recurs gets its row here the first time it is minted; the next board copies it.
+> A Tier-3 case that recurs gets its row here the first time it is minted; the next board copies it. "On boards" names the FLOW too — another flow's screen with the same number (Payment 29.1) has no board until it is built.
+> A pack above that has no id yet: mint `<pack in kebab-case>/<case in kebab-case>`, use it, and add the row here after the build.
 
 | id | caption (EN — TH) | on boards |
 |---|---|---|
-| `coupon/expired-at-confirm` | Coupon expired at confirm — กรณีคูปองหมดอายุ/ถูกใช้ไประหว่างยืนยันรายการ ⚠️ ยืนยัน business rule | 29.1 Confirmation |
-| `coupon/zero-payable` | Zero payable — กรณีส่วนลดเต็มยอด ยอดชำระ 0.00 บาท | 29.1 Confirmation |
-| `coupon/none` | No coupon — กรณีไม่ใช้คูปอง ⚠️ ยืนยันการแสดงแถวส่วนลด | 29.1 Confirmation |
-| `coupon/percent` | Coupon discount % — กรณีส่วนลดแบบ % ⚠️ ยืนยันการแสดงผล | 29.1 Confirmation |
-| `coupon/discount-type` | Discount type — กรณีคูปองส่วนลดแบบ % / จำนวนเงิน / สินค้า / ของแถม | 19.1 Coupon Chooser |
-| `coupon/expired` | Expired — กรณีคูปองหมดอายุ | 19.1 Coupon Chooser |
-| `coupon/ineligible` | Ineligible — กรณีคูปองใช้กับรายการนี้ไม่ได้ | 19.1 Coupon Chooser |
-| `button/interaction-states` | Button interaction states — กรณีปุ่ม Default / Pressed / Disabled | 29.1 · 19.1 |
+| `coupon/expired-at-confirm` | Coupon expired at confirm — กรณีคูปองหมดอายุ/ถูกใช้ไประหว่างยืนยันรายการ ⚠️ ยืนยัน business rule | Top-Up 29.1 Confirmation |
+| `coupon/zero-payable` | Zero payable — กรณีส่วนลดเต็มยอด ยอดชำระ 0.00 บาท | Top-Up 29.1 Confirmation |
+| `coupon/none` | No coupon — กรณีไม่ใช้คูปอง ⚠️ ยืนยันการแสดงแถวส่วนลด | Top-Up 29.1 Confirmation |
+| `coupon/percent` | Coupon discount % — กรณีส่วนลดแบบ % ⚠️ ยืนยันการแสดงผล | Top-Up 29.1 Confirmation |
+| `coupon/discount-type` | Discount type — กรณีคูปองส่วนลดแบบ % / จำนวนเงิน / สินค้า / ของแถม | Top-Up 19.1 Coupon Chooser |
+| `coupon/expired` | Expired — กรณีคูปองหมดอายุ | Top-Up 19.1 Coupon Chooser |
+| `coupon/ineligible` | Ineligible — กรณีคูปองใช้กับรายการนี้ไม่ได้ | Top-Up 19.1 Coupon Chooser |
+| `button/interaction-states` | Button interaction states — กรณีปุ่ม Default / Pressed / Disabled (ONE case showing the three states) | Top-Up 29.1 · 19.1 |
 
 ## Screen facts (persisted ⊘ — pre-bucket these before enumerating; do not re-propose)
 | Screen | caseId | reason | date |
 |---|---|---|---|
-| `*` (whole USP Revamp Top-Up flow) | `tmpl/server-down` · `tmpl/session-timeout` · repeat transaction | covered once by the flow's `Permutation_JUN26.02.1.12.1_…_Common Handling` board (Case#1–5) | 2026-08-11 |
+| `*` (any USP Revamp flow that has a `…_Common Handling` board — Top-Up: `1.12.1` · Payment: `1.8.1`) | `tmpl/server-down` · `tmpl/session-timeout` · repeat transaction | covered once by that flow's Common Handling board (Case#1–5) — check the board exists in THIS flow before applying | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `screen/empty` | the biller list is server master data and always has rows — "no rows" only happens as a fetch failure → `screen/error-full` | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `screen/loading-spinner` | list screens in this flow load with a skeleton, never a full-screen spinner | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `screen/loading-lazy` · `screen/block-retry` | the biller list is fetched once in full, no pagination | 2026-08-11 |
@@ -135,6 +136,7 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | `1.13.1 Select Top-Up` | `tmpl/ekyc` · `tmpl/consent` · `tmpl/retry-lockout` | separate modules with their own bases (Fraud Engine 1.34–1.56 · Session PIN 1.8/1.10/1.11) | 2026-08-11 |
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
+> Per run, add: `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` · `linkId` (+ `linkCaps` from the harvest) · `knownCaseIds`. G5 lists whatever is left empty in `stats.skipped`.
 ```js
 labelStyle: "strict",                     // Case#N exactly → renumber-compatible
 slotSizes: ["390x844","360x844","440x844","375x812"],  // normal · small · large · legacy — for a standard 844 base

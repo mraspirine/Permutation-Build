@@ -103,6 +103,7 @@ Default (unselected) · Selected · UnSelected · Multiple Select · Selected Di
 | Date Calendar / Roller | Default (วันเดือนปีที่กำหนด) | `datecalendar/default` · `dateroller/default` |
 | Date Calendar / Roller | ขอบเขตช่วงเวลาเลือกได้ | `datecalendar/selectable-range` · `dateroller/selectable-range` |
 | Date Calendar / Roller | Button enabled/disabled | `datecalendar/button-enabled-disabled` · `dateroller/button-enabled-disabled` |
+| Image | default image/banner | `image/default` |
 | Image | asset load fail (หายไปทั้ง section / placeholder) | `image/asset-load-fail` |
 | Image | Ratio & Sizing | `image/ratio-sizing` |
 

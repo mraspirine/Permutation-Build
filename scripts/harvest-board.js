@@ -28,7 +28,8 @@ function lh(t) {
 // A device-sized frame that HOLDS a Case label is the case column (caption + slot), not the screen —
 // otherwise the column size gets reported as the slot size.
 const SCREEN_MIN_H = 600, SCREEN_W = [300, 500];
-const holdsCaseLabel = n => !!n.findOne && !!n.findOne(x => x.type === "TEXT" && /^\s*(Case\s*#?\s*\d+|\d+\.\d+\s*\||#\s*\d+(\.\d+)*\s)/.test(x.characters || ""));
+let CAPTION_RE = /^\s*(Case\s*#?\s*\d+|\d+\.\d+\s*\||#\s*\d+(\.\d+)*\s)/;   // narrowed to the Case grammar once the board is known to use it
+const holdsCaseLabel = n => !!n.findOne && !!n.findOne(x => x.type === "TEXT" && CAPTION_RE.test(x.characters || ""));
 const isScreen = n => n.height > SCREEN_MIN_H && n.width >= SCREEN_W[0] && n.width <= SCREEN_W[1] &&
   (n.type === "INSTANCE" || n.type === "FRAME" || n.type === "COMPONENT") && !holdsCaseLabel(n);
 
@@ -36,7 +37,7 @@ const isScreen = n => n.height > SCREEN_MIN_H && n.width >= SCREEN_W[0] && n.wid
 // state suffix `G.03-01.B` (.A = screen, .B/.C = boards). A connector can be NAMED "Permutation",
 // so the node type is part of the test.
 const BOARD_TYPES = ["FRAME", "SECTION", "GROUP", "COMPONENT", "INSTANCE"];
-const isBoardName = s => /permutation/i.test(s || "") || /^[A-Z]{1,4}\.\d{1,3}-\d{1,3}\.[B-Z]$/.test(s || "");
+const isBoardName = s => /^Permutations?[:_]/i.test(s || "") || /\bPermutations\s*$/i.test(s || "") || /^[A-Z]{1,4}\.\d{1,3}-\d{1,3}\.[B-Z]$/.test(s || "");
 const isBoard = n => !!n && BOARD_TYPES.indexOf(n.type) !== -1 && isBoardName(n.name);
 // strict `Case#N` · loose `Case #N - Name` (CLICX, DGL) · indexed `1.2 | Name` / `#2.1 Name` (PTP — no "Case" word)
 const CASE_RE = /^\s*(?:Case\s*#?\s*\d+\s*(?:[-–—:.]\s*.+)?|\d+\.\d+\s*\|\s*.+?|#\s*\d+(?:\.\d+)*\s+.+?)\s*$/s;
@@ -58,6 +59,7 @@ async function harvest() {
   if (!board) return { error: "board not found: " + BOARD_HINT };
   let pg = board; while (pg && pg.type !== "PAGE") pg = pg.parent;
   if (pg && pg.loadAsync) await pg.loadAsync();      // use_figma starts on the file's first page
+  if (board.findOne(x => x.type === "TEXT" && /^\s*Case\s*#?\s*\d+/.test(x.characters || ""))) CAPTION_RE = /^\s*Case\s*#?\s*\d+/;
 
   // --- shell: structure + spacing per level ---
   const layers = [];
@@ -155,7 +157,7 @@ async function harvest() {
     board: { name: board.name, id: board.id, type: board.type,
              w: Math.round(board.width), h: Math.round(board.height),
              x: Math.round(board.x), y: Math.round(board.y),
-             parent: parent ? { name: parent.name, type: parent.type, id: parent.id } : null },
+             parent: parent ? { name: parent.name, type: parent.type, id: parent.id, w: Math.round(parent.width || 0), h: Math.round(parent.height || 0) } : null },
     shell: layers.filter(l => l.depth <= 3).slice(0, 40),
     typography: typo,
     screenSlots: slots,

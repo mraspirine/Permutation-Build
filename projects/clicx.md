@@ -137,8 +137,10 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | `home / intelligent hub` | (หลายเคสใน component-states group) | note 6 Aug 2026 บน `A.01-01.B` แปะ "จะไม่มีเคสนี้ในหน้า home" ไว้หลายจุด — รอบ AUDIT หน้าให้ไล่จับคู่ note → case แล้วเติมเป็นรายแถวในตารางนี้ | pending |
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
+> Per run, add: `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` · `linkId` (+ `linkCaps` from the harvest) · `knownCaseIds`. G5 lists whatever is left empty in `stats.skipped`.
 ```js
 labelStyle: "loose",          // "Case #N - <name>" in one node → NOT renumber-compatible (manual renumber; say so in the report)
+componentCrops: true,        // component-level cases hold a crop (118–424 tall), not a screen
 slotSizes: ["375x812"],
 titlesFullWidth: true,        // every `permutation` frame = board inner width; section-title instance is FILL
 numbersScopedPerGroup: true,  // Case#N RESTARTS in every `permutation` group (General #1-9, Touch area #1-4, Loading #1-6)

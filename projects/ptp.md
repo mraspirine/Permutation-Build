@@ -116,8 +116,10 @@ FRAME 'Permutation:' / 'Permutation: <Name>'   [V · gap 0 · padding 0]  no fil
 |---|---|---|---|
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
+> Per run, add: `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` · `linkId` (+ `linkCaps` from the harvest) · `knownCaseIds`. G5 lists whatever is left empty in `stats.skipped`.
 ```js
 labelStyle: "indexed",          // dialect A `<g>.<n> | <name>` · dialect B `#<n>[.<m>] <name>` — never `Case#N`
+componentCrops: true,           // component-level cases hold a crop (`SOFCard_CASA` 390×108), not a screen
 slotSizes: ["390x844"],         // dialect B flows: ["375x812"] · slot height follows the base: replace it with the base height when it differs
 titlesFullWidth: false,         // headers span the GRID (gridColumnSpan), not a sibling frame — the generic check does not apply
 ```
