@@ -200,5 +200,12 @@ if (typeof figma === "undefined") {
   placeInGrid(gridMock, header, 0, 0, 3);
   A(calls[0] === "at 0,0 span1" && header.gridColumnSpan === 3, "placeInGrid appends at span 1, then widens");
   A(typeof freshInstance === "function" && typeof setInstanceTexts === "function" && typeof gridFrame === "function", "instance + grid factories");
+  // grid planner: rows and positions are known BEFORE the grid exists
+  const plan = gridPlan(3, [4, 1], 80);
+  A(plan.rows === 6 && plan.fixedRows[3] === 80, "gridPlan: header + 2 cell rows + spacer + header + 1 cell row = 6, spacer at row 3");
+  A(JSON.stringify(plan.groups[0].cells) === JSON.stringify([[1, 0], [1, 1], [1, 2], [2, 0]]) && plan.groups[0].header === 0 && plan.groups[1].header === 4 && plan.groups[1].cells[0][0] === 5, "gridPlan positions");
+  const stuck = { type: "TEXT", visible: true, _c: "fixed box", get characters() { return this._c; }, set characters(v) { this._c = v; }, height: 24 };
+  equalizeRow([mkText("two\nlines", 24), stuck], 0);
+  A(stuck.characters === "fixed box", "equalizeRow leaves a text that cannot grow untouched (no 40 blank lines)");
   console.log("scaffold-kit self-check OK");
 }

@@ -240,4 +240,15 @@ const cscan = scanCases();
 A(cscan.counts.designed === 2 && cscan.counts.spec === 1, 'component crops count as designed, placeholders do not, got ' + JSON.stringify(cscan.counts));
 A(Array.isArray(cscan.containers[0].cases) && cscan.containers[0].designed === 2, 'DETAIL on: per-case rows + per-board designed count');
 delete globalThis.figma;
+// a real team board can be named anything (PTP `Guideline: Select Account`): the attached `Permutation` connector finds it
+const guideline = N('FRAME', 'Guideline: Select Account', [N('FRAME', 'row', [hcell('#1.1 Account that can link', designedScreen()), hcell('#1.2 Account already Linked', designedScreen())])]);
+const otherLogic = N('INSTANCE', 'Other Logic', [T('logic')]);
+const linked = new Map([[guideline, [{ id: '9:1', name: 'Select account' }]], [otherLogic, [{ id: '9:2', name: 'Set CASA account' }]]]);
+const lscan = scanCases([N('SECTION', 'flow', [guideline, otherLogic])], linked);
+A(lscan.counts.containers === 1 && lscan.counts.cases === 2, 'a board found through its Permutation connector; a linked non-board (no cases) is dropped, got ' + JSON.stringify(lscan.counts));
+A(lscan.containers[0].linkedFrom[0].name === 'Select account', 'each board reports which screen its link starts from');
+// a note instance beside an EMPTY slot must not read as designed
+const noted = N('FRAME', 'Case', [N('INSTANCE', 'Title Block', [T('1.1 | Default')]), N('INSTANCE', 'Note', [T('todo')]), emptySlot()]);
+const nscan = scanCases([N('FRAME', 'Permutation: X', [N('FRAME', 'Case', [noted])])]);
+A(nscan.counts.designed === 0, 'a cell that still holds its placeholder is spec, whatever sits beside it');
 console.log('scan-cases v2 self-check OK');

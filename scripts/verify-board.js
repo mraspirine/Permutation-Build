@@ -255,4 +255,6 @@ A(linkFailures(Object.assign({}, okLink, { connectorEndStrokeCap: "NONE" }), ctx
 A(linkFailures(okLink, Object.assign({}, ctx, { lineTop: 2395 })).some(f => /702px/.test(f)), "line starting below the visible screen (instance overflows the frame)");
 A(outsideParent({ x: 152, y: 3810, width: 1650, height: 3580 }, { type: "SECTION", width: 8528, height: 7386 }) === 4, "board leaves its section by 4px");
 A(outsideParent({ x: 152, y: 3810, width: 1650, height: 3556 }, { type: "SECTION", width: 8528, height: 7386 }) === 0 && outsideParent({ x: -5, y: 0, width: 10, height: 10 }, { type: "PAGE" }) === 0, "inside / not a section");
+A(linkFailures(Object.assign({}, okLink, { connectorStart: { endpointNodeId: "base", magnet: "AUTO" } }), ctx).some(f => /magnet/.test(f)), "an AUTO start magnet is reported, not skipped");
+A(linkFailures(Object.assign({}, okLink, { connectorStart: { endpointNodeId: "base", magnet: "AUTO" } }), Object.assign({}, ctx, { magnets: null })).length === 0, "magnets: null switches the magnet rule off");
 console.log("verify-board self-check OK");

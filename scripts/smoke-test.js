@@ -59,5 +59,8 @@ r = runWith(mockFigma("My file", undefined, true), "My file");
 A(r.ready && /plain/.test(r.checks.stamp), "Bridge: plain store, guarded by file name");
 r = runWith(mockFigma("My file", undefined, true), "Other file");
 A(!r.ready && /FAIL/.test(r.checks.guard), "wrong file is reported, not thrown");
+let created = 0; const wrong = mockFigma("My file", undefined, true); const mk = wrong.createFrame; wrong.createFrame = function () { created++; return mk.call(this); };
+r = runWith(wrong, "Other file");
+A(created === 0 && !r.ready, "wrong file: nothing is created");
 delete globalThis.figma;
 console.log("smoke-test self-check OK");
