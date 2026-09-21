@@ -27,12 +27,20 @@ FRAME 'Permutation: Pg_<Name>'      [V · gap 0 · padding 0]  fill #C4C8D4 · r
         └── (a FIXED 80-high empty grid row separates one sub-group from the next)
 ```
 
-**`Title Block` is a remote library component** — component-set key `a9dd4f21347ee433af151110339c4eced0fa4b38`:
+**`Title Block` is a remote library component — and the two dialects use two DIFFERENT component sets** (measured 2026-09-22). Dialect A — component-set key `a9dd4f21347ee433af151110339c4eced0fa4b38`:
 | variant | used for | key |
 |---|---|---|
 | `Flow=Permutation, Type=Section Title` | board header | `8977d1418ca6873c0a4b3758036e3b329e4a3d47` |
 | `Flow=Permutation, Type=Sub Section Title` | group header (spans the grid) | `cdd3280e1c605393f51b728f52b61d684d22c334` |
 | `Flow=Main Flow, Type=Screen Title` | the case caption | `634ede0ad4c234c5d7d2e0f692f786d3de93c769` |
+
+Dialect B — component-set key `c60ab6ae4c1a31f2dd10310109cc711248e9d907`:
+| variant | used for | key |
+|---|---|---|
+| `Flow=Permutation, Type=Section Title` | board header | `2a6a1461433b3b2e01a0bd4dd925f0e7473afaba` |
+| `Flow=Permutation, Type=Sub Section Title` | group header | `3bfd9d5866685bf9a87fc393771ed3ab991a0e2b` |
+| `Flow=Permutation, Type=Screen Title` | the case caption | `f12a21d4207203fe39ed610346ff38f9a6007711` |
+> Never mix the two sets on one board. `freshInstance(<a Title Block from the neighbour board you harvested>)` picks the right set by itself; use the keys only when there is no instance to start from.
 > **Create the instance from the main component** (`(await src.getMainComponentAsync()).createInstance()`, then copy the source's boolean props) and override its texts — never rebuild it as plain text. **Do not `clone()` a Title Block out of a team board**: the copy is born inside the team's own grid and carries that grid's column span, which then collides in yours.
 > GRID build order: cells first via `appendChildAt(node, row, col)`, spanning headers last — place the header at span 1, then set `gridColumnSpan`. Tracks `HUG`; the spacer row between sub-groups `FIXED 80`.
 > Keep every case description to ONE line (≈ 48 characters at 390 wide): a wrapped description drops that cell's slot below its row neighbours.

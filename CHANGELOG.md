@@ -64,6 +64,9 @@
 - ไม่ทำตาม: ตัด `compatibility` ใน frontmatter (เป็นฟิลด์ในสเปก) · เริ่ม Phase 4 ที่ 1 (project file อ้าง "step 3" อยู่) · แตกย่อหน้า G1 เป็นข้อย่อย
 - `next.md` §Screen facts: Common Handling board ครอบ `screen/error-full` · `screen/retry-loading` · `screen/block-retry` ด้วย (เจ้าของ flow ยืนยัน) —
   จุดที่ Opus กับ Sonnet แตกเคสไม่ตรงกันบนจอ Payment 29.1
+- จากการเขียนคำอธิบายรายบรรทัดของเล่มสอน: `board-grammar.md` Link rule เขียนว่า "four counts" แต่มี 5 ข้อ → แก้เป็น five ·
+  `ptp.md` ตาราง key ของ `Title Block` เป็นของ dialect A อย่างเดียว — **dialect B ใช้ component set คนละชุด** (วัดจากไฟล์จริง 2026-09-22)
+  เพิ่มตาราง key ของ dialect B 3 variant และกฎห้ามปนสองชุดใน board เดียว
 
 **กฎ**
 - Phase 1: **board เป็นของ base นี้เมื่อ stamp `baseNodeId` หรือ `linkedFrom` ตรงกับ base เท่านั้น — ไม่ใช่ตามชื่อ** ·
