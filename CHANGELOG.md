@@ -106,7 +106,7 @@
   ดูเหมือนเส้นไม่เชื่อมกับจอ (เจอจริงบน CLICX Home: instance 1509 ใน frame 812) → ให้ anchor ที่ FRAME แทน + อ่านค่ากลับ
 - **Placement: ไม่มีที่ว่างตามลำดับ flow → หยุดถามผู้ใช้** · อ่านความกว้าง board กลับหลังกลุ่มแรก
 - **case-library: backtick เป็น markup ของไฟล์** ไม่ลง canvas
-- **clicx.md: board กว้างขั้นต่ำ 1200** (title block `minWidth 1000`) + page variant `Im (CLICX)`
+- **clicx.md: board กว้างขั้นต่ำ 1200** (title block `minWidth 1000`) + page variant ของหน้า CLICX เดิมของทีม
 - **next.md: ตาราง Tier-3 ids ที่อยู่บน board แล้ว** (8 id อ่านกลับจาก canvas) — กัน caption เพี้ยนข้าม board
 
 **ย้ายกฎจากข้อความไปเป็นด่านใน script (รอบสี่ วันเดียวกัน — สรุปจาก 3 รอบรันจริง NEXT / CLICX / PTP)**
