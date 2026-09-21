@@ -12,7 +12,7 @@ description: |
   "generate state", "คิด state ให้หน่อย", "จอนี้ลืม state อะไรไหม", "state ครบยัง",
   "edge case มีอะไรบ้าง", "ก่อนส่ง dev ขาดอะไร", "เช็ค state ก่อน handoff",
   "list state ที่ต้องทำ", "empty/error/loading มีหมดยัง".
-compatibility: "Reading the base works through the official Figma MCP (use_figma). Writing the scaffold requires the figma-console Desktop Bridge (its pluginData stamps cannot be written under use_figma), and so does reading/auditing large existing permutation boards (official MCP overflows on big boards)."
+compatibility: "Reading the base and writing the scaffold work through the official Figma MCP (use_figma). Reading/auditing large existing permutation boards — and any board stamped via the Bridge — requires the figma-console Desktop Bridge (official MCP overflows on big boards and cannot read plain pluginData)."
 ---
 
 # figma-permutation-build
@@ -121,7 +121,7 @@ Anyone who only wanted the case list stops here.
 3. Placement from `siblingBoards`: pick a column count whose width fits the free span
 4. Per case: label node (project's label style) + caption nodes + `placeholder()` + `stampCase()`
 5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). **The clone gate is per-RUNTIME**: the desktop Bridge may throw *"Cloning CONNECTOR nodes is not supported"* where `use_figma` clones the very same line fine (proven 2026-08-18) → on a Bridge throw, run the clone + re-point through **`use_figma`** instead; re-pointing works on both runtimes. Every runtime blocked → the user hand-draws or Cmd+D's an exemplar and you re-point it. `elbowLink`'s VECTOR is a placeholder of last resort — it never attaches; when the project's links attach, say so. Either way **replicate the exemplar: anchor (NEXT: the main INSTANCE inside the screen, magnet BOTTOM) · route (screen bottom-center → board top-center) · BOTH end caps** (VECTOR: per-vertex `strokeCap` via `setVectorNetworkAsync`) — the capless unattached "close enough" line is the most-repeated link mistake across projects (`board-grammar.md` §Link rule)
-6. Chunks of ~10 cells per call; every call starts with `guard(<file name>)`
+6. Chunks of ~10 cells per call; every call starts with `guard(<file name>)` on the Bridge · `guard(<fileKey>)` under use_figma
 
 ### Phase 5 — Verify + report (gate G5)
 - **Run `scripts/verify-board.js`** with CONFIG from `projects/<name>.md` §Verify config (label style · slot sizes · expected case count · baseNodeId + node count from G1). **The scaffold is done only when `pass: true`.** Never hand-write a subset of these checks
@@ -175,7 +175,7 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 **pluginData** — written ONLY through `scaffold-kit.js` stamps:
 - cell key `"permBuild"`: `{ caseId, level:"S"|"C", tier:1|2|3, priority:"must"|"should"|"edge", status:"spec"|"designed", baseNodeId, configVer, date }` — `caseId` = the stable semantic id from `case-library.md` (stable across renumbering, not the Case# number)
 - board key `"permBuildBoard"`: `{ project, baseNodeId, configVer, date }` — lets AUDIT find boards even if renamed, and ties a board to its base
-- **Store note**: `scaffold-kit.js` writes *plain* pluginData only (pilot-tested — do not change casually). Plain is blocked under use_figma → stamps are only guaranteed when scaffolding runs on the Bridge; a stampless use_figma build fails G5 loudly (`verify-board.js` reads both stores). AUDIT on a plain-stamped board must also run via the Bridge
+- **Store note**: stamps follow the runtime — `scaffold-kit.js` writes *plain* pluginData on the Bridge and falls back to *shared* pluginData (namespace `"permBuild"`) under use_figma, where plain throws (live-verified on both, 2026-09-21). `scan-cases.js` / `verify-board.js` read both. One asymmetry remains: a **plain-stamped board** (built on the Bridge — every board before 2026-09-21) is invisible under use_figma → AUDIT it via the Bridge. A shared-stamped board reads on both
 
 **Label styles** (per project, in `projects/<name>.md` §Verify config):
 - `strict` = the label node is exactly `Case#N` → **renumber-cases compatible** (NEXT)
@@ -190,12 +190,11 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 ## Runtime & write idiom
 | Task | Runtime |
 |---|---|
-| Profile a single base screen (read-only) | **official MCP `use_figma` (primary)** · Bridge as fallback |
-| Write the scaffold (cells + stamps) | **figma-console Bridge (primary)** — stamps are plain pluginData, which `use_figma` cannot write; a `use_figma` scaffold builds the board but fails G5 on missing stamps (§pluginData Store note) |
+| Profile a single base screen + write the scaffold | **official MCP `use_figma` (primary)** · Bridge as fallback — stamps land in the store the runtime allows (§pluginData Store note) |
 | Read / audit a large existing permutation board | **figma-console Bridge required** (official MCP overflows on big boards — proven 2026-07-24) |
-| Clone + re-point the screen→board CONNECTOR | **try the active runtime; Bridge throws in some files where `use_figma` succeeds (proven 2026-08-18)** — note the flip side: stamps are Bridge-only |
+| Clone + re-point the screen→board CONNECTOR | **try the active runtime; Bridge throws in some files where `use_figma` succeeds (proven 2026-08-18)** |
 
-- **`if (figma.root.name !== "<EXPECTED>") throw "wrong file";`** at the top of every write batch (the desktop's active file can drift)
+- **`guard(<EXPECTED>)`** at the top of every write batch (the desktop's active file can drift). Bridge: pass the file **name**. use_figma: pass the **fileKey** — `figma.root.name` is always `"Document"` there (verified 2026-09-21), so a name guard throws on every call
 - **Only touch what this skill created; never modify the base** — phase 1 does not even clone screens
 - **Never call `figma.commitUndo()` under use_figma** (it throws and the whole atomic batch silently no-ops)
 - On the Bridge, use **`getNodeByIdAsync`** only (`getNodeById` throws under documentAccess: dynamic-page)

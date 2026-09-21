@@ -11,8 +11,9 @@
 //   A container that must grow with content: call growWithContent(board) AFTER all appends.
 // Node syntax self-check: `node scripts/scaffold-kit.js`.
 
-function guard(expectedFileName) {
-  if (figma.root.name !== expectedFileName) throw "wrong file: " + figma.root.name;
+// Bridge: pass the file NAME. use_figma: pass the file KEY — root.name is always "Document" there.
+function guard(expected) {
+  if (figma.root.name !== expected && figma.fileKey !== expected) throw "wrong file: " + figma.root.name;
 }
 
 // Auto-layout frame with layout set BEFORE any sizing. Both axes start AUTO (hug).
@@ -75,16 +76,22 @@ async function placeholder(parent, w, h, font, opts) {
 }
 
 // pluginData contract — the ONLY place these keys are written.
+// Plain store on the Bridge (unchanged); use_figma throws on plain → shared namespace "permBuild",
+// which scan-cases / verify-board already read.
+function setStamp(node, key, json) {
+  try { node.setPluginData(key, json); }
+  catch (e) { node.setSharedPluginData("permBuild", key, json); }
+}
 function stampCase(node, d) {
   ["caseId", "level", "tier", "priority"].forEach(k => { if (d[k] === undefined) throw "stampCase missing " + k; });
-  node.setPluginData("permBuild", JSON.stringify({
+  setStamp(node, "permBuild", JSON.stringify({
     caseId: d.caseId, level: d.level, tier: d.tier, priority: d.priority,
     status: d.status || "spec", baseNodeId: d.baseNodeId || "",
     configVer: d.configVer || "", date: d.date || "",
   }));
 }
 function stampBoard(node, d) {
-  node.setPluginData("permBuildBoard", JSON.stringify({
+  setStamp(node, "permBuildBoard", JSON.stringify({
     project: d.project || "", baseNodeId: d.baseNodeId || "",
     configVer: d.configVer || "", date: d.date || "",
   }));

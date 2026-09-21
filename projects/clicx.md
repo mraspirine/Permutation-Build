@@ -161,7 +161,7 @@ row3 all 144 · row4 all `Title` 336 — **per row, not per board**.
 
 > ⚠️ **pluginData under `use_figma`**: `setPluginData`/`getPluginData` are blocked by the official MCP →
 > `scaffold-kit.js` falls back to `setSharedPluginData("permBuild", <key>, …)`. `verify-board.js` and
-> `scan-cases.js` must read **both**. Only the figma-console Bridge can write plain pluginData.
+> `scan-cases.js` must read **both**. Only the figma-console Bridge can write plain pluginData; under use_figma `scaffold-kit.js` writes the shared store instead.
 
 ## DS hooks (phase 2)
 Variable collections `color` / `spacing` / `radius` / `size-generic`. Screens are built from instances such as `my asset screen`, `asset`, `acc detail`, `top bar`, `status bar`. See `figma-design-build/projects/pb.md` + `pb.registry.md` for component keys.

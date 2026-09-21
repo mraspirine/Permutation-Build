@@ -7,7 +7,7 @@
 
 ## 2026-09-21 — เตรียมแชร์: ตัดชื่อบุคคล / ชื่อ skill อื่น / ตัวชี้ phase 2
 
-ไม่เปลี่ยน pipeline / gate / script ใด ๆ
+ไม่เปลี่ยน pipeline / gate · script แตะไฟล์เดียวคือ `scaffold-kit.js` (ดูหัวข้อรอบสอง)
 
 **พฤติกรรมใหม่**
 - **Phase 2 กลับเป็น "planned — not built yet"** — skill เติมจอตัวเดิมเลิกพัฒนา
@@ -17,11 +17,15 @@
 - **FigJam scope tag → tier เป็นกฎทั่วไป** — tag รูป `<name> UI` ใดก็ตาม = Tier 1
   (เดิมระบุ tag รายตัว)
 
-**แก้เอกสารที่ขัดกันเอง (รอบสอง วันเดียวกัน — ไม่แตะ script)**
-- **Runtime: เขียน scaffold = Bridge เป็นหลัก** — เดิม Runtime table / frontmatter / README
-  บอกว่าเขียน scaffold ผ่าน `use_figma` เป็นหลัก แต่ stamp เป็น plain pluginData ซึ่ง
-  `use_figma` เขียนไม่ได้ → ทำตามตารางแล้วตก G5 ทุกครั้ง · แยกเป็น 2 แถว:
-  profile (อ่าน) = `use_figma` · scaffold (เขียน + stamp) = Bridge
+**แก้ข้อขัดแย้งภายใน (รอบสอง วันเดียวกัน)**
+- **scaffold-kit: stamp + guard ใช้ได้ทั้งสอง runtime** (ปลด freeze, ทดสอบสดทั้ง Bridge และ `use_figma`) —
+  เดิม `stampCase`/`stampBoard` เขียน plain pluginData อย่างเดียว ซึ่ง `use_figma` throw
+  ("not supported in this host runtime") และ `guard()` เทียบ `figma.root.name` ซึ่งบน `use_figma`
+  เป็น `"Document"` เสมอ → scaffold ผ่าน runtime หลักตามเอกสารทำไม่ได้เลย · แก้: `setStamp()` ลอง plain
+  ก่อน (Bridge เหมือนเดิมทุกไบต์) throw แล้วค่อยเขียน shared namespace `"permBuild"` ที่ scan-cases /
+  verify-board อ่านอยู่แล้ว · `guard()` รับชื่อไฟล์ (Bridge) หรือ fileKey (`use_figma`) · self-check มี mock
+  ทั้งสองทาง · Runtime table กลับเป็น `use_figma` primary (ตอนนี้จริงแล้ว) · ข้อจำกัดที่เหลือ: board ที่ stamp
+  แบบ plain (สร้างผ่าน Bridge / ก่อนวันนี้) ยังอ่านไม่ได้บน `use_figma` → AUDIT ผ่าน Bridge
 - **NEXT `slotSizes` ตามความสูง base** — §Verify config เดิมล็อก ×844 ขัดกับ §Board anatomy
   ("slot heights follow the base") → base ที่ไม่ใช่ 844 ตก G5 ทั้งที่ board ถูก (เจอจริงรอบ 29.1,
   base 862) · เพิ่มคำสั่งให้แทน 844 ด้วยความสูง base ที่วัดตอน G1 และห้ามบีบ slot ให้ผ่าน
@@ -45,7 +49,7 @@
   Phase 5 summary / AUDIT ต้องตอบตามบล็อก format ที่กำหนด (เดิมปล่อยอิสระ)
 - **Conciseness rule** — ตอบกระชับตาม report shape ไม่มี prose เกิน
 
-**Known issue (บันทึกไว้ ไม่แก้ — script ผ่าน pilot แล้ว):** scaffold-kit เขียน
+**Known issue (แก้แล้วใน 2026-09-21 — บันทึกเดิม:)** scaffold-kit เขียน
 stamp เป็น plain pluginData อย่างเดียว ซึ่ง use_figma เขียน/อ่านไม่ได้ →
 scaffold ที่ต้องการ stamp ให้รันบน Bridge; build ที่ stamp ไม่ติดจะตกที่ G5
 (verify-board อ่านทั้งสอง store) — ดู §pluginData Store note ใน SKILL.md

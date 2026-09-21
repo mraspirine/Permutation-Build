@@ -27,8 +27,8 @@ cp -R figma-permutation-build ~/.claude/skills/
 
 | ของ | เอาไว้ทำอะไร |
 |---|---|
-| **Figma MCP** (ตัว official) | อ่านจอ + clone เส้น connector |
-| **figma-console Desktop Bridge** | เขียน board (stamp ของเคสเขียนผ่าน MCP ตัว official ไม่ได้) + อ่าน board ใหญ่ๆ ที่มีอยู่แล้ว (MCP ตัว official อ่านแล้วล้น) |
+| **Figma MCP** (ตัว official) | อ่านจอ + เขียน board |
+| **figma-console Desktop Bridge** | ใช้ตอนไปอ่าน board ใหญ่ๆ ที่มีอยู่แล้ว (MCP ตัว official อ่านแล้วล้น) และ board ที่เคยสร้างผ่าน Bridge |
 | Node.js *(ไม่บังคับ)* | ไว้รัน self-check ของสคริปต์ เช่น `node scripts/scan-cases.js` |
 
 ## ใช้กับโปรเจคตัวเองครั้งแรก
@@ -100,7 +100,7 @@ figma-permutation-build/
 
 - ทุกอย่างถูกเขียน**ในกล่อง board เดียว** — อยากย้อนกลับก็ลบ node นั้นทิ้ง จบ
 - จอต้นทางไม่โดนแตะเลย (ขั้นตอนไหนก็ไม่ clone ด้วยซ้ำ) และ verify พิสูจน์ให้ดูด้วยการนับ node
-- ทุกก้อนโค้ดที่เขียนไฟล์มี guard เช็คชื่อไฟล์ก่อน กันเขียนผิดไฟล์เวลา Figma สลับแท็บ
+- ทุกก้อนโค้ดที่เขียนไฟล์มี guard เช็คชื่อไฟล์ (หรือ fileKey ถ้ารันผ่าน MCP ตัว official) ก่อน กันเขียนผิดไฟล์เวลา Figma สลับแท็บ
 - โหมด AUDIT เจอเคสแปลกปลอมจะแค่รายงาน **ไม่ลบของใครทิ้งเด็ดขาด**
 
 ## รัน self-check ของสคริปต์
