@@ -40,8 +40,6 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 - Fonts seen inside legacy screens (`Krungthai Fast`) belong to **the screens, not the captions** — do not mix
 - Internal layer names: the team reuses `case` at every level (or auto names like `Frame 10000xxx`)
 - **Link:** CONNECTOR named `Permutation` · `#FAB900` · weight 5 · `ELBOWED` · from the **main INSTANCE inside the screen (magnet BOTTOM)** → **board (magnet TOP)** · parent = SECTION
-  (the plugin API cannot create connectors in a design file → draw a VECTOR instead and tell the user — see board-grammar.md)
-  **2026-08-11:** `CONNECTOR.clone()` also throws here — *"Cloning CONNECTOR nodes is not supported in the current editor"* — and `figma.createConnector` is not a function. In a **design** file the VECTOR fallback is the only option; it does not attach, so say so in the report. Cloning may still work on a FigJam board.
   **2026-08-18 (verified on healthy team lines 302749/302753 + a hand-drawn exemplar):** caps **`TRIANGLE_FILLED` at the screen end · `ARROW_LINES` into the board**. **Anchor = the main screen INSTANCE inside the frame (magnet BOTTOM) → the board frame (magnet TOP)** — 276:304854 (frame-bound) and 276:304468 (endpoints → SECTION, loose) are broken outliers; never pick them as the exemplar. Route = screen bottom-center → board top-center (straight when aligned, elbow when not — no need to move the board). In this file the **desktop Bridge cannot clone ANY connector** (healthy ones included, 3/3 throw) and `createConnector` is undefined in both runtimes — **but `use_figma` (official MCP) clones + re-points the same lines fine** (proven 2026-08-18: minted a complete line — right section, right caps, right endpoints — fully programmatic, no human step). Recovery ladder: ① clone + re-point via `use_figma` ② human hand-draw/Cmd+D + plugin re-point ③ capped VECTOR placeholder. The VECTOR fallback (per-vertex caps via `setVectorNetworkAsync`) is a visual placeholder only — it does not attach, and **an unattached line gets rejected** (29.1 build, user feedback). Full checklist: board-grammar §Link rule.
 - **Placement:** flow band at `y≈147–4200` · permutation band at **`y≈6176`** · boards ordered by x following the screen order in the flow (leaving gaps for screens that have no board yet)
 - **Board width:** choose a column count that fits the gap between neighbours — `n×390 + (n-1)×64 + 128`
@@ -122,7 +120,9 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 ```js
 labelStyle: "strict",                     // Case#N exactly → renumber-cases compatible
-slotSizes: ["390x844","360x844","440x844","375x812"],  // normal · small · large · legacy
+slotSizes: ["390x844","360x844","440x844","375x812"],  // normal · small · large · legacy — for a standard 844 base
+// Slot height follows the BASE (§Board anatomy). Base not 844 tall → replace 844 with the base height
+// measured at G1, e.g. base 862 → ["390x862","360x862","440x862"]. Never resize slots to 844 to make this pass.
 titlesFullWidth: false,                   // NEXT headers are not forced to span the group
 ```
 

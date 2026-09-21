@@ -17,6 +17,17 @@
 - **FigJam scope tag → tier เป็นกฎทั่วไป** — tag รูป `<name> UI` ใดก็ตาม = Tier 1
   (เดิมระบุ tag รายตัว)
 
+**แก้เอกสารที่ขัดกันเอง (รอบสอง วันเดียวกัน — ไม่แตะ script)**
+- **Runtime: เขียน scaffold = Bridge เป็นหลัก** — เดิม Runtime table / frontmatter / README
+  บอกว่าเขียน scaffold ผ่าน `use_figma` เป็นหลัก แต่ stamp เป็น plain pluginData ซึ่ง
+  `use_figma` เขียนไม่ได้ → ทำตามตารางแล้วตก G5 ทุกครั้ง · แยกเป็น 2 แถว:
+  profile (อ่าน) = `use_figma` · scaffold (เขียน + stamp) = Bridge
+- **NEXT `slotSizes` ตามความสูง base** — §Verify config เดิมล็อก ×844 ขัดกับ §Board anatomy
+  ("slot heights follow the base") → base ที่ไม่ใช่ 844 ตก G5 ทั้งที่ board ถูก (เจอจริงรอบ 29.1,
+  base 862) · เพิ่มคำสั่งให้แทน 844 ด้วยความสูง base ที่วัดตอน G1 และห้ามบีบ slot ให้ผ่าน
+- **NEXT link note** — ตัดบรรทัดเก่า 2 บรรทัด ("VECTOR เป็นทางเดียว", 2026-08-11) ที่ถูก
+  หักล้างโดย note 2026-08-18 ในย่อหน้าเดียวกัน
+
 **เอกสาร**
 - ตัดชื่อบุคคลออกจากทุกไฟล์ ใช้ชื่อโปรเจคแทน
 - ตัวอย่างใน report shape ไม่ใช้ชื่อแบรนด์ · อ้างถึงรอบเทสโดยไม่ระบุชื่อโมเดล

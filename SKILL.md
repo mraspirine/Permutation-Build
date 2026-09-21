@@ -12,7 +12,7 @@ description: |
   "generate state", "คิด state ให้หน่อย", "จอนี้ลืม state อะไรไหม", "state ครบยัง",
   "edge case มีอะไรบ้าง", "ก่อนส่ง dev ขาดอะไร", "เช็ค state ก่อน handoff",
   "list state ที่ต้องทำ", "empty/error/loading มีหมดยัง".
-compatibility: "Reading the base and writing the scaffold work through the official Figma MCP (use_figma). Reading/auditing large existing permutation boards requires the figma-console Desktop Bridge (official MCP overflows on big boards)."
+compatibility: "Reading the base works through the official Figma MCP (use_figma). Writing the scaffold requires the figma-console Desktop Bridge (its pluginData stamps cannot be written under use_figma), and so does reading/auditing large existing permutation boards (official MCP overflows on big boards)."
 ---
 
 # figma-permutation-build
@@ -190,7 +190,8 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 ## Runtime & write idiom
 | Task | Runtime |
 |---|---|
-| Profile a single base screen + write the scaffold | **official MCP `use_figma` (primary)** · Bridge as fallback |
+| Profile a single base screen (read-only) | **official MCP `use_figma` (primary)** · Bridge as fallback |
+| Write the scaffold (cells + stamps) | **figma-console Bridge (primary)** — stamps are plain pluginData, which `use_figma` cannot write; a `use_figma` scaffold builds the board but fails G5 on missing stamps (§pluginData Store note) |
 | Read / audit a large existing permutation board | **figma-console Bridge required** (official MCP overflows on big boards — proven 2026-07-24) |
 | Clone + re-point the screen→board CONNECTOR | **try the active runtime; Bridge throws in some files where `use_figma` succeeds (proven 2026-08-18)** — note the flip side: stamps are Bridge-only |
 
