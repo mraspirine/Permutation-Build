@@ -1,14 +1,15 @@
 # case-library — the 2-level case base (Tier 1 / Tier 2)
 
-> Read in Phase 2 (Enumerate). Sources: the team's **FigJam canonical library** (`pFnfToBs4ecxvqrTWxqhaM` node `129:5011`, verified at full resolution 2026-07-24) and **corpus §8** (`permutation-reference.md`: 16 universal + 11 templates). Tier 3 (project-specific) lives in `projects/<name>.md`.
+> Read in Phase 2 (Enumerate). Source: the team's **FigJam canonical library** (§Source at the bottom). Tier 3 (project-specific) lives in `projects/<name>.md`.
 >
 > **How to use:** whichever components Phase 1 found on the base → pull their packs from §L2 (plus chained packs). Whatever archetype it is → pull the screen-level states from §L1 and `archetype-cases.md`. Every case carries: `id` · level · tier · opt-in · caption.
 > **Row ids inside a pack are derived, never invented**: `<pack>/<row name in kebab-case>` — `textfield/focus`, `image/asset-load-fail`, `text/maximum-characters`. No abbreviations, no re-wording; that is what lets `knownCaseIds` be built mechanically from this file.
 > `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → offer it as 🟡/⚪ for the user to decide.
 >
-> **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (the 2026-08-06 test run named the same situation "Session timeout" on one board and "Network reconnect" on its sibling, and the boards stopped being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
+> **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (e.g. "Session timeout" on one board and "Network reconnect" on its sibling — the boards stop being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
 >
-> **Thai strings below are verbatim from the team's FigJam and corpus** — they are the wording the team actually uses on boards, so they stay in Thai.
+> **Backticks are file markup, not caption text** — a caption that quotes an id (`` `empty/section` ``) goes onto the canvas WITHOUT the backticks.
+> **Thai strings below are verbatim from the team's FigJam and boards** — they are the wording the team actually uses on boards, so they stay in Thai.
 
 ## FigJam scope tag → tier
 `DX - NEXT (Shared)` or any `<name> UI` tag (the board the case originated on) all mean "originated in that project but the team promoted it to shared" → treat as **Tier 1** (applies to any screen carrying that component). Cases that genuinely cannot be shared are Tier 3, in `projects/<name>.md`.
@@ -80,18 +81,17 @@ Default (unselected) · Selected · Selected Disable · Default Disabled
 ### Selection (Checkbox+Text)  `id: selection-checkbox/*` · tier 1
 Default (unselected) · Selected · UnSelected · Multiple Select · Selected Disable · Default Disable
 
-### Additions 2026-08-11 (from the AI Test 05 run — **not yet in the team FigJam**; sync there and move into the sections above)
+### Additions 2026-08-11
 | id | tier | opt-in | caption (EN — TH) |
 |---|---|---|---|
 | `empty/section` | 1 | | Empty (per section) — กรณี section ว่างขณะที่ทั้งจอยังปกติ (ต่างจาก `screen/empty` ที่ว่างทั้งจอ) |
 | `nav/badge` | 1 | ✓ | Notification badge — กรณีมี badge บน nav / icon แจ้งเตือน |
 | `hub/card-set` | 3 (CLICX) | ✓ | Hub card set — กรณีจำนวน/ลำดับการ์ดใน hub เปลี่ยนตาม personalize (น้อยสุด / มากสุด) |
 | `fav/list-count` | 1 | ✓ | Favorite list count — กรณี favorite 0 / 1 / เต็ม (0 รายการยังต้องแสดงปุ่มเพิ่ม ไม่ใช่ `empty/section`) |
-> ที่มา: board `A.01-01.B` มีเคสจริงที่ไม่มี id รองรับ (Savings account/hub/widgets - empty · Bottom nav - notification badge) ทำให้ถูก free-text ต่างกันทุก board — บรรจุ id เพื่อให้ผ่านด่าน `knownCaseIds`
 
 ---
 
-## Tier 2 · Platform templates (opt-in, parameterized — corpus §8)
+## Tier 2 · Platform templates (opt-in, parameterized)
 
 Attach only when the flow actually uses them. Each takes a parameter (in the last column). Real values (limits, counts) must come from the brief; otherwise mark `⚠️ ยืนยันค่า`.
 
@@ -125,4 +125,4 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 - Selection that is required → Validation inline
 
 ## Source
-FigJam library `pFnfToBs4ecxvqrTWxqhaM#129:5011` (two groups: Screen, Component · verified 2026-07-24) · corpus `permutation-reference.md` §8. **If the FigJam changes, re-sync these tables and update the date.**
+FigJam library `pFnfToBs4ecxvqrTWxqhaM#129:5011` (two groups: Screen, Component · verified 2026-07-24) · Tier 2 templates are distilled from the team's existing boards. **If the FigJam changes, re-sync these tables and update the date.**

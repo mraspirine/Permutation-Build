@@ -3,15 +3,18 @@
 // Scope = current selection, else whole page. Returns inventory JSON.
 // Node self-check at bottom: `node scripts/scan-cases.js` (runs when figma is undefined).
 //
-// v2 lessons baked in (2026-07-27 pilots):
+// v2:
 // - CLICX board names (`G.03-01.B`) and loose labels (`Case #1 - Account sorting`) are now detected.
-// - STRICT vs LOOSE labels are reported separately — only strict labels are renumber-cases compatible.
+// - STRICT / LOOSE / INDEXED labels are reported separately — only strict labels are renumber-compatible.
+//   INDEXED = `<g>.<n> | <name>` or `#<n>[.<m>] <name>` (PTP): those boards carry no "Case" word at all.
 // - The label TEXT may live inside an INSTANCE (CLICX title block): climb ancestors to find the
 //   cell that carries the permBuild pluginData.
 // - isDesigned() only counts SCREEN-SIZED children (h > 600): caption frames were false positives.
 
-const STRICT_RE = /^\s*Case\s*#?\s*(\d+)\s*$/;                     // renumber-cases compatible
+const STRICT_RE = /^\s*Case\s*#?\s*(\d+)\s*$/;                     // renumber-compatible
 const LOOSE_RE = /^\s*Case\s*#?\s*(\d+)\s*(?:[-–—:.]\s*(.+))?\s*$/s; // also "Case #1 - Name"
+const INDEXED_RE = /^\s*(?:#\s*(\d+(?:\.\d+)*)\s+|(\d+\.\d+)\s*\|\s*)(.+?)\s*$/s; // PTP: "1.2 | Name" or "#2.1 Name" — no "Case" word
+const byLabel = (a, b) => String(a).localeCompare(String(b), undefined, { numeric: true });
 
 // Board-name forms seen on real team boards: colon `Permutation: X`, underscore `Permutation_X`,
 // suffix `X Permutations` (NEXT), and CLICX state suffix `G.03-01.B` (.A = screen, .B/.C = boards).
@@ -34,15 +37,20 @@ function readPD(n, key) {
 function hasBoardStamp(node) { return !!readPD(node, 'permBuildBoard'); }
 
 function parseLabel(text) {
-  const m = typeof text === 'string' ? text.match(LOOSE_RE) : null;
+  if (typeof text !== 'string') return null;
+  const i = text.match(INDEXED_RE);
+  if (i) return { n: i[1] || i[2], name: i[3].trim(), strict: false, style: 'indexed' };
+  const m = /^\s*Case/i.test(text) ? text.match(LOOSE_RE) : null;
   if (!m) return null;
-  return { n: Number(m[1]), name: m[2] ? m[2].trim() : null, strict: STRICT_RE.test(text) };
+  const strict = STRICT_RE.test(text);
+  return { n: Number(m[1]), name: m[2] ? m[2].trim() : null, strict, style: strict ? 'strict' : 'loose' };
 }
+const isLabelText = text => parseLabel(text) !== null;
 
 function findDupNumbers(nums) {
   const seen = new Set(), dup = new Set();
   nums.forEach(n => { if (n != null) { if (seen.has(n)) dup.add(n); seen.add(n); } });
-  return [...dup].sort((a, b) => a - b);
+  return [...dup].sort(byLabel);
 }
 
 function scanCases() {
@@ -61,7 +69,7 @@ function scanCases() {
     !!frame.findOne(x => x.type === 'TEXT' && /awaiting design/i.test(x.characters || ''));
 
   // designed = the cell holds a SCREEN-SIZED child (h > 600) that is not the placeholder.
-  // Height gate matters: caption blocks are frames too and made short cells read as designed (v1 bug).
+  // Height gate matters: caption blocks are frames too and made short cells read as designed.
   function isDesigned(cell) {
     if (!('children' in cell)) return false;
     return cell.children.some(f =>
@@ -73,7 +81,7 @@ function scanCases() {
     let c = 0;
     (function w(x) {
       if (c >= cap) return;
-      if (x.type === 'TEXT') { if (LOOSE_RE.test(x.characters) && /^\s*Case/i.test(x.characters)) c++; }
+      if (x.type === 'TEXT') { if (isLabelText(x.characters)) c++; }
       else if ('children' in x) x.children.forEach(w);
     })(n);
     return c;
@@ -82,7 +90,7 @@ function scanCases() {
   // The label TEXT can be nested inside an INSTANCE (CLICX title block) — climb up to the node
   // that actually carries the permBuild stamp. Unstamped (team-made) board: the cell is the LARGEST
   // ancestor that still holds only this one label, i.e. the case column — the label's own wrapper
-  // has no screen in it, which made every team board read 0 designed.
+  // holds no screen, so stopping there reads every team board as 0 designed.
   function findCell(labelNode) {
     let p = labelNode.parent, hops = 0;
     while (p && hops < 6) {
@@ -105,6 +113,7 @@ function scanCases() {
       label: labelNode.characters.split('\n')[0],
       nameFromLabel: lab ? lab.name : null,
       strict: lab ? lab.strict : false,
+      style: lab ? lab.style : null,
       caseId: pd ? pd.caseId : null,
       tier: pd ? pd.tier : null,
       priority: pd ? pd.priority : null,
@@ -119,19 +128,18 @@ function scanCases() {
     try { boardStamp = JSON.parse(readPD(c, 'permBuildBoard') || 'null'); } catch (e) {}
     const cases = [];
     (function walk(n) {
-      if (n.type === 'TEXT' && LOOSE_RE.test(n.characters) && /^\s*Case/i.test(n.characters)) {
-        const lab = parseLabel(n.characters);
-        if (lab) cases.push(readCell(n));
-      }
+      // A group header can share the label grammar (PTP `#1 E-Saving Account`): its "cell" resolves to the
+      // title instance itself — nothing sits beside the label — so it is not a case.
+      if (n.type === 'TEXT' && isLabelText(n.characters)) { const c = findCell(n); if (c && c.type !== 'INSTANCE' && c.type !== 'TEXT') cases.push(readCell(n)); }
       if ('children' in n) n.children.forEach(walk);
     })(c);
-    cases.sort((a, b) => (a.n || 0) - (b.n || 0));
+    cases.sort((a, b) => byLabel(a.n, b.n));
     return { id: c.id, name: c.name, stamp: boardStamp, count: cases.length, dupNumbers: findDupNumbers(cases.map(x => x.n)), cases };
   });
 
   // Case#N restarts on every board — duplicates only mean something INSIDE one board.
   const all = out.flatMap(c => c.cases);
-  const dup = [...new Set(out.flatMap(c => c.dupNumbers))].sort((a, b) => a - b);
+  const dup = [...new Set(out.flatMap(c => c.dupNumbers))].sort(byLabel);
   return {
     containers: out,
     counts: {
@@ -140,7 +148,8 @@ function scanCases() {
       designed: all.filter(x => x.designed).length,
       spec: all.filter(x => !x.designed).length,
       strictLabels: all.filter(x => x.strict).length,
-      looseLabels: all.filter(x => !x.strict).length,
+      looseLabels: all.filter(x => x.style === 'loose').length,
+      indexedLabels: all.filter(x => x.style === 'indexed').length,
       dupNumbers: dup,
       renumberCompatible: dup.length === 0 && all.length > 0 && all.every(x => x.strict),
     },

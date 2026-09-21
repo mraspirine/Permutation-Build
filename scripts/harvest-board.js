@@ -23,14 +23,26 @@ function prop(n, k) { try { return n[k]; } catch (e) { return null; } }
 function lh(t) {
   return t.lineHeight && t.lineHeight.unit === "PIXELS" ? Math.round(t.lineHeight.value) : t.lineHeight ? t.lineHeight.unit : null;
 }
-// ponytail: a screen = a frame taller than 600 whose width is device-sized (300-500); do not descend
+// A screen = a frame taller than 600 whose width is device-sized (300-500); do not descend
 // into it. Anything wider is a row wrapper, not a screen. Widen SCREEN_W for tablet/desktop projects.
 // A device-sized frame that HOLDS a Case label is the case column (caption + slot), not the screen —
-// without this the harvest reported the column (390×2062) as the slot size.
+// otherwise the column size gets reported as the slot size.
 const SCREEN_MIN_H = 600, SCREEN_W = [300, 500];
-const holdsCaseLabel = n => !!n.findOne && !!n.findOne(x => x.type === "TEXT" && /^\s*Case\s*#?\s*\d+/.test(x.characters || ""));
+const holdsCaseLabel = n => !!n.findOne && !!n.findOne(x => x.type === "TEXT" && /^\s*(Case\s*#?\s*\d+|\d+\.\d+\s*\||#\s*\d+(\.\d+)*\s)/.test(x.characters || ""));
 const isScreen = n => n.height > SCREEN_MIN_H && n.width >= SCREEN_W[0] && n.width <= SCREEN_W[1] &&
   (n.type === "INSTANCE" || n.type === "FRAME" || n.type === "COMPONENT") && !holdsCaseLabel(n);
+
+// Board names seen on real boards: `Permutation: X` / `Permutation_X` / `X Permutations`, and the CLICX
+// state suffix `G.03-01.B` (.A = screen, .B/.C = boards). A connector can be NAMED "Permutation",
+// so the node type is part of the test.
+const BOARD_TYPES = ["FRAME", "SECTION", "GROUP", "COMPONENT", "INSTANCE"];
+const isBoardName = s => /permutation/i.test(s || "") || /^[A-Z]{1,4}\.\d{1,3}-\d{1,3}\.[B-Z]$/.test(s || "");
+const isBoard = n => !!n && BOARD_TYPES.indexOf(n.type) !== -1 && isBoardName(n.name);
+// strict `Case#N` · loose `Case #N - Name` (CLICX, DGL) · indexed `1.2 | Name` / `#2.1 Name` (PTP — no "Case" word)
+const CASE_RE = /^\s*(?:Case\s*#?\s*\d+\s*(?:[-–—:.]\s*.+)?|\d+\.\d+\s*\|\s*.+?|#\s*\d+(?:\.\d+)*\s+.+?)\s*$/s;
+const STRICT_CASE_RE = /^\s*Case\s*#?\s*(\d+)\s*$/;
+const INDEXED_CASE_RE = /^\s*(?:\d+\.\d+\s*\||#\s*\d+(?:\.\d+)*\s)/;
+const styleOf = labels => !labels.length ? null : labels.every(l => STRICT_CASE_RE.test(l)) ? "strict" : labels.every(l => INDEXED_CASE_RE.test(l)) ? "indexed" : "loose";
 
 async function harvest() {
   let board = null;
@@ -39,7 +51,7 @@ async function harvest() {
   } else {
     (function find(n, d) {
       if (board || d > 4) return;
-      if (n.name && n.name.indexOf(BOARD_HINT) !== -1 && /permutation/i.test(n.name)) { board = n; return; }
+      if (n.name && n.name.indexOf(BOARD_HINT) !== -1 && isBoard(n)) { board = n; return; }
       if ("children" in n) n.children.forEach(c => find(c, d + 1));
     })({ name: "", children: figma.currentPage.children }, 0);
   }
@@ -58,7 +70,7 @@ async function harvest() {
             wrap: n.layoutWrap === "WRAP",
             pad: [n.paddingTop, n.paddingRight, n.paddingBottom, n.paddingLeft].join("/") }
         : null,
-      sizing: sizingOf(n), // FILL headers span their group (CLICX lesson)
+      sizing: sizingOf(n), // FILL headers span their group (CLICX)
       fill: solid(n, "fills"), radius: typeof n.cornerRadius === "number" ? n.cornerRadius : null,
       isScreenSlot: screen || undefined,
     });
@@ -89,11 +101,10 @@ async function harvest() {
   })(board);
 
   // --- label pattern ---
-  const CASE_RE = /^\s*Case\s*#?\s*(\d+)\s*$/;
   const labels = [];
   (function w(n, d) {
     if (d > 6) return;
-    if (n.type === "TEXT" && CASE_RE.test(n.characters)) labels.push(n.characters);
+    if (n.type === "TEXT" && CASE_RE.test(n.characters)) labels.push(n.characters.split("\n")[0]);
     if ("children" in n) n.children.forEach(c => w(c, d + 1));
   })(board, 0);
 
@@ -126,7 +137,7 @@ async function harvest() {
   // --- neighbours: used to compute free space when placing a new board ---
   const parent = board.parent;
   const siblings = (parent && parent.children ? parent.children : [])
-    .filter(n => n.id !== board.id && /permutation/i.test(n.name || ""))
+    .filter(n => n.id !== board.id && isBoard(n))
     .map(n => ({ name: (n.name || "").slice(0, 40), x: Math.round(n.x), right: Math.round(n.x + n.width), y: Math.round(n.y) }))
     .sort((a, b) => a.x - b.x);
 
@@ -140,10 +151,23 @@ async function harvest() {
     screenSlots: slots,
     labelSamples: labels.slice(0, 6),
     labelHasSpace: labels.length ? /Case\s+#/.test(labels[0]) : null,
+    labelStyle: styleOf(labels),
     incomingLinks: links,
     otherLinesNearby: otherLines.slice(0, 8), // flow links etc — compare to tell the two kinds apart
     siblingBoards: siblings,
     note: "Copy these into projects/<name>.md \u2192 \u00a7Board anatomy. Store grammar + measured values, never per-screen x/y.",
   };
 }
-return await harvest();
+if (typeof figma !== "undefined") return harvest(); // returns a Promise — the runtime awaits it
+
+// --- node self-check (pure parts) ---
+const A = (c, m) => { if (!c) throw new Error("FAIL: " + m); };
+A(isBoardName("Permutation_JUN26.02 Select Top-Up") && isBoardName("Loan Amount Permutations") && isBoardName("Permutation: Home"), "Permutation name forms");
+A(isBoardName("G.03-01.B") && isBoardName("B.01-01.C") && !isBoardName("G.03-01.A | my asset"), "CLICX .B/.C boards, not .A screens");
+A(isBoard({ type: "FRAME", name: "B.01-01.C" }) && !isBoard({ type: "CONNECTOR", name: "Permutation" }), "a connector named Permutation is not a sibling board");
+A(CASE_RE.test("Case#3") && CASE_RE.test("Case #1 - Account sorting\n") && !CASE_RE.test("Cases") && !CASE_RE.test("Case study"), "strict + loose labels");
+A(STRICT_CASE_RE.test("Case#3") && !STRICT_CASE_RE.test("Case #1 - Account sorting"), "strict only");
+A(CASE_RE.test("1.1 | Default") && !CASE_RE.test("1 | CASA") && styleOf(["1.1 | Default", "2.3 | Empty State"]) === "indexed", "indexed labels (PTP)");
+A(styleOf(["Case#1", "Case#2"]) === "strict" && styleOf(["Case #1 - Name"]) === "loose" && styleOf([]) === null, "label style summary");
+A(CASE_RE.test("#2.1 Savings account limit unreached") && styleOf(["#1 A", "#2.1 B"]) === "indexed" && !CASE_RE.test("# tag"), "hash-indexed labels (PTP dialect B)");
+console.log("harvest-board self-check OK");

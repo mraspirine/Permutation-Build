@@ -1,10 +1,10 @@
 # archetype-cases — archetype → signature cases + permutation axes
 
-> Read in Phase 1–2. Sources: **corpus §D** (archetype → signatures, drawn from 6 real projects) and **§B** (the 9 axes). Use it to classify the base, then pull the cases that come with that screen type — on top of the component packs in `case-library.md`.
+> Read in Phase 1–2. Use it to classify the base, then pull the cases that come with that screen type — on top of the component packs in `case-library.md`.
 > **An archetype is a floor, not a ceiling** — real screens usually have more. Reason forward from what is actually on the screen instead of just ticking the list.
 
 ## Guessing the archetype from what is on the base (then confirm with the user)
-| Archetype | Signals on the screen | Corpus example |
+| Archetype | Signals on the screen | Team example |
 |---|---|---|
 | **Form / multi-step** | input fields, labels, submit, validation hints, sliders | Apply LOC |
 | **Transaction / payment** | amount, confirm, source/destination, fee, slip | Coupon |
@@ -15,7 +15,7 @@
 
 Hybrid screens: pick the primary archetype by the screen's core task, then add one secondary set.
 
-## Signature cases per archetype (beyond the L1/L2 basics — corpus §D)
+## Signature cases per archetype (beyond the L1/L2 basics)
 | Archetype | Signature permutations |
 |---|---|
 | **Form / multi-step** | field default/filled/focus-out/validation · dropdown + action-sheet dismiss · calculator or slider (min/max/round-down) · confirm & edit · consent · eKYC · processing/result |
@@ -27,7 +27,7 @@ Hybrid screens: pick the primary archetype by the screen's core task, then add o
 
 > Most signature cases are **Tier 3 (project-specific)** — their real captions and parameters belong in `projects/<name>.md`. This table only says which dimensions a screen of this type should make you think about; it is not ready-made caption text.
 
-## The 9 permutation axes (corpus §B — walk all of them when enumerating)
+## The 9 permutation axes (walk all of them when enumerating)
 1. **Data volume** — Default / Filled / Empty / Long text / Max-Min / Placeholder / Scrolling / End-of-list
 2. **Loading** — Skeleton / Loading screen / Pull-to-refresh
 3. **Error & network** — Unable to load / Server down / Reload > N / Image placeholder / Partial error / Page not found

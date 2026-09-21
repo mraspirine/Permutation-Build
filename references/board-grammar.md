@@ -9,7 +9,7 @@
 ## Hard rule: harvest before scaffold
 **Never build a board from memory, from defaults, or from another project.** Every time you scaffold in a file you have not built in before:
 1. Find a board the team made in that file (`scan-cases.js` locates containers)
-2. **Run `scripts/harvest-board.js` verbatim** against it (replace `BOARD_HINT`). **Never hand-write a shortened version** — the pilot did that, dropped the links section, and reported "no connector" for a project that clearly had one (2026-07-27). The script exists precisely so nothing gets skipped.
+2. **Run `scripts/harvest-board.js` verbatim** against it (replace `BOARD_HINT`). **Never hand-write a shortened version** — a shortened one drops sections (the links, typically) and then reports "no connector" for a project that clearly has one. The script exists precisely so nothing gets skipped.
 3. Compare with `projects/<name>.md` — if it differs or is missing, update the project file first, then build
 4. **No existing board at all (greenfield)** → use the project file's defaults; if there are none → **ask the user**, do not guess
 
@@ -43,7 +43,7 @@ board                          ← name per project convention; fill/padding fro
 ```
 
 ## Rules that hold for every project (independent of style)
-- **The label must be its own text node** whose entire string is `Case#N` / `Case #N` (satisfies the `renumber-cases` regex `/^\s*Case\s*#?\s*(\d+)\s*$/`) — no trailing text is allowed on that node
+- **The label must be its own text node** whose entire string is `Case#N` / `Case #N` (satisfies the strict-label regex `/^\s*Case\s*#?\s*(\d+)\s*$/`) — no trailing text is allowed on that node
 - **Everything is written inside one board node** → rollback = delete it
 - **Never touch the base**, and never modify the team's existing boards
 - **line-height**: if the team sets PIXELS, set PIXELS (AUTO throws off spacing across the whole board)
@@ -65,7 +65,7 @@ Real boards **mix schools** — record the primary school and the mix in `projec
 
 ## Link rule — replicate, don't approximate (the most-misdrawn item, in EVERY project)
 The screen→board link keeps getting drawn as "a colored line, close enough" — and it gets rejected every time. Whether it ends up a cloned CONNECTOR or a VECTOR fallback, it must replicate the harvested exemplar on all four counts:
-1. **Anchor** — start at the exact point the project attaches to (the screen FRAME or the main INSTANCE inside it, magnet BOTTOM = bottom-center); never a corner, never the caption
+1. **Anchor** — start at the exact point the project attaches to (the screen FRAME or the main INSTANCE inside it, magnet BOTTOM = bottom-center); never a corner, never the caption. **Overflow exception:** when the main INSTANCE is taller than a clipping screen frame (`frame.clipsContent && instance.height > frame.height` — scroll screens), its bottom edge lies below the visible screen and the line looks detached → anchor the **FRAME** instead. Always read back: the line must start within ~10px of the screen frame's bottom edge
 2. **Route** — screen bottom-center → board top-center: straight when they happen to align, a single elbow when they don't. Judge the route from a **healthy** exemplar (both endpoints bound to real nodes) — loose connectors pinned by position are broken leftovers, not the style
 3. **End caps — the most-missed detail** — real connectors carry a different cap per end (e.g. NEXT: `TRIANGLE_FILLED` at the screen · `ARROW_LINES` into the board). A VECTOR gets per-end caps only via per-vertex `strokeCap` in `setVectorNetworkAsync`; a bare capless line is wrong
 4. **Ink** — color · weight · dash · name, from `projects/<name>.md`

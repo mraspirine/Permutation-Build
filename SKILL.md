@@ -35,7 +35,7 @@ Keep replies concise — use the report shapes defined per phase, no extra prose
 - Not for: design-quality review · raw-value/override QA against the DS · token binding · building new screens
 - This skill is about **coverage** (which cases should exist), not **quality** (raw values / overrides)
 - **Only variants of the given base.** Separate module screens (an eKYC chain, a full-screen consent) belong to their own base → tell the user to run this skill on that screen instead; never fan out across screens
-- **More than one base given → STOP and ask the relationship before enumerating anything** (the 2026-08-06 test fed 3 state-screens in and got 3 boards identical to the letter, and a "gen a template" request cloned the previous flow's list wholesale). Three answers, three behaviors:
+- **More than one base given → STOP and ask the relationship before enumerating anything** — enumerating each one blindly yields near-identical boards. Three answers, three behaviors:
   - **states of one screen** → ONE board on the user-designated default base; **diff the given screens first** and add only difference-driven cases (what varies between the states is the case list)
   - **related but separate screens** → one run per screen, each enumerated from **that screen's own visible components** — never seeded from a sibling's case list
   - **mockup / template** → ask what the template must parameterize (which slots vary, which are fixed) before enumerating; if the user can't say, deliver the case list for ONE screen and stop
@@ -62,6 +62,7 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 | **NEXT** | collections `❖ NEXT` + `3. Size` + `4. Typography` · file name contains "NEXT" | `projects/next.md` |
 | **DGL Revamp** | screens named `[MMM][YY].[EPIC].[N].[N]_DGL Revamp_NX_…` · legacy 375-wide · `Krungthai Fast` — **runs in the NEXT app but is NOT NEXT** | `projects/dgl.md` |
 | **CLICX** (PB) | collections `color` `spacing` `radius` `size-generic` · screens named `X.NN-NN.A \| name` | `projects/clicx.md` |
+| **PTP** (Paotang) | flow screens are INSTANCES named `PTP/<Module>/<Screen>_<MonYYYY>` · product font Kanit · boards named `Permutation: Pg_<Name>` | `projects/ptp.md` |
 
 ---
 
@@ -73,7 +74,7 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 3. Load `projects/<name>.md` in full, plus the references needed (see the References table)
 
 ### Phase 1 — Profile (read-only)
-- Traverse **selection scope only** (never walk the whole page — node cap / slow), and **skip `visible === false` subtrees** — a hidden component must not produce cases (the 2026-08-06 run generated widget and banner cases for components that were eye-toggled off). Collect: archetype signals, component instances, lists/images, bound variable modes
+- Traverse **selection scope only** (never walk the whole page — node cap / slow), and **skip `visible === false` subtrees** — a hidden component must not produce cases. Collect: archetype signals, component instances, lists/images, bound variable modes
 - **Map components → categories** using the `component → category` table in `projects/<name>.md` (key or name pattern). No match → **flag "unmapped component — add it to projects/<name>.md"; never guess**
 - **Find existing cases**: run `scripts/scan-cases.js` (selection / siblings) to locate `Permutation*` containers and `Case#N` labels. If nothing is found with confidence → **ask the user where cases are kept; never assume there are none**
 - Take one screenshot of the base as the visual arbiter
@@ -105,22 +106,22 @@ N total → minus existing / N-A → M remaining → proposing 🔴x 🟡y ⚪z
 | — | S | Screen | Empty (`screen/empty`) — เป็นไปไม่ได้: มีบัญชี savings เสมอ | — | §Screen facts | ⊘ |
 ```
 (rows are examples — real ids and captions always come verbatim from `case-library.md` / §Screen facts)
-The table shows **every row of every pack pulled for this screen — ✓ existing and ⊘ N/A (with its reason) included, not just the ✗ proposals**. A row that never appears is where dropped cases hide (the 2026-08-06 run silently omitted `image/asset load fail` even though the Image pack carries it — a full table makes that omission visible instead of silent). ⊘ rows may be grouped at the bottom.
+The table shows **every row of every pack pulled for this screen — ✓ existing and ⊘ N/A (with its reason) included, not just the ✗ proposals**. A row that never appears is where dropped cases hide — a full table makes an omission visible instead of silent. ⊘ rows may be grouped at the bottom.
 plus where the board will be placed. **The user trims / adds / reorders, then confirms. Nothing is written before that.**
 
-- **Trims are classified, and "impossible" trims are persisted.** When the user cuts a case, ask which kind it is: **เป็นไปไม่ได้ (business rule)** → append a row to `projects/<name>.md` §Screen facts (screen · caseId · reason · date) so the next run pre-buckets it automatically · **แค่รอบนี้** → drop without persisting. (The 2026-08-06 test grew 7 identical "ต้องให้ข้อมูล ai เพิ่ม" notes because trims were never remembered.)
+- **Trims are classified, and "impossible" trims are persisted.** When the user cuts a case, ask which kind it is: **เป็นไปไม่ได้ (business rule)** → append a row to `projects/<name>.md` §Screen facts (screen · caseId · reason · date) so the next run pre-buckets it automatically · **แค่รอบนี้** → drop without persisting.
 - **CTA reminder**: if Phase 1 found CTA buttons on the base, add one line to this message — case specs should state where each CTA navigates (CLICX grammar: the 🔗 marker line). Targets come from the brief; unknown → `⚠️ ยืนยัน target`.
 
 Anyone who only wanted the case list stops here.
 
 ### Phase 4 — Scaffold
-**Gate G1 first: §Board anatomy in `projects/<name>.md` must be verified against a live board in THIS file — not yet (or the team's style changed) → run `scripts/harvest-board.js` VERBATIM** against a board the team already made in that file — never a hand-shortened version (a shortened harvest missed a connector in the pilot). It returns all 10 items (shell · spacing per level · font + weight + lineHeight · colors · caption shape · slot sizes · sub-groups · links incl. `otherLinesNearby` · placement + `siblingBoards` · naming). Compare with `projects/<name>.md`; if it differs or is missing, **update the project file first**. Record the base's node count now (for G5). Then build:
-0. **Sibling-duplicate guard**: run `scripts/scan-cases.js` over the sibling boards in the same section first; if the confirmed case set is **≥90% identical (by caseId) to a sibling board whose base is a different screen** → stop and confirm with the user before building — an enumeration that ignores its own base produces exactly this signature (three near-identical boards shipped this way on 2026-08-06). Siblings without stamps carry no caseIds → compare by case **names**; if that is not possible either, report `guard skipped — siblings unstamped` instead of passing silently
-1. **Paste `scripts/scaffold-kit.js` as the prelude** of the build call, then write project-specific code with its factories (`alFrame` → append → `finalizeFixed` / `growWithContent`; `placeholder`; `stampCase`/`stampBoard`; `elbowLink`) — the factories encode the auto-layout ordering that silently collapsed frames in both pilots
+**Gate G1 first: §Board anatomy in `projects/<name>.md` must be verified against a live board in THIS file — not yet (or the team's style changed) → run `scripts/harvest-board.js` VERBATIM** against a board the team already made in that file — never a hand-shortened version (a shortened harvest drops items, e.g. the links). It returns all 10 items (shell · spacing per level · font + weight + lineHeight · colors · caption shape · slot sizes · sub-groups · links incl. `otherLinesNearby` · placement + `siblingBoards` · naming). Compare with `projects/<name>.md`; if it differs or is missing, **update the project file first**. Record the base's node count now (for G5). Then build:
+0. **Sibling-duplicate guard**: run `scripts/scan-cases.js` over the sibling boards in the same section first; if the confirmed case set is **≥90% identical (by caseId) to a sibling board whose base is a different screen** → stop and confirm with the user before building — an enumeration that ignores its own base produces exactly this signature. Siblings without stamps carry no caseIds → compare by case **names**; if that is not possible either, report `guard skipped — siblings unstamped` instead of passing silently
+1. **Paste `scripts/scaffold-kit.js` as the prelude** of the build call, then write project-specific code with its factories (`alFrame` → append → `finalizeFixed` / `growWithContent`; `placeholder`; `stampCase`/`stampBoard`; `elbowLink`) — the factories encode the auto-layout ordering that otherwise silently collapses frames
 2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node + its screen→board link, which has to live on the SECTION)
-3. Placement from `siblingBoards`: pick a column count whose width fits the free span
+3. Placement from `siblingBoards`: pick a column count whose width fits the free span. **No free span where the project's ordering puts this board** (or the slot is narrower than the project's minimum board width) → **STOP and ask the user where it goes** — never squeeze the board, resize the team's section, or relocate it silently. Read the board's width back after the first group is appended, before building the rest
 4. Per case: label node (project's label style) + caption nodes + `placeholder()` + `stampCase()`
-5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). **The clone gate is per-RUNTIME**: the desktop Bridge may throw *"Cloning CONNECTOR nodes is not supported"* where `use_figma` clones the very same line fine (proven 2026-08-18) → on a Bridge throw, run the clone + re-point through **`use_figma`** instead; re-pointing works on both runtimes. Every runtime blocked → the user hand-draws or Cmd+D's an exemplar and you re-point it. `elbowLink`'s VECTOR is a placeholder of last resort — it never attaches; when the project's links attach, say so. Either way **replicate the exemplar: anchor (NEXT: the main INSTANCE inside the screen, magnet BOTTOM) · route (screen bottom-center → board top-center) · BOTH end caps** (VECTOR: per-vertex `strokeCap` via `setVectorNetworkAsync`) — the capless unattached "close enough" line is the most-repeated link mistake across projects (`board-grammar.md` §Link rule)
+5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). **The clone gate is per-RUNTIME**: the desktop Bridge may throw *"Cloning CONNECTOR nodes is not supported"* where `use_figma` clones the very same line fine (proven 2026-08-18) → on a Bridge throw, run the clone + re-point through **`use_figma`** instead; re-pointing works on both runtimes. Every runtime blocked → the user hand-draws or Cmd+D's an exemplar and you re-point it. `elbowLink`'s VECTOR is a placeholder of last resort — it never attaches; when the project's links attach, say so. Either way **replicate the exemplar: anchor (NEXT: the main INSTANCE inside the screen, magnet BOTTOM — but the screen FRAME when that instance overflows a clipping frame, else the line starts below the visible screen) · route (screen bottom-center → board top-center) · BOTH end caps** (VECTOR: per-vertex `strokeCap` via `setVectorNetworkAsync`) — the capless unattached "close enough" line is the most-repeated link mistake across projects (`board-grammar.md` §Link rule)
 6. Chunks of ~10 cells per call; every call starts with `guard(<file name>)` on the Bridge · `guard(<fileKey>)` under use_figma
 
 ### Phase 5 — Verify + report (gate G5)
@@ -130,7 +131,7 @@ Anyone who only wanted the case list stops here.
 ```
 สรุป: 14 cells → 🔴5 🟡6 ⚪3 · S:8 C:6 · T1:10 T2:3 T3:1
 🔗 figma.com/design/…?node-id=… · rollback: ลบ board "Permutation: Home" + เส้น link ของมัน
-fill ต่อ: Case#2 #5 #9 (🔴 ก่อน) · renumber-cases: ใช้ได้ (strict) · จอถัดไป: eKYC intro
+fill ต่อ: Case#2 #5 #9 (🔴 ก่อน) · renumber อัตโนมัติ: ใช้ได้ (strict) · จอถัดไป: eKYC intro
 ```
 
 ---
@@ -161,13 +162,12 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 
 ## THE CONTRACT (shared by every file and mode — do not change casually)
 
-**Caption**: there must be a **single label node** whose entire string is `Case#N` / `Case #N` (must satisfy the `renumber-cases` regex `/^\s*Case\s*#?\s*(\d+)\s*$/`). **How many other nodes (case name, description) and which language they use is per-project** — see `projects/<name>.md` §Board anatomy.
+**Caption**: there must be a **single label node** per case, in the project's label style (below). The default is `Case#N` / `Case #N` — the whole string, matching the strict-label regex `/^\s*Case\s*#?\s*(\d+)\s*$/`. **How many other nodes (case name, description) and which language they use is per-project** — see `projects/<name>.md` §Board anatomy.
 
-**Standard-case naming**: a case that exists in `case-library.md` keeps its library `id` and caption **verbatim** — never re-word a standard situation, and never invent a new name for one ("Session timeout" vs "Network reconnect" on sibling boards came from exactly this). New recurring situation → propose it as a library addition. Captions refer to sections/components by the **team's names from the component → category map** in `projects/<name>.md`, never the model's own labels — an unmapped component is already flagged in Phase 1, so by caption time every name has a source.
+**Standard-case naming**: a case that exists in `case-library.md` keeps its library `id` and caption **verbatim** — never re-word a standard situation, and never invent a new name for one (e.g. "Session timeout" on one board and "Network reconnect" on its sibling). New recurring situation → propose it as a library addition. Captions refer to sections/components by the **team's names from the component → category map** in `projects/<name>.md`, never the model's own labels — an unmapped component is already flagged in Phase 1, so by caption time every name has a source.
 
 > **🔴 Hard rule: harvest before scaffold.** Board style **differs per project** (spacing · weight · lineHeight · node count · link style). Before writing into a file you have not built in before, run **Gate G1** (Phase 4) first.
 > Never build from memory, from defaults, or from another project. No existing board at all → use the project file's defaults; none there either → **ask the user**.
-> *(Pilot 2026-07-27 got this wrong twice by guessing: caption shape first, then weight/lineHeight — one harvest would have caught both.)*
 
 **Placeholder frame** (phase 1): sized like the project's real screen slot, with a centered label
 `◻︎ Case Spec — awaiting design`. **Never use the words "Pending Design"** — on some boards that is a real status for a case the team hasn't designed yet.
@@ -178,10 +178,11 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 - **Store note**: stamps follow the runtime — `scaffold-kit.js` writes *plain* pluginData on the Bridge and falls back to *shared* pluginData (namespace `"permBuild"`) under use_figma, where plain throws (live-verified on both, 2026-09-21). `scan-cases.js` / `verify-board.js` read both. One asymmetry remains: a **plain-stamped board** (built on the Bridge — every board before 2026-09-21) is invisible under use_figma → AUDIT it via the Bridge. A shared-stamped board reads on both
 
 **Label styles** (per project, in `projects/<name>.md` §Verify config):
-- `strict` = the label node is exactly `Case#N` → **renumber-cases compatible** (NEXT)
+- `strict` = the label node is exactly `Case#N` → **renumber-compatible**: any renumbering tool or script that matches the strict-label regex can rewrite the numbers safely (NEXT)
 - `loose` = `Case #N - <name>` in one node (CLICX) → NOT renumber-compatible; renumbering there is manual — say so in the report
+- `indexed` = `<g>.<n> | <name>` or `#<n>[.<m>] <name>` in one node (PTP — two flow dialects) — no "Case" word at all → NOT renumber-compatible. Use it only when the project file says so; the scripts recognize all three
 
-**Board container**: named per the project's convention. `scan-cases.js` recognizes `Permutation:` / `Permutation_` / `… Permutations` / CLICX `X.NN-NN.B`, plus any `permBuildBoard`-stamped node. **Everything is written inside it, so deleting that one node rolls back the whole build** — the screen→board link is the one exception (it sits on the SECTION); delete it too.
+**Board container**: named per the project's convention. `scan-cases.js` recognizes `Permutation:` (NEXT early boards, PTP) / `Permutation_` / `… Permutations` / CLICX `X.NN-NN.B`, plus any `permBuildBoard`-stamped node. **Everything is written inside it, so deleting that one node rolls back the whole build** — the screen→board link is the one exception (it sits on the SECTION); delete it too.
 
 **Layout schools** (details in `references/board-grammar.md`): A flow+link · B grid-matrix · C section-per-tab. The school is a field in `projects/<name>.md` and projects can mix them.
 
@@ -200,7 +201,7 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 - **Never call `figma.commitUndo()` under use_figma** (it throws and the whole atomic batch silently no-ops)
 - On the Bridge, use **`getNodeByIdAsync`** only (`getNodeById` throws under documentAccess: dynamic-page)
 - `loadFontAsync` before setting characters; text inside an INSTANCE must go through `figma_set_instance_properties` (direct assignment fails silently)
-- **Auto-layout ordering matters**: set `layoutMode` **first**, then `resize()`, then finish with the sizing modes. Resizing before layoutMode silently leaves a frame hugging (a placeholder meant to be 844 tall collapsed to 21px in the pilot). A container that must grow with its content gets `counterAxisSizingMode = "AUTO"` **after** all children are appended
+- **Auto-layout ordering matters**: set `layoutMode` **first**, then `resize()`, then finish with the sizing modes. Resizing before layoutMode silently leaves a frame hugging (an 844-tall placeholder collapses to ~21px). A container that must grow with its content gets `counterAxisSizingMode = "AUTO"` **after** all children are appended
 - **Verify by reading values back** (placeholder and container width/height) — never assume a set stuck
 
 ## References (read when)

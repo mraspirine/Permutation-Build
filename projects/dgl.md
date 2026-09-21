@@ -32,7 +32,7 @@ FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F
 
 - **Case numbering restarts inside each group** (group 1 = Case#1–3, group 2 = Case#1–3 again) →
   duplicate numbers across one board are intentional here
-- **Label style = `loose`** (`Case#N - Name` in one node) → **NOT `renumber-cases` compatible**; renumbering is manual
+- **Label style = `loose`** (`Case#N - Name` in one node) → **NOT renumber-compatible**; renumbering is manual
 - Internal layer names: `Case` at every level; the row frame is `Permutations`; the title node is `Permutation Title`
 - **Link:** CONNECTOR `Permutation` · `#FAB900` · weight 5 · `ELBOWED` · magnet TOP on the board ·
   parent = SECTION. Flow links are `#4858E4` (`Diamond to Screen`, `Logic to Logic`) — do not confuse the two.
@@ -81,7 +81,7 @@ FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 ```js
-labelStyle: "loose",                      // Case#N - Name → NOT renumber-cases compatible
+labelStyle: "loose",                      // Case#N - Name → NOT renumber-compatible
 slotSizes: ["375x812","360x812"],         // legacy · small — ADD the base screen's own height when it scrolls
 titlesFullWidth: false,                   // group titles are FIXED width 646
 numbersScopedPerGroup: true,              // Case#N restarts per group → dup check runs per group

@@ -1,4 +1,4 @@
-// verify-board.js — the Phase 5 gate. Runs EVERY check the pilots used to hand-write, in one call.
+// verify-board.js — the Phase 5 gate. Runs every Phase 5 check in one call.
 // Paste VERBATIM into use_figma / figma_execute after filling CONFIG (values come from
 // projects/<name>.md §Verify config). Returns { pass, failures[], stats } — scaffold is DONE only
 // when pass === true. Never hand-write an abbreviated version of these checks.
@@ -6,7 +6,7 @@
 
 const CONFIG = {
   boardId: "<BOARD_ID>",           // the scaffolded board
-  labelStyle: "strict",            // "strict" = `Case#N` only · "loose" = `Case #N - Name` (e.g. CLICX)
+  labelStyle: "strict",            // "strict" = `Case#N` only · "loose" = `Case #N - Name` (CLICX) · "indexed" = `1.2 | Name` / `#2.1 Name` (PTP)
   expectedCases: 0,                // number confirmed in Phase 3 (0 = skip)
   slotSizes: ["390x844"],          // allowed screen-slot sizes for this project, "WxH"
   baseNodeId: "",                  // the base screen ("" = skip base-intact check)
@@ -21,6 +21,7 @@ const CONFIG = {
 
 const STRICT_RE = /^\s*Case\s*#?\s*(\d+)\s*$/;
 const LOOSE_RE = /^\s*Case\s*#?\s*(\d+)\s*(?:[-–—:.]\s*(.+))?\s*$/s;
+const INDEXED_RE = /^\s*(?:#\s*(\d+(?:\.\d+)*)\s+|(\d+\.\d+)\s*\|\s*)(.+?)\s*$/s;   // PTP: "1.2 | Name" or "#2.1 Name" — no "Case" word
 const REQUIRED_PD = ["caseId", "level", "tier", "priority", "status"];
 const SOLID_TYPES = ["FRAME", "SECTION", "GROUP", "COMPONENT", "INSTANCE"]; // overlap check ignores lines
 
@@ -33,13 +34,22 @@ function readPD(n, key) {
 }
 function labelOk(text, style) {
   if (style === "strict") return STRICT_RE.test(text);
+  if (style === "indexed") return INDEXED_RE.test(text);
   const m = text.match(LOOSE_RE);
   return !!m && /^\s*Case/i.test(text);
+}
+// any of the three label grammars — used to FIND the label node; labelOk() then checks the project's style
+function isLabelText(text) {
+  return typeof text === "string" && ((/^\s*Case/i.test(text) && LOOSE_RE.test(text)) || INDEXED_RE.test(text));
+}
+function labelKey(text) {
+  const i = text.match(INDEXED_RE); if (i) return i[1] || i[2];
+  const m = text.match(LOOSE_RE); return m ? Number(m[1]) : null;
 }
 function findDup(nums) {
   const seen = new Set(), dup = new Set();
   nums.forEach(n => { if (n != null) { if (seen.has(n)) dup.add(n); seen.add(n); } });
-  return [...dup].sort((a, b) => a - b);
+  return [...dup].sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true }));
 }
 
 async function verify() {
@@ -60,7 +70,7 @@ async function verify() {
   const rows = cells.map(cell => {
     let pd = null; try { pd = JSON.parse(readPD(cell, "permBuild")); } catch (e) {}
     const label = cell.findOne
-      ? cell.findOne(x => x.type === "TEXT" && /^\s*Case/i.test(x.characters || "") && LOOSE_RE.test(x.characters))
+      ? cell.findOne(x => x.type === "TEXT" && isLabelText(x.characters || ""))
       : null;
     const slot = cell.findOne
       ? cell.findOne(x => (x.type === "FRAME" || x.type === "INSTANCE") && x.height > 600)
@@ -93,7 +103,7 @@ async function verify() {
 
   // Case numbers must be unique — across the whole board, or within each group when the project
   // restarts numbering per group (DGL). Group = the board child the cell sits under.
-  const numOf = r => { const m = r.label && r.label.characters.match(LOOSE_RE); return m ? Number(m[1]) : null; };
+  const numOf = r => (r.label ? labelKey(r.label.characters) : null);
   const groupOf = cell => {
     let p = cell, hops = 0;
     while (p && p.parent && p.parent.id !== board.id && hops < 8) { p = p.parent; hops++; }
@@ -103,7 +113,7 @@ async function verify() {
   if (CONFIG.numbersScopedPerGroup) {
     const byGroup = {};
     rows.forEach(r => { const g = groupOf(r.cell); (byGroup[g] = byGroup[g] || []).push(numOf(r)); });
-    dup = [...new Set(Object.keys(byGroup).flatMap(g => findDup(byGroup[g])))].sort((a, b) => a - b);
+    dup = [...new Set(Object.keys(byGroup).flatMap(g => findDup(byGroup[g])))];
     if (dup.length) F.push("duplicate case numbers within a group: " + dup.join(","));
   } else {
     dup = findDup(rows.map(numOf));

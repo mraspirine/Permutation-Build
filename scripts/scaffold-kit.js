@@ -1,7 +1,7 @@
 // scaffold-kit.js — factory prelude for Phase 4 build code.
 // PASTE THIS BLOCK FIRST inside the same figma_execute / use_figma call, then write the
 // project-specific build code below it using these factories. They encode the auto-layout
-// ordering that bit both pilots (resize before layoutMode silently collapses frames to hug),
+// ordering (resize before layoutMode silently collapses frames to hug),
 // the identity guard, and the pluginData contract — so build code never re-derives them.
 //
 // Correct order, enforced by the factories:

@@ -1,6 +1,6 @@
 # Project: CLICX (PB) — permutation profile
 
-> Learned 2026-07-27 by harvesting `G.02-01.B` in `[Test Case] UI State & Edge Case Generator`, page `AI Test 02`, section `Home`. Corpus reference: `permutation-reference.md` §4 (CLICX).
+> Learned 2026-07-27 by harvesting `G.02-01.B` in `[Test Case] UI State & Edge Case Generator`, page `AI Test 02`, section `Home`.
 
 ## About / recognition
 - Product: CLICX — KTB / Infinitas digital bank app
@@ -39,7 +39,7 @@ FRAME '<FLOW>.<SS>-<SS>.B'        [V · gap 100 · padding 100]  fill #EAEEF4   
 | `type=note` | Thai description | 16px Regular · lh 24 |
 | `type=note -bold` | emphasized note | 14–16px Medium |
 Boolean prop `Show Description#1:3` toggles the secondary line.
-> The set did not resolve through `importComponentSetByKeyAsync` (it behaves as local) → **clone an existing instance in the file instead** (that is what the pilot did).
+> The set did not resolve through `importComponentSetByKeyAsync` (it behaves as local) → **clone an existing instance in the file instead**.
 
 | Role | Font | Size / line-height | Color |
 |---|---|---|---|
@@ -53,11 +53,11 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
   (`VariableID:9c2d0eaa6e60f55a86a78c7723c51f5391ccb2b9/2479:405`), never set as a raw color.
   Every existing board (`C.01-01.B` … `G.03-01.B`) is bound; resolve it off an exemplar's
   `fills[0].boundVariables.color.id` → `getVariableByIdAsync` → `setBoundVariableForPaint`.
-  *(Missed on the 2026-07-31 build — the hex matched but the binding was absent, and the designer caught it.)*
+  A matching hex without the binding is still wrong.
 - Title block fill `#CDD5DF` — comes free when you clone an existing instance
 - Internal layer names: `permutation` → `container` → `case` → `Title` / `screen permutation`
 - **Every `permutation` frame has the SAME width** = board inner width (board width − 2×100), regardless of how many cases its row holds. The section-title instance is set to **`layoutSizingHorizontal = "FILL"`** so the grey header bar spans the full frame. Only the inner `container` row hugs its content.
-- **Link from screen to board: CONNECTOR named `Permutation`** · stroke **`#F79009`** · weight **4** · `ELBOWED` · no dash · start = **the main screen INSTANCE inside the `.A` frame** (e.g. `my asset screen`, `home master screen`), magnet **BOTTOM** → end = **the `.B` board frame**, magnet **TOP** · parent = the SECTION
+- **Link from screen to board: CONNECTOR named `Permutation`** · stroke **`#F79009`** · weight **4** · `ELBOWED` · no dash · start = **the main screen INSTANCE inside the `.A` frame** (e.g. `my asset screen`, `home master screen`), magnet **BOTTOM** — **except when that instance is taller than the clipping 812px frame** (`home master screen` is 1509 tall): anchor the `.A` FRAME itself, or the line starts ~700px below the visible screen → end = **the `.B` board frame**, magnet **TOP** · parent = the SECTION
   > **Draw it by CLONING an existing `Permutation` connector, then re-pointing both endpoints** — verified 2026-07-31:
   > ```js
   > const c = src.clone(); src.parent.appendChild(c);
@@ -71,6 +71,8 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 - Flow connectors are a different thing: `Primary Line` · `#384250` · weight 4 · **dashed 8,8** — those link screens to logic boxes, not to boards
 - **Placement:** screens sit at `y≈1000–2800`; every permutation board sits at **`y = 3562`** and they are ordered left→right by flow letter (`C.01` … `H.02`). Gap between neighbouring boards ≈ **240**
 - **Board width** grows with its widest row (no wrapping) — check `siblingBoards` and keep it inside the free span
+- **Minimum board width is 1200**: the `type=section title` block has `minWidth 1000` (+ 2×100 padding), so a one-column board is still 1200 wide — never plan a slot narrower than that (measured 2026-09-21)
+- **Page variant — the team's original CLICX page** (section `Product highlight - Entry point from Home`, harvested 2026-09-21 from `B.01-01.B`): the group frame is named `permutation container` [V · gap 80], its inner `container` is [V · gap 80] and each row `container` is [H · gap 100]; boards sit at `y = 3270`; the screen→board connector is named `Diamond to Screen - Yes`, weight 5 (same `#F79009`, caps and BOTTOM→TOP anchors). Match the neighbours on the page you build on
 
 ## Layout (school and conventions)
 - **School A/C hybrid**: a permutation band below the flow, each board split into `permutation` sections by category
@@ -83,7 +85,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 - Screens: `<FLOW>.<SS>-<SS>.A | <name>` — **`.A` = the real screen**
 - Boards: **`<FLOW>.<SS>-<SS>.B`** (a second board for the same screen becomes `.C`)
 - Case label: **`Case #N - <case name>`** (space after Case, hyphen, English name)
-- **Note body = description, BLANK LINE, then emoji-marked instruction lines** (designer request 2026-07-31).
+- **Note body = description, BLANK LINE, then emoji-marked instruction lines**.
   Anything that is not the case description itself gets an emoji marker on its own line instead of
   being buried in prose, and the marker block is separated from the description by an **empty line**
   (`\n\n`, not `\n`) — it makes the "what do I actually have to check" lines scannable:
@@ -95,12 +97,12 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
   | 🚫 | สิ่งที่ไม่นับรวม (excluded from the case) |
   Thai has no word spaces — put real spaces at natural break points, otherwise one long run pushes
   past the 375px note width and **orphans the emoji alone on its line**.
-- ⚠️ **This label does NOT satisfy the `renumber-cases` regex** (`/^\s*Case\s*#?\s*(\d+)\s*$/` requires the whole string to be just `Case #N`). CLICX boards are therefore not renumber-cases compatible by design — follow the CLICX convention and tell the user that renumbering must be done by hand here.
+- ⚠️ **This label does NOT satisfy the strict-label regex** (`/^\s*Case\s*#?\s*(\d+)\s*$/` requires the whole string to be just `Case #N`). CLICX boards are therefore not renumber-compatible by design — follow the CLICX convention and tell the user that renumbering must be done by hand here.
 
 ## Component → category (Phase 1, L2 detection)
 | If instance.name matches | → category |
 |---|---|
-| `/^(gen\|cus)_ic_/i` | **icon asset — NOT a pack. Check this row FIRST** (2026-08-11: `gen_ic_my-asset` false-matched the account-card row below) |
+| `/^(gen\|cus)_ic_/i` | **icon asset — NOT a pack. Check this row FIRST** (otherwise `gen_ic_my-asset` false-matches the account-card row below) |
 | `/asset\b/i`, `/acc detail/i`, `/acc type/i`, `/savings account/i` | account card / list item (data states: long name, max amount, zero/negative) — pulls Tier-3 **Account list** + **Balance display** packs |
 | `/gen_ic_eye/i` | hide-balance toggle — exception to the icon row: this icon IS the Balance-display trigger. ⚠️ the eye can sit NESTED inside `total balance` and not appear as its own top-level instance (confirmed on `A.01-01.A` 2026-08-11) — if a balance amount is visible, check for the eye inside it before bucketing hide-balance ⊘ |
 | `/tooltip/i`, `/ic_circle-information/i` | info tooltip |
@@ -126,7 +128,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | Copy | strings are bound to **Frontitude keys** (e.g. `system.error.notification.loading`) |
 
 ## Screen facts (business rules per screen — grown by Phase 3 trims)
-> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**. Rows below come from the designer notes on page `AI Test 05` (6 Aug 2026 test run).
+> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**. Rows below come from the team's notes on the boards.
 | Screen (name pattern) | Case (`caseId`) | Rule | Learned |
 |---|---|---|---|
 | `home` / `home / intelligent hub` | `screen/empty` | เข้าหน้า Home ได้แปลว่ามีบัญชี savings แล้ว → empty ทั้งจอเกิดไม่ได้ (empty รายส่วน เช่น widget ว่าง ยังมีได้) | 2026-08-11 |
@@ -135,7 +137,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 ```js
-labelStyle: "loose",          // "Case #N - <name>" in one node → NOT renumber-cases compatible (manual renumber; say so in the report)
+labelStyle: "loose",          // "Case #N - <name>" in one node → NOT renumber-compatible (manual renumber; say so in the report)
 slotSizes: ["375x812"],
 titlesFullWidth: true,        // every `permutation` frame = board inner width; section-title instance is FILL
 numbersScopedPerGroup: true,  // Case#N RESTARTS in every `permutation` group (General #1-9, Touch area #1-4, Loading #1-6)
@@ -157,11 +159,7 @@ row3 all 144 · row4 all `Title` 336 — **per row, not per board**.
 > tallest label and tallest note → append `\n` to the rest until each reaches its target. Label floor
 > is **72 (2 lines)**. **Never** set `layoutSizingVertical = "FIXED"` on the caption frame — it looks
 > identical on canvas but breaks the moment someone edits the copy.
-> *(Built it the FIXED-height way on 2026-07-31; the designer asked for the team's way instead.)*
 
 > ⚠️ **pluginData under `use_figma`**: `setPluginData`/`getPluginData` are blocked by the official MCP →
 > `scaffold-kit.js` falls back to `setSharedPluginData("permBuild", <key>, …)`. `verify-board.js` and
 > `scan-cases.js` must read **both**. Only the figma-console Bridge can write plain pluginData; under use_figma `scaffold-kit.js` writes the shared store instead.
-
-## DS hooks (phase 2)
-Variable collections `color` / `spacing` / `radius` / `size-generic`. Screens are built from instances such as `my asset screen`, `asset`, `acc detail`, `top bar`, `status bar`. See `figma-design-build/projects/pb.md` + `pb.registry.md` for component keys.

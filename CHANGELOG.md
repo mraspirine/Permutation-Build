@@ -46,6 +46,21 @@
 - **Rollback = board + เส้น link** (เส้นอยู่บน SECTION ไม่ได้อยู่ใน board)
 - **Sibling-duplicate guard** — board ข้างเคียงไม่มี stamp ให้เทียบด้วยชื่อเคส หรือรายงานว่าข้าม ห้ามผ่านเงียบ
 - **case-library: id ของแถวใน pack = `<pack>/<ชื่อแถว kebab-case>`** — สร้าง `knownCaseIds` ได้แบบ mechanical
+- **โปรเจคใหม่: PTP (`projects/ptp.md`)** — เรียนจาก board `Permutation: Pg_Setting` 2 อัน: board เป็น GRID
+  (4/3 คอลัมน์ · colGap 120 · rowGap 40) · หัว/caption เป็น instance `Title Block` จาก library · จอใน flow เป็น INSTANCE
+- **labelStyle ตัวที่ 3: `indexed`** = `<g>.<n> | <name>` หรือ `#<n>[.<m>] <name>` (PTP มี 2 dialect ตาม flow · ไม่มีคำว่า Case เลย ·
+  หัวกลุ่มที่ใช้ grammar เดียวกันไม่ถูกนับเป็นเคส) — scan-cases / verify-board /
+  harvest-board รู้จักแล้ว · เดิม board ของทีม PTP อ่านได้ 0 เคส · CONTRACT: label เป็นรายโปรเจค (strict / loose / indexed)
+- **PTP build บน canvas (dialect A, GRID)** — board `Permutation: Pg_Setting` 5 เคส ผ่าน G5 ด้วย labelStyle `indexed` ·
+  บทเรียนลง ptp.md: สร้าง Title Block ด้วย `createInstance()` ไม่ clone จาก board ทีม · ลำดับวาง GRID · คำอธิบายเคสบรรทัดเดียว
+- **harvest-board รู้จัก board ของ CLICX** — เดิมหา sibling/board ด้วยคำว่า "permutation" ในชื่อ → `B.01-01.C` มองไม่เห็น
+  (`siblingBoards: []`) และ connector ที่ชื่อ "Permutation" ถูกนับเป็น board · label แบบ loose ไม่ถูกเก็บ
+  (`labelSamples: []`) · ตอนนี้ใช้ `isBoard()` (ชื่อ + type) + regex strict/loose · คืน `labelStyle` · มี node self-check แล้ว
+- **Link anchor: ข้อยกเว้น overflow** — instance หลักที่สูงกว่า frame ที่ clip (จอ scroll) ทำให้เส้นเริ่มใต้จอที่มองเห็น
+  ดูเหมือนเส้นไม่เชื่อมกับจอ (เจอจริงบน CLICX Home: instance 1509 ใน frame 812) → ให้ anchor ที่ FRAME แทน + อ่านค่ากลับ
+- **Placement: ไม่มีที่ว่างตามลำดับ flow → หยุดถามผู้ใช้** · อ่านความกว้าง board กลับหลังกลุ่มแรก
+- **case-library: backtick เป็น markup ของไฟล์** ไม่ลง canvas
+- **clicx.md: board กว้างขั้นต่ำ 1200** (title block `minWidth 1000`) + page variant `Im (CLICX)`
 - **next.md: ตาราง Tier-3 ids ที่อยู่บน board แล้ว** (8 id อ่านกลับจาก canvas) — กัน caption เพี้ยนข้าม board
 
 **เอกสาร**
@@ -56,7 +71,7 @@
 
 ---
 
-## 2026-08-18 — Audit fixes (skill-md-auditor 9.5/12 → pass)
+## 2026-08-18 — Audit fixes (skill audit 9.5/12 → pass)
 
 แก้ตามผล audit โดยไม่เปลี่ยน pipeline/gate ใด ๆ
 
@@ -188,5 +203,5 @@ scaffold ที่ต้องการ stamp ให้รันบน Bridge; b
 - skill ตัวแรก: pipeline 6 phase (Profile → Enumerate → Confirm →
   Scaffold → Verify) หยุดที่ Phase 3 ได้ถ้าต้องการแค่ case list
 - case base 2 ระดับ (screen / component) 3 tier จาก FigJam ทีม + corpus
-- `scan-cases.js` + project file NEXT · แทนที่ `ui-state-edge-generator`
+- `scan-cases.js` + project file NEXT · แทนที่ skill วิเคราะห์ state ตัวเดิม
   (deprecated วันเดียวกัน)

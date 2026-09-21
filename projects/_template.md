@@ -38,7 +38,7 @@
 - Shared boards, if any: <e.g. a Common Handling board holding server/timeout cases → individual screens must not duplicate them>
 
 ## Naming
-- Board name pattern: <...> · how it works with `screen-rename` · section band pattern: <...>
+- Board name pattern: <...> · how it follows the base screen's name / number · section band pattern: <...>
 
 ## Component → category (Phase 1, L2 detection)
 | If instance.name / key matches | → category (pack in case-library) |
@@ -62,10 +62,7 @@
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 ```js
-labelStyle: "<strict|loose>",   // strict = `Case#N` exactly (renumber-compatible) · loose = `Case #N - name`
+labelStyle: "<strict|loose|indexed>",   // strict = `Case#N` exactly (renumber-compatible) · loose = `Case #N - name` · indexed = `1.2 | name`
 slotSizes: ["<WxH>", ...],
 titlesFullWidth: <true|false>,  // do group headers span the group's full width?
 ```
-
-## DS hooks (phase 2)
-Components the recipes will instantiate → registry / keys · how text is bound · the radius and spacing scales that exist

@@ -33,7 +33,7 @@ cp -R figma-permutation-build ~/.claude/skills/
 
 ## ใช้กับโปรเจคตัวเองครั้งแรก
 
-ในนี้แถมโปรเจคที่สอนไว้แล้ว 3 ตัว (`projects/next.md`, `projects/dgl.md`, `projects/clicx.md`)
+ในนี้แถมโปรเจคที่สอนไว้แล้ว 4 ตัว (`projects/next.md`, `projects/dgl.md`, `projects/clicx.md`, `projects/ptp.md`)
 แต่นั่นคือ**ธรรมเนียมของทีมนึงเท่านั้น ไม่ใช่ค่ากลางของทุกคน** — พอเอาไปใช้กับโปรเจคตัวเอง มันจะ:
 
 1. รู้ตัวว่าไม่รู้จักโปรเจคนี้
@@ -64,6 +64,7 @@ figma-permutation-build/
 │   ├── next.md                 NEXT — label แบบ strict, จอ 390×844
 │   ├── dgl.md                  DGL Revamp — อยู่แอปเดียวกับ NEXT แต่ board คนละสไตล์
 │   ├── clicx.md                CLICX — caption เป็น instance, จอ 375×812
+│   ├── ptp.md                  PTP — board เป็น GRID, label แบบ `1.2 | ชื่อ`, จอเป็น instance 390×844
 │   └── _template.md            แบบฟอร์มเปล่าสำหรับบันทึกโปรเจคใหม่
 └── scripts/                    โค้ดที่ยิงเข้า Figma
     ├── scan-cases.js           สำรวจว่ามี board/เคสอะไรอยู่แล้ว ทำไปกี่ %
@@ -94,6 +95,7 @@ figma-permutation-build/
 
 - `strict` — label เป็น `Case#N` เพียวๆ → ใช้เครื่องมือ renumber อัตโนมัติได้ (NEXT ใช้แบบนี้)
 - `loose` — เป็น `Case #N - ชื่อเคส` ใน node เดียว (DGL, CLICX) → renumber เองมือ
+- `indexed` — เป็น `1.2 | ชื่อเคส` ไม่มีคำว่า Case เลย (PTP) → renumber เองมือ
   ซึ่ง skill จะเตือนเรื่องนี้ในรายงานทุกครั้ง จะได้ไม่มีใครไปกดเครื่องมือแล้วงง
 
 ## ความปลอดภัย
@@ -107,13 +109,10 @@ figma-permutation-build/
 
 ```bash
 node scripts/scan-cases.js      # เทส regex, ชื่อ board, เลขซ้ำ
-node scripts/scaffold-kit.js    # เช็ค syntax ของ factory
+node scripts/scaffold-kit.js    # เช็ค factory + stamp/guard ทั้งสอง runtime (mock)
+node scripts/harvest-board.js   # เทสการจำชื่อ board + รูปแบบ label
 node scripts/verify-board.js    # เทส logic ของ label + เลขซ้ำ
 ```
-
-ยกเว้น `harvest-board.js` ตัวเดียวที่รันใน Node ตรงๆ ไม่ได้ — มันใช้ `return await`
-ที่ระดับบนสุด ซึ่งทำงานได้เฉพาะใน `figma_execute` / `use_figma` (พวกนั้นห่อโค้ดใน
-async function ให้อยู่แล้ว) ตั้งใจเขียนแบบนั้นเพราะมันเกิดมาเพื่อ paste ลง Figma ทั้งก้อน
 
 ## ข้อจำกัดที่รู้อยู่
 

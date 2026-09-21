@@ -1,6 +1,6 @@
 # Project: NEXT (Krungthai NEXT) — permutation profile
 
-> Written by hand from the corpus (`permutation-reference.md` §1-2, §7) + `permutation-layout-analysis.md`, then corrected against live boards during the 2026-07-27 pilot. Keep updating as more boards are harvested.
+> Corrected against live boards (first harvest 2026-07-27). Keep updating as more boards are harvested.
 
 ## About / recognition
 - Product: Krungthai NEXT — Thai mobile banking (iOS-first)
@@ -40,7 +40,7 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 - Fonts seen inside legacy screens (`Krungthai Fast`) belong to **the screens, not the captions** — do not mix
 - Internal layer names: the team reuses `case` at every level (or auto names like `Frame 10000xxx`)
 - **Link:** CONNECTOR named `Permutation` · `#FAB900` · weight 5 · `ELBOWED` · from the **main INSTANCE inside the screen (magnet BOTTOM)** → **board (magnet TOP)** · parent = SECTION
-  **2026-08-18 (verified on healthy team lines 302749/302753 + a hand-drawn exemplar):** caps **`TRIANGLE_FILLED` at the screen end · `ARROW_LINES` into the board**. **Anchor = the main screen INSTANCE inside the frame (magnet BOTTOM) → the board frame (magnet TOP)** — 276:304854 (frame-bound) and 276:304468 (endpoints → SECTION, loose) are broken outliers; never pick them as the exemplar. Route = screen bottom-center → board top-center (straight when aligned, elbow when not — no need to move the board). In this file the **desktop Bridge cannot clone ANY connector** (healthy ones included, 3/3 throw) and `createConnector` is undefined in both runtimes — **but `use_figma` (official MCP) clones + re-points the same lines fine** (proven 2026-08-18: minted a complete line — right section, right caps, right endpoints — fully programmatic, no human step). Recovery ladder: ① clone + re-point via `use_figma` ② human hand-draw/Cmd+D + plugin re-point ③ capped VECTOR placeholder. The VECTOR fallback (per-vertex caps via `setVectorNetworkAsync`) is a visual placeholder only — it does not attach, and **an unattached line gets rejected** (29.1 build, user feedback). Full checklist: board-grammar §Link rule.
+  **2026-08-18 (verified on healthy team lines 302749/302753 + a hand-drawn exemplar):** caps **`TRIANGLE_FILLED` at the screen end · `ARROW_LINES` into the board**. **Anchor = the main screen INSTANCE inside the frame (magnet BOTTOM) → the board frame (magnet TOP)** — 276:304854 (frame-bound) and 276:304468 (endpoints → SECTION, loose) are broken outliers; never pick them as the exemplar. Route = screen bottom-center → board top-center (straight when aligned, elbow when not — no need to move the board). In this file the **desktop Bridge cannot clone ANY connector** (healthy ones included, 3/3 throw) and `createConnector` is undefined in both runtimes — **but `use_figma` (official MCP) clones + re-points the same lines fine** (proven 2026-08-18). Recovery ladder: ① clone + re-point via `use_figma` ② human hand-draw/Cmd+D + plugin re-point ③ capped VECTOR placeholder. The VECTOR fallback (per-vertex caps via `setVectorNetworkAsync`) is a visual placeholder only — it does not attach, and **an unattached line gets rejected**. Full checklist: board-grammar §Link rule.
 - **Placement:** flow band at `y≈147–4200` · permutation band at **`y≈6176`** · boards ordered by x following the screen order in the flow (leaving gaps for screens that have no board yet)
 - **Board width:** choose a column count that fits the gap between neighbours — `n×390 + (n-1)×64 + 128`
 
@@ -48,7 +48,7 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 
 ## Layout (school and conventions)
 - **School A** (flow + permutation band + link)
-- Canvas: dark on the corpus boards · captions are **bilingual** (EN name + Thai condition)
+- Canvas: dark on the reference boards · captions are **bilingual** (EN name + Thai condition)
 - **Device variants are separate cases** (a `Small screen` case with a 360-wide slot), not extra columns
 - Granularity: one board per screen; one sub-group per case category (Input / Error Handling / Screen State / Coupon State …)
 - **A shared `Common Handling` board** (`Permutation_JUN26.02.1.8.1_…`) holds `Server Down · Unable Connect · Repeat Transaction · Session timeout` for the whole flow → **individual screens must not duplicate these** (check before enumerating)
@@ -58,14 +58,14 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | Form | Where | Example |
 |---|---|---|
 | **`Permutation_<full screen name>`** (underscore) | file `[Test Case] UI State & Edge Case Generator` / Universal Payment — **verified 2026-07-27** | `Permutation_JUN26.02.1.13.1_NEXT_USP Revamp Payment_Payment Information` |
-| Suffix `<Field> Permutations` | Apply LOC boards (corpus §1) | `Loan Amount Permutations` |
+| Suffix `<Field> Permutations` | Apply LOC boards | `Loan Amount Permutations` |
 - `scan-cases.js` recognizes `Permutation:` / `Permutation_` / `… Permutations` (and filters by node type so a title text node is not counted as a container)
-- Works with `screen-rename`: the `Permutation_` prefix inherits the number of the nearest normal screen above
+- The board name carries the base screen's full name, number included — when the screen is renamed or renumbered, rename the board to match
 - Section band (if present): `NEXT_Screen Flow_<REL.EPIC>_<FLOW>_<YYYYMMDD>`
 - **Label is `Case#N` (no space)** in the Universal Payment file; the regex accepts both forms, but match the neighbouring boards
 
 ## Component → category (Phase 1, L2 detection)
-> v1 matches on **name patterns**. Component keys are more precise — harvest them from `figma-design-build/projects/next.registry.md` and add them here. No match = **flag as "unmapped", never guess**.
+> Matches on **name patterns**. Component keys are more precise — add them here when known. No match = **flag as "unmapped", never guess**.
 
 | If instance.name matches | → category (pack in case-library) |
 |---|---|
@@ -106,7 +106,7 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | Face liveness | 12+5+3 | error catalog · motion challenge · environment — **module: run on the eKYC screen itself** |
 
 ### Tier-3 ids already on boards — reuse id + caption **verbatim** (read back from the canvas 2026-09-21)
-> A Tier-3 case that recurs gets its row here the first time it is minted; the next board copies it. (`button/interaction-states` drifted to "Button states" on its second board before this table existed.)
+> A Tier-3 case that recurs gets its row here the first time it is minted; the next board copies it.
 
 | id | caption (EN — TH) | on boards |
 |---|---|---|
@@ -133,12 +133,9 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 ```js
-labelStyle: "strict",                     // Case#N exactly → renumber-cases compatible
+labelStyle: "strict",                     // Case#N exactly → renumber-compatible
 slotSizes: ["390x844","360x844","440x844","375x812"],  // normal · small · large · legacy — for a standard 844 base
 // Slot height follows the BASE (§Board anatomy). Base not 844 tall → replace 844 with the base height
 // measured at G1, e.g. base 862 → ["390x862","360x862","440x862"]. Never resize slots to 844 to make this pass.
 titlesFullWidth: false,                   // NEXT headers are not forced to span the group
 ```
-
-## DS hooks (phase 2 — when screens get built)
-Components the recipes will instantiate (spinner / error state / toast / skeleton / keyboard) → grep keys from `figma-design-build/projects/next.registry.md` (optional, graceful — if it is missing, the recipe becomes a TODO). NEXT binds text via `setTextStyleIdAsync`; radius scale 0/16/24/32/Full; there is no 12px or 18px type.
