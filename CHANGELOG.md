@@ -62,6 +62,8 @@
 - LEARN ตรงกับตาราง Runtime (Bridge เมื่อ board ใหญ่) · AUDIT กับตาราง References พูดเรื่อง `DETAIL` ตรงกัน · เอ่ยชื่อ `BOARD_HINT` / `boardId`
 - `dgl.md`: ความกว้างขั้นต่ำ 1 คอลัมน์ = 503 (จากสูตรในไฟล์) — กฎ STOP ของ Phase 4 step 3 ใช้กับ DGL ได้แล้ว
 - ไม่ทำตาม: ตัด `compatibility` ใน frontmatter (เป็นฟิลด์ในสเปก) · เริ่ม Phase 4 ที่ 1 (project file อ้าง "step 3" อยู่) · แตกย่อหน้า G1 เป็นข้อย่อย
+- `next.md` §Screen facts: Common Handling board ครอบ `screen/error-full` · `screen/retry-loading` · `screen/block-retry` ด้วย (เจ้าของ flow ยืนยัน) —
+  จุดที่ Opus กับ Sonnet แตกเคสไม่ตรงกันบนจอ Payment 29.1
 
 **กฎ**
 - Phase 1: **board เป็นของ base นี้เมื่อ stamp `baseNodeId` หรือ `linkedFrom` ตรงกับ base เท่านั้น — ไม่ใช่ตามชื่อ** ·

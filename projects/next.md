@@ -127,6 +127,7 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | Screen | caseId | reason | date |
 |---|---|---|---|
 | `*` (any USP Revamp flow that has a `…_Common Handling` board — Top-Up: `1.12.1` · Payment: `1.8.1`) | `tmpl/server-down` · `tmpl/session-timeout` · repeat transaction | covered once by that flow's Common Handling board (Case#1–5) — check the board exists in THIS flow before applying | 2026-08-11 |
+| `*` (same scope as the row above) | `screen/error-full` · `screen/retry-loading` · `screen/block-retry` | the flow's Common Handling board also owns the full-screen error and its retry (Case#1 Server Down · Case#2 Unable Connect to Server) — confirmed by the flow owner; check the board exists in THIS flow before applying | 2026-09-22 |
 | `1.13.1 Select Top-Up` | `screen/empty` | the biller list is server master data and always has rows — "no rows" only happens as a fetch failure → `screen/error-full` | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `screen/loading-spinner` | list screens in this flow load with a skeleton, never a full-screen spinner | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `screen/loading-lazy` · `screen/block-retry` | the biller list is fetched once in full, no pagination | 2026-08-11 |
