@@ -76,7 +76,7 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 
 ### Phase 1 — Profile (read-only)
 - Traverse **selection scope only** (never walk the whole page — node cap / slow), and **skip `visible === false` subtrees** — a hidden component must not produce cases. Collect: archetype signals, component instances, lists/images, bound variable modes
-- **Map components → categories** using the `component → category` table in `projects/<name>.md` (key or name pattern). No match → **flag "unmapped component — add it to projects/<name>.md"; never guess**
+- **Map components → categories** using the `component → category` table in `projects/<name>.md` (key or name pattern) — **of the screen's OWN design system**: a partner screen embedded in another project's flow is mapped with its own project's table, while the board still follows the flow (Phase 0). Rows are checked top-down, NOT-a-pack rows first. No match → **flag "unmapped component — add it to projects/<name>.md"; never guess**
 - **Find existing cases**: run `scripts/scan-cases.js` (selection / siblings) to locate `Permutation*` containers and `Case#N` labels. If nothing is found with confidence → **ask the user where cases are kept; never assume there are none**
 - Take one screenshot of the base as the visual arbiter
 - **Report the profile** in this shape (values are an example):

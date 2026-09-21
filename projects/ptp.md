@@ -82,9 +82,13 @@ FRAME 'Permutation:' / 'Permutation: <Name>'   [V · gap 0 · padding 0]  no fil
 ## Component → category (Phase 1, L2 detection)
 | If instance.name matches | → category |
 |---|---|
-| `/Navbar/i`, `/Home Indicator/i`, `/Status Bar/i` | OS chrome — not a case pack |
+| `/Navbar/i`, `/Home Indicator/i`, `/Status Bar/i` | **OS / navigation chrome — NOT a pack. Check the NOT-a-pack rows FIRST** (seen on 7/7 screens, 2026-09-21) |
+| `/^ic_/i`, `/^icons?\//i` | **icon asset — NOT a pack** (`ic_chevron-left`, `icon/chevron_right`, `Icons/Check_Fill`, `icon/edit_square`) |
+| `/^(line\|divider\|section divider)$/i`, `/^background \//i` | decoration — NOT a pack |
+| `/^logo\//i` | logo asset — NOT a pack |
 | `/SOFCard/i` | source-of-fund account card — pulls Tier-3 **SOF card** + **Account restriction** packs |
 > Starter map only — fill it in as screens are profiled. No match = flag as "unmapped", never guess.
+> This map also applies to a PTP screen embedded in another project's flow (a PTP coupon screen inside a NEXT Top-Up flow): components follow the screen's own design system, the board follows the flow.
 
 ## Anchors (READ-ONLY)
 - File `lN13minj5i19c2fEyBSF3q`, page `PTP`: dialect A boards `438:196424` · `438:196511` · healthy link `438:196535` — dialect B boards `438:213486` · `438:213510` · `438:213786` · `438:213874`

@@ -69,6 +69,10 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 
 | If instance.name matches | → category (pack in case-library) |
 |---|---|
+| the top-level INSTANCE that fills the frame (named after the screen: `Confirmation Topup`, `Select Top-Up`) | **the screen itself — NOT a pack**; map its children instead |
+| `/^top ?bar$/i`, `/^status ?bar$/i`, `/^header$/i`, `/iphone indicator\|home ?indicator/i` | **OS / navigation chrome — NOT a pack. Check the NOT-a-pack rows FIRST** (seen on 4/4 Top-Up screens, 2026-09-21) |
+| `/^(back\|close\|symbol\|icon\|coupon icon)$/i` | **icon asset — NOT a pack** |
+| `/quick ?(button\|menu)\|shortcut/i` | `fav/list-count` + `scrolling/*` (horizontal rail) · confirmed 2026-08-11 · **sits above the button row**: `Quick Button` would otherwise match `/button/` |
 | `/text ?field/i`, `/input/i`, `/textbox/i` | `textfield/*` (+ `textfield-addon` if it is a money field) |
 | `/date ?picker/i` | `datepicker/*` → chains to `datecalendar`, `dateroller` |
 | `/calendar/i` | `datecalendar/*` |
@@ -79,7 +83,6 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | `/button\|cta/i` | interaction states (Default/Pressed/Disabled) — not a separate pack · id `button/interaction-states` (Tier-3 ids table) |
 | `/search ?bar\|search/i` | `textfield/*` (search field — no validation pack, no mandatory/optional) · confirmed 2026-08-11 |
 | `/switch\|segment\|tab ?bar/i` | navigation — tab change (axis 9), not a component pack · confirmed 2026-08-11 |
-| `/quick ?(button\|menu)\|shortcut/i` | `fav/list-count` + `scrolling/*` (horizontal rail) · confirmed 2026-08-11 |
 | `/^list$\|list ?item\|row/i` | list rows → `empty/section` · `text/*` (long name) · `image/*` (row logo) · `tmpl/entitlement` (row disabled) · confirmed 2026-08-11 |
 
 ## Anchors (READ-ONLY — for harvesting and comparison)

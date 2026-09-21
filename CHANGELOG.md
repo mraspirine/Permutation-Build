@@ -76,6 +76,9 @@
   (โปรเจคเดียวมีหลาย dialect: PTP 2 flow · CLICX หน้าต้นฉบับ · NEXT 2 รูปแบบชื่อ)
 - **scan-cases `DETAIL = false`** — คืนเฉพาะสรุปราย board สำหรับ use_figma ที่ response เกิน ~20 KB แล้ว error
 - **Project index: อ่านสัญญาณจากชื่อก่อน variables** · Phase 4 ข้อ 5 (เส้นโยง) ย่อจาก ~1,170 เหลือ ~520 ตัวอักษร รายละเอียดอยู่ใน board-grammar
+- **Component maps: แถว NOT-a-pack จากหลักฐานจริง** (ชื่อ instance บนจอ 4 / 7 / 7 จอของ NEXT / CLICX / PTP) — chrome · ไอคอน ·
+  ของตกแต่ง · instance ที่เป็นตัวจอเอง · NEXT ย้ายแถว quick ขึ้นเหนือแถว button (`Quick Button` เคยไป match `/button/`) ·
+  Phase 1: map component ตาม DS ของตัวจอ ไม่ใช่ตาม flow
 - **`scripts/smoke-test.js`** + README "เช็คว่าเครื่องพร้อม" — ให้คนในทีมเช็คเครื่องตัวเองก่อนใช้ครั้งแรก
 
 **เอกสาร**

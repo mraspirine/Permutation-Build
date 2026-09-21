@@ -108,6 +108,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | `/tooltip/i`, `/ic_circle-information/i` | info tooltip |
 | `/text group \d+:\d+/i` | label/value pair (max characters, max lines) |
 | `/top bar/i`, `/status bar/i` | OS chrome — not a case pack |
+| `/ screen$/i` (`home master screen`, `my asset screen`) | the screen itself — NOT a pack; map its children instead |
 | `/point note/i` | annotation, not a component under test |
 > No match = flag as "unmapped", never guess.
 
