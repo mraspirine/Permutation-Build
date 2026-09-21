@@ -193,4 +193,26 @@ const scan = scanCases();
 delete globalThis.figma;
 A(scan.counts.cases === 4 && scan.counts.designed === 2, 'unstamped team board: designed screens counted, got ' + scan.counts.designed + '/4');
 A(scan.counts.dupNumbers.length === 0 && scan.counts.renumberCompatible === true, 'numbering restarts per board: no cross-board dup alarm, got ' + JSON.stringify(scan.counts.dupNumbers));
+// indexed labels (PTP): `<g>.<n> | <name>` — no "Case" word at all
+p = parseLabel('1.2 | Account type exceed limited space ');
+A(p && p.n === '1.2' && p.name === 'Account type exceed limited space' && p.style === 'indexed' && p.strict === false, 'indexed PTP label');
+A(parseLabel('1 | Set Default name') === null && parseLabel('v1.2 | x') === null, 'group header / near-miss are not case labels');
+const icol = (lab, slot) => N('FRAME', 'Case', [N('INSTANCE', 'Title Block', [T(lab)]), slot]);
+globalThis.figma = { currentPage: { selection: [], children: [N('FRAME', 'Permutation: Pg_Setting', [N('FRAME', 'Contrainer', [N('FRAME', 'Case',
+  [icol('1.1 | Default', designedScreen()), icol('1.2 | Long Name', emptySlot()), icol('2.1 | Link 1 Acc', designedScreen())])])])] } };
+const iscan = scanCases();
+delete globalThis.figma;
+A(iscan.counts.cases === 3 && iscan.counts.designed === 2 && iscan.counts.indexedLabels === 3, 'indexed board: 3 cases, 2 designed, got ' + JSON.stringify(iscan.counts));
+A(iscan.counts.renumberCompatible === false && iscan.counts.dupNumbers.length === 0, 'indexed labels are not renumber-compatible, no dups');
+// PTP dialect B: `#1 Name` / `#2.1 Name`; the group header `#1 Group` uses the SAME grammar and must not count as a case
+p = parseLabel('#2.1 Savings account limit unreached');
+A(p && p.n === '2.1' && p.name === 'Savings account limit unreached' && p.style === 'indexed', 'hash-indexed PTP label');
+A(parseLabel('#1  Unable to link account').n === '1' && parseLabel('# hashtag') === null && parseLabel('1 Name') === null, 'hash-indexed edge cases');
+const hcell = (lab, slot) => N('FRAME', 'Frame 1000004022', [N('INSTANCE', 'Title Block', [N('FRAME', 'Content', [T(lab)])]), slot]);
+globalThis.figma = { currentPage: { selection: [], children: [N('FRAME', 'Permutation:', [N('FRAME', 'Frame 1000004026', [
+  N('INSTANCE', 'Title Block', [N('FRAME', 'Content', [T('#1 E-Saving Account')])]),
+  N('FRAME', 'Frame 1000004025', [hcell('#1 No E-Saving (PMT)', designedScreen()), hcell('#2 Have E-Saving (PMT)', designedScreen())])])])] } };
+const hscan = scanCases();
+delete globalThis.figma;
+A(hscan.counts.cases === 2 && hscan.counts.designed === 2, 'group header sharing the label grammar is not a case, got ' + JSON.stringify(hscan.counts));
 console.log('scan-cases v2 self-check OK');

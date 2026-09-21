@@ -191,4 +191,9 @@ A(labelOk("Case#3", "strict") && !labelOk("Case #1 - Name", "strict"), "strict s
 A(labelOk("Case #1 - Account sorting", "loose") && labelOk("Case#3", "loose"), "loose accepts both");
 A(!labelOk("Cases", "loose") && !labelOk("Note", "loose"), "loose rejects non-labels");
 A(JSON.stringify(findDup([1, 2, 2, 3])) === "[2]", "dup");
+A(labelOk("1.1 | Default", "indexed") && labelOk("2.3 | Link 3 Acc + ESaving (max)", "indexed"), "indexed style (PTP)");
+A(!labelOk("Case#3", "indexed") && !labelOk("1 | Group header", "indexed") && !labelOk("1.1 | Default", "strict"), "indexed is its own style");
+A(isLabelText("Case#3") && isLabelText("Case #1 - Name") && isLabelText("1.1 | Default") && !isLabelText("Permutation:") && !isLabelText("1 | CASA"), "label finder covers all three styles");
+A(labelOk("#1 No E-Saving (PMT)", "indexed") && labelOk("#2.1 Savings account limit unreached", "indexed") && !labelOk("# tag", "indexed"), "hash-indexed (PTP dialect B)");
+A(labelKey("#2.1 Savings") === "2.1" && labelKey("1.2 | Name") === "1.2" && labelKey("Case#7") === 7, "label keys");
 console.log("verify-board self-check OK");
