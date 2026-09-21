@@ -69,6 +69,8 @@ FRAME 'Permutation:' / 'Permutation: <Name>'   [V · gap 0 · padding 0]  no fil
 - Flow screens are INSTANCES named `<MonYYYY>/PTP revamp/<Module>/<Screen>` (plus loose FRAMES for popups and error screens)
 - **Link:** same CONNECTOR (`Permutation` · `#F98600` · `ELBOWED` · `TRIANGLE_FILLED` → `ARROW_LINES`) but **weight 5**, and it ends on the board's **`Title Block` instance (magnet TOP)** — in this flow that is the norm, not an outlier
 - Boards sit under or beside the screen they belong to, not in one shared band
+- Measured on all four boards: sub-group frame [V · gap 31–64], case row inside a `Content` wrapper [H · gap 80 · padding 80 · fill `#C4C8D4`] → **board width = `cols × 375 + (cols − 1) × 80 + 160`** (990 / 1445 / 1900 fit) · **minimum = 1 column = 535** · no fixed gap between boards — leave ≈ 200
+- A screen here is often one VARIANT of a component set (`State=Default | No link Acc | Linked all Acc`) placed several times: the default copy may already own the board — check the sibling copies before proposing a new one
 
 ## Layout (school and conventions)
 - **School B (grid-matrix)** with a School-A link from the screen
@@ -77,7 +79,9 @@ FRAME 'Permutation:' / 'Permutation: <Name>'   [V · gap 0 · padding 0]  no fil
 - Sub-groups: numbered `1 | …`, `2 | …`; component-level groups first (card states), screen-level groups after
 
 ## Naming
-- Board name: **`Permutation: Pg_<Name>`** (colon + space) · header text `Pg | <Name>`
+- Dialect A: **`Permutation: Pg_<Name>`** (colon + space) · header text `Pg | <Name>`
+- Dialect B: `Permutation:` with nothing after the colon, `Permutation: <Name>`, and free names such as `Guideline: Select Account` — a board there is recognized by its `Permutation` connector, not by its name
+- A second board for a screen that already has one: ask the user whether to extend the existing board instead
 
 ## Component → category (Phase 1, L2 detection)
 | If instance.name matches | → category |
@@ -93,7 +97,8 @@ FRAME 'Permutation:' / 'Permutation: <Name>'   [V · gap 0 · padding 0]  no fil
 ## Anchors (READ-ONLY)
 - File `lN13minj5i19c2fEyBSF3q`, page `PTP`: dialect A boards `438:196424` · `438:196511` · healthy link `438:196535` — dialect B boards `438:213486` · `438:213510` · `438:213786` · `438:213874`
 
-## Tier-3 packs (PTP-specific — read off the captions on the two boards)
+## Tier-3 packs (PTP-specific — read off the captions on the team's boards)
+> Pull a pack when the base belongs to that flow or carries that component.
 | Pack | ~cases | Notable cases |
 |---|---|---|
 | SOF card — nickname | 4 | Default · Set Nickname · Long Name · Disable |

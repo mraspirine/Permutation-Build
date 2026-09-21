@@ -60,7 +60,9 @@ async function textNode(str, font, size, opts) {
 // ---- captions built from a library component (CLICX, PTP) ----
 // A fresh instance of the same variant as `src`, with its boolean/text props copied. Never `src.clone()`:
 // a clone is born inside the team's own board (and, in a GRID, carries that grid's column span).
+// `src` = a team instance to copy the variant + props from, OR a published component KEY (string) from the project file.
 async function freshInstance(src) {
+  if (typeof src === "string") return (await figma.importComponentByKeyAsync(src)).createInstance();
   const main = await src.getMainComponentAsync();
   const inst = main.createInstance();
   const props = {};
@@ -81,10 +83,31 @@ async function setInstanceTexts(inst, strings) {
 // match the tallest — the caption frames stay HUG, so later copy edits never clip. Fonts must be loaded.
 function equalizeRow(texts, floor) {
   const target = Math.max(floor || 0, ...texts.map(t => t.height));
-  texts.forEach(t => { let guardCount = 0; while (t.height < target - 0.5 && guardCount++ < 40) t.characters = t.characters + "\n"; });
+  texts.forEach(t => {
+    let tries = 0;
+    while (t.height < target - 0.5 && tries++ < 40) {
+      const before = t.height, chars = t.characters;
+      t.characters = chars + "\n";
+      if (t.height <= before) { t.characters = chars; break; }   // fixed-height text: it cannot grow — leave it alone
+    }
+  });
   return target;
 }
 // ---- GRID groups (PTP) ----
+// Plan first: a grid needs its row count and every position BEFORE it is created.
+// gridPlan(3, [4, 1], 80) → { rows: 6, fixedRows: {3: 80}, groups: [{ header: 0, cells: [[1,0],[1,1],[1,2],[2,0]] }, { header: 4, cells: [[5,0]] }] }
+function gridPlan(cols, groupSizes, spacer) {
+  const groups = [], fixedRows = {};
+  let row = 0;
+  groupSizes.forEach((n, g) => {
+    if (g > 0 && spacer) { fixedRows[row] = spacer; row++; }
+    const header = row++, cells = [];
+    for (let i = 0; i < n; i++) cells.push([row + Math.floor(i / cols), i % cols]);
+    row += Math.ceil(n / cols);
+    groups.push({ header, cells });
+  });
+  return { rows: row, fixedRows, groups };
+}
 function gridFrame(name, cols, rows, opts) {
   opts = opts || {};
   const g = figma.createFrame(); g.name = name; g.fills = []; g.clipsContent = false;

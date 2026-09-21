@@ -22,7 +22,8 @@ function readPD(n, key) {
 
 function smokeTest() {
   const out = { runtime: figma.root.name === "Document" ? "use_figma (official MCP)" : "plugin / Desktop Bridge", ready: false, checks: {} };
-  try { guard(FILE); out.checks.guard = "ok"; } catch (e) { out.checks.guard = "FAIL — " + e + " · pass the file " + (figma.root.name === "Document" ? "KEY" : "NAME"); }
+  try { guard(FILE); out.checks.guard = "ok"; }
+  catch (e) { out.checks.guard = "FAIL — " + e + " · pass the file " + (figma.root.name === "Document" ? "KEY" : "NAME"); return out; }   // wrong file: write nothing
   let f = null;
   try {
     f = figma.createFrame(); f.name = "__permutation smoke test (safe to delete)"; f.x = -20000; f.y = -20000;

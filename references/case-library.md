@@ -3,7 +3,8 @@
 > Read in Phase 2 (Enumerate). Source: the team's **FigJam canonical library** (§Source at the bottom). Tier 3 (project-specific) lives in `projects/<name>.md`.
 >
 > **How to use:** whichever components Phase 1 found on the base → pull their packs from §L2 (plus chained packs). Whatever archetype it is → pull the screen-level states from §L1 and `archetype-cases.md`. Every case carries: `id` · level · tier · opt-in · caption.
-> **Row ids inside a pack are derived, never invented**: `<pack>/<row name in kebab-case>` — `textfield/focus`, `image/asset-load-fail`, `text/maximum-characters`. No abbreviations, no re-wording; that is what lets `knownCaseIds` be built mechanically from this file.
+> **Row ids inside a pack are derived, never invented**: `<pack>/<row name in kebab-case>` — `textfield/focus`, `image/asset-load-fail`, `text/maximum-characters`. No abbreviations, no re-wording. Rows whose name is Thai or carries a slash have their id written out in **§Row ids that cannot be derived** below.
+> `knownCaseIds` for G5 = every L1 id + every `tmpl/*` id + the row ids this run actually used.
 > `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → offer it as 🟡/⚪ for the user to decide.
 >
 > **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (e.g. "Session timeout" on one board and "Network reconnect" on its sibling — the boards stop being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
@@ -80,6 +81,34 @@ Default (unselected) · Selected · Selected Disable · Default Disabled
 
 ### Selection (Checkbox+Text)  `id: selection-checkbox/*` · tier 1
 Default (unselected) · Selected · UnSelected · Multiple Select · Selected Disable · Default Disable
+
+### Row ids that cannot be derived (Thai or slashed row names)
+| pack | row | id |
+|---|---|---|
+| Text Field | Had value (Pre-filled) | `textfield/had-value` |
+| Text Field | Mandatory/Optional | `textfield/mandatory-optional` |
+| Text Field | Error — ไม่กรอก | `textfield/error-empty` |
+| Text Field | Error — อักขระพิเศษ+Emoji | `textfield/error-special-characters` |
+| Text Field | Error — ไม่ใช่ภาษา Eng/TH | `textfield/error-not-eng-th` |
+| Text Field | Error — กรอกได้เฉพาะ Eng/TH | `textfield/error-eng-th-only` |
+| Text Field (Add-on) | กรอกไม่ตรงตามจำนวนที่กำหนด | `textfield-addon/error-length-mismatch` |
+| Text Field (Add-on) | Count ตัวอักษร | `textfield-addon/character-count` |
+| Text Field (Add-on) | กรอกไม่ครบ | `textfield-addon/error-incomplete` |
+| Text Field (Add-on) | เงินไม่พอ | `textfield-addon/error-insufficient` |
+| Text Field (Add-on) | ตัวเลขเกินขั้นต่ำ | `textfield-addon/error-limit` |
+| Text Field (Add-on) | Keyboard Show/Hide · Keyboard type | `textfield-addon/keyboard-show-hide` · `textfield-addon/keyboard-type` |
+| Date Picker | Had value (Pre-filled) · Mandatory/Optional | `datepicker/had-value` · `datepicker/mandatory-optional` |
+| Date Picker | Error — ไม่เลือกวัน | `datepicker/error-no-date` |
+| Date Picker | Error — เลือกวันไม่ตรงตามช่วงเวลาที่กำหนด | `datepicker/error-out-of-range` |
+| Date Calendar / Roller | Default (วันเดือนปีที่กำหนด) | `datecalendar/default` · `dateroller/default` |
+| Date Calendar / Roller | ขอบเขตช่วงเวลาเลือกได้ | `datecalendar/selectable-range` · `dateroller/selectable-range` |
+| Date Calendar / Roller | Button enabled/disabled | `datecalendar/button-enabled-disabled` · `dateroller/button-enabled-disabled` |
+| Image | asset load fail (หายไปทั้ง section / placeholder) | `image/asset-load-fail` |
+| Image | Ratio & Sizing | `image/ratio-sizing` |
+
+### Never a pack — in ANY project (check before the project's own map)
+`/status ?bar/i` · `/home ?indicator|iphone indicator/i` · `/^(nav|top) ?bar|^navbar|^header$/i` · `/^ic[_\/]|^icons?[\/_ ]|^icon$/i` · `/^(line|divider)$/i` · `/^background/i`
+> OS chrome, icons and decoration produce no cases in any design system, so they are never reported as "unmapped". A project file may still override one of them with an exception row placed ABOVE its NOT-a-pack rows (CLICX `gen_ic_eye` = the hide-balance trigger).
 
 ### Additions 2026-08-11
 | id | tier | opt-in | caption (EN — TH) |

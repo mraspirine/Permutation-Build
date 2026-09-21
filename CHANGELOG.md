@@ -5,6 +5,35 @@
 
 ---
 
+## 2026-09-22 — แก้ตามผลเทส 3 โมเดล (Sonnet · Opus · Haiku ใช้ skill ตามตัวอักษร แบบ read-only)
+
+ผลเทส: กฎใหม่ของ 09-21 ทำงานครบบน Sonnet (detect ตาม flow · ข้าม hidden · Screen facts · T3 verbatim · หยุดถามเมื่อไม่มีที่วาง) ·
+ควิซกฎ 10 ข้อ: Opus 10 · Sonnet 9.5 · Haiku 8 · Haiku ยังทำ Phase 2 ไม่ได้ (นับเคสของ board คนละจอมาเป็นของจอนี้)
+
+**Script**
+- **หา board จากเส้น `Permutation` ด้วย ไม่ใช่แค่ชื่อ** — board จริงของทีม PTP ชื่อ `Guideline: Select Account` เคยมองไม่เห็น
+  ทั้งใน scan-cases (เสนอเคสซ้ำ) และ harvest-board `siblingBoards` (เสี่ยงวาง board ทับ) · scan-cases คืน `linkedFrom` ราย board
+- **script อ่านโหลดหน้าเอง** — scan-cases รับ `SCOPE_ID`, harvest/verify โหลดหน้าจาก board id → วาง verbatim ใต้ use_figma ได้จริง
+  (เดิมต้องเติม prelude เอง · โมเดลเล็กวางตามหัวไฟล์แล้วได้ผลว่างเพราะ use_figma เริ่มที่หน้าแรก)
+- **cell ที่ยังมี placeholder = spec เสมอ** แม้มี note/tag วางข้าง ๆ
+- **verify-board: magnet ของเส้น** (`linkMagnets` ค่าเริ่ม BOTTOM→TOP) — magnet `AUTO` เคยทำให้ข้ามการเช็คจุดเริ่มเส้นไปเงียบ ๆ
+- **scaffold-kit: `gridPlan()`** คำนวณจำนวนแถว + ตำแหน่งทุก cell ก่อนสร้าง grid · `freshInstance()` รับ component key ได้ ·
+  `equalizeRow()` ไม่เติมบรรทัดว่างลง text ที่สูงคงที่
+- **smoke-test: guard ไม่ผ่าน = ไม่เขียนอะไรเลย** (เดิมรายงานแล้วยังสร้าง frame ต่อ)
+
+**กฎ**
+- Phase 1: **board เป็นของ base นี้เมื่อ stamp `baseNodeId` หรือ `linkedFrom` ตรงกับ base เท่านั้น — ไม่ใช่ตามชื่อ** ·
+  base อาจเป็น variant/state ของจอที่มี board อยู่แล้ว → เข้ากรณี states-of-one-screen
+- ⊘ ต้องมีเหตุผลที่ชี้ได้ (เห็นบนจอ หรืออยู่ใน §Screen facts) — สมมติฐานทางธุรกิจให้เสนอเป็น ✗ + ⚠️
+- ตาราง Phase 3 ที่ยาวเกิน ~30 แถว: ✗ แสดงทุกแถว · ✓/⊘ พับเป็นบรรทัดละ pack ได้
+- G0 write probe เฉพาะเมื่อจะ Scaffold · รันแบบถามไม่ได้ = พิมพ์ matrix + คำถาม แล้วหยุด
+- board-grammar: label ตาม labelStyle ของโปรเจค (เดิมเขียนว่าทุกโปรเจคต้องเป็น `Case#N` — ขัดกับ CLICX / PTP)
+- case-library: ตาราง id ของแถวที่ derive ไม่ได้ (ชื่อไทย/มี `/`) · รายการ **Never a pack ทุกโปรเจค** (chrome · ไอคอน · ของตกแต่ง)
+- next.md / ptp.md: ความกว้าง board ขั้นต่ำ (518 / 535) · ptp.md dialect B: สูตรความกว้าง · ชื่อ board อิสระ · จอเป็น variant
+- Runtime: response ~20 KB ล้มทั้ง `use_figma` และ `get_metadata` (นับ script ที่ echo กลับด้วย) · Bridge อ่านข้ามหน้าต้อง `page.loadAsync()`
+
+---
+
 ## 2026-09-21 — เตรียมแชร์: ตัดชื่อบุคคล / ชื่อ skill อื่น / ตัวชี้ phase 2
 
 ไม่เปลี่ยน pipeline / gate · script แตะไฟล์เดียวคือ `scaffold-kit.js` (ดูหัวข้อรอบสอง)

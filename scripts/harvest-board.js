@@ -56,6 +56,8 @@ async function harvest() {
     })({ name: "", children: figma.currentPage.children }, 0);
   }
   if (!board) return { error: "board not found: " + BOARD_HINT };
+  let pg = board; while (pg && pg.type !== "PAGE") pg = pg.parent;
+  if (pg && pg.loadAsync) await pg.loadAsync();      // use_figma starts on the file's first page
 
   // --- shell: structure + spacing per level ---
   const layers = [];
@@ -136,8 +138,16 @@ async function harvest() {
 
   // --- neighbours: used to compute free space when placing a new board ---
   const parent = board.parent;
+  // a sibling is a board by NAME, or because an attached `Permutation` connector ends on it (teams name boards freely)
+  const linkedIds = new Set();
+  for (const c of (parent && parent.children ? parent.children : []).filter(n => n.type === "CONNECTOR" && /permutation/i.test(n.name || ""))) {
+    const e = prop(c, "connectorEnd"); if (!e || !e.endpointNodeId) continue;
+    let t = await figma.getNodeByIdAsync(e.endpointNodeId);
+    while (t && t.parent && t.parent.id !== parent.id) t = t.parent;
+    if (t && BOARD_TYPES.indexOf(t.type) !== -1 && t.findOne && t.findOne(x => x.type === "TEXT" && CASE_RE.test(x.characters || ""))) linkedIds.add(t.id);
+  }
   const siblings = (parent && parent.children ? parent.children : [])
-    .filter(n => n.id !== board.id && isBoard(n))
+    .filter(n => n.id !== board.id && (isBoard(n) || linkedIds.has(n.id)))
     .map(n => ({ name: (n.name || "").slice(0, 40), x: Math.round(n.x), right: Math.round(n.x + n.width), y: Math.round(n.y) }))
     .sort((a, b) => a.x - b.x);
 

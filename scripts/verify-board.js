@@ -11,6 +11,7 @@ const CONFIG = {
   slotSizes: ["390x844"],          // allowed screen-slot sizes for this project, "WxH"
   baseNodeId: "",                  // the base screen ("" = skip base-intact check)
   linkId: "",                      // the screen→board link ("" = skip). Must be an attached CONNECTOR with both caps
+  linkMagnets: ["BOTTOM", "TOP"],  // [start, end] the project's links use · null = do not check magnets
   expectedBaseNodes: 0,            // node count measured BEFORE scaffolding (0 = skip)
   titlesFullWidth: false,          // true = every group header must span its group's full width
   numbersScopedPerGroup: false,    // true = Case#N restarts inside each group (DGL) → dup check runs per group
@@ -53,7 +54,7 @@ function outsideParent(board, parent) {
   return Math.max(0, -board.x, -board.y, board.x + board.width - parent.width, board.y + board.height - parent.height);
 }
 // The link is the most-rejected part of a build: capless, unattached, or starting below a clipped screen.
-// ctx = { inBoard:Set, inBase:Set|null, baseBottom, lineTop, tolerance }
+// ctx = { inBoard:Set, inBase:Set|null, baseBottom, lineTop, tolerance, magnets:[start,end]|null }
 function linkFailures(link, ctx) {
   if (link.type !== "CONNECTOR") return ["link is a " + link.type + ", not a CONNECTOR — it cannot attach (placeholder line: say so to the user)"];
   const F = [], s = link.connectorStart || {}, e = link.connectorEnd || {};
@@ -62,6 +63,9 @@ function linkFailures(link, ctx) {
   if (e.endpointNodeId && !ctx.inBoard.has(e.endpointNodeId)) F.push("link does not end on this board");
   if (ctx.inBase && s.endpointNodeId && !ctx.inBase.has(s.endpointNodeId)) F.push("link does not start on the base screen");
   if (link.connectorStartStrokeCap === "NONE" || link.connectorEndStrokeCap === "NONE") F.push("link is missing an end cap");
+  const want = ctx.magnets === undefined ? ["BOTTOM", "TOP"] : ctx.magnets;      // null = the project has no fixed magnets
+  if (want && (s.magnet !== want[0] || e.magnet !== want[1]))
+    F.push("link magnets are " + s.magnet + "→" + e.magnet + ", the project uses " + want[0] + "→" + want[1] + " (an AUTO magnet also hides the anchor check)");
   if (s.magnet === "BOTTOM" && ctx.baseBottom != null && ctx.lineTop != null && Math.abs(ctx.lineTop - ctx.baseBottom) > ctx.tolerance)
     F.push("link starts " + Math.round(ctx.lineTop - ctx.baseBottom) + "px from the screen's bottom edge — anchor the FRAME when the main instance overflows it");
   return F;
@@ -76,6 +80,8 @@ async function verify() {
   const F = [];                                 // failures
   const board = await figma.getNodeByIdAsync(CONFIG.boardId);
   if (!board) return { pass: false, failures: ["board not found: " + CONFIG.boardId], stats: null };
+  let pg = board; while (pg && pg.type !== "PAGE") pg = pg.parent;
+  if (pg && pg.loadAsync) await pg.loadAsync();      // use_figma starts on the file's first page
 
   // ---- collect cells (nodes stamped with permBuild) ----
   const cells = [];
@@ -163,7 +169,7 @@ async function verify() {
       const base = CONFIG.baseNodeId ? await figma.getNodeByIdAsync(CONFIG.baseNodeId) : null;
       const bb = base && base.absoluteBoundingBox, lb = link.absoluteBoundingBox;
       linkFailures(link, { inBoard: ids(board), inBase: base ? ids(base) : null,
-        baseBottom: bb ? bb.y + bb.height : null, lineTop: lb ? lb.y : null, tolerance: 12 }).forEach(f => F.push(f));
+        baseBottom: bb ? bb.y + bb.height : null, lineTop: lb ? lb.y : null, tolerance: 12, magnets: CONFIG.linkMagnets }).forEach(f => F.push(f));
     }
   }
 

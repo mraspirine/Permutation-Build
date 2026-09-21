@@ -44,7 +44,7 @@ board                          ← name per project convention; fill/padding fro
 ```
 
 ## Rules that hold for every project (independent of style)
-- **The label must be its own text node** whose entire string is `Case#N` / `Case #N` (satisfies the strict-label regex `/^\s*Case\s*#?\s*(\d+)\s*$/`) — no trailing text is allowed on that node
+- **The case label is its own text node, in the project's label style** (SKILL.md §Label styles): `strict` = the whole string is `Case#N` / `Case #N` (regex `/^\s*Case\s*#?\s*(\d+)\s*$/`, renumber-compatible) · `loose` = `Case #N - <name>` · `indexed` = `<g>.<n> | <name>` or `#<n>[.<m>] <name>`. The project file says which one; never mix styles on one board
 - **Everything is written inside one board node** → rollback = delete it
 - **Never touch the base**, and never modify the team's existing boards
 - **line-height**: if the team sets PIXELS, set PIXELS (AUTO throws off spacing across the whole board)

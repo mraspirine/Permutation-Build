@@ -1,6 +1,8 @@
 // scan-cases.js v2 — inventory Permutation boards + case cells + fill status.
 // Paste VERBATIM into use_figma / figma_execute (wrapped in a function → top-level return OK).
-// Scope = current selection, else whole page. Returns inventory JSON.
+// Scope: set SCOPE_ID to the SECTION (or board) to scan — the script loads that node's page itself, so it
+// works under use_figma, which starts every call on the file's first page with nothing selected.
+// SCOPE_ID empty → current selection, else the whole current page. Returns inventory JSON.
 // Node self-check at bottom: `node scripts/scan-cases.js` (runs when figma is undefined).
 //
 // v2:
@@ -9,8 +11,11 @@
 //   INDEXED = `<g>.<n> | <name>` or `#<n>[.<m>] <name>` (PTP): those boards carry no "Case" word at all.
 // - The label TEXT may live inside an INSTANCE (CLICX title block): climb ancestors to find the
 //   cell that carries the permBuild pluginData.
-// - isDesigned() only counts SCREEN-SIZED children (h > 600): caption frames were false positives.
+// - designed = the cell holds something beside its caption and no longer holds the placeholder.
+// - A board is found by its NAME, by its stamp, or by an attached `Permutation` connector that ends on it
+//   (teams name boards freely: PTP `Guideline: Select Account`). `linkedFrom` tells which screen owns it.
 
+const SCOPE_ID = "";  // e.g. "438:213330" — the section that holds the base and its sibling boards
 const DETAIL = true; // false = per-board counts only. Use false under use_figma: its responses die around 20 KB.
 
 const STRICT_RE = /^\s*Case\s*#?\s*(\d+)\s*$/;                     // renumber-compatible
@@ -55,14 +60,14 @@ function findDupNumbers(nums) {
   return [...dup].sort(byLabel);
 }
 
-function scanCases() {
-  const roots = figma.currentPage.selection.length
-    ? figma.currentPage.selection
-    : figma.currentPage.children;
+// `linked`: Map(boardNode → [{id,name}] screens whose Permutation connector ends on it) — built by run()
+function scanCases(roots, linked) {
+  roots = roots || (figma.currentPage.selection.length ? figma.currentPage.selection : figma.currentPage.children);
+  linked = linked || new Map();
 
   const containers = [];
   (function collect(n) {
-    if (isContainer(n) || (CONTAINER_TYPES.indexOf(n.type) !== -1 && hasBoardStamp(n))) containers.push(n);
+    if (isContainer(n) || linked.has(n) || (CONTAINER_TYPES.indexOf(n.type) !== -1 && hasBoardStamp(n))) containers.push(n);
     else if ('children' in n) n.children.forEach(collect);
   })({ type: 'PAGE', name: '', children: roots });
 
@@ -75,6 +80,7 @@ function scanCases() {
   // (PTP `SOFCard_CASA` 390x108), not a screen.
   function isDesigned(cell, labelNode) {
     if (!('children' in cell)) return false;
+    if (cell.children.some(isPlaceholder)) return false;       // still holds its empty slot → spec, whatever sits beside it
     const holdsLabel = k => k === labelNode || (k.findOne && !!k.findOne(x => x === labelNode));
     return cell.children.some(f =>
       (f.type === 'FRAME' || f.type === 'INSTANCE') && !holdsLabel(f) &&
@@ -138,13 +144,15 @@ function scanCases() {
       if ('children' in n) n.children.forEach(walk);
     })(c);
     cases.sort((a, b) => byLabel(a.n, b.n));
-    const row = { id: c.id, name: c.name, stamp: boardStamp, count: cases.length, designed: cases.filter(x => x.designed).length, dupNumbers: findDupNumbers(cases.map(x => x.n)) };
+    const row = { id: c.id, name: c.name, stamp: boardStamp, linkedFrom: linked.get(c) || [], count: cases.length, designed: cases.filter(x => x.designed).length, dupNumbers: findDupNumbers(cases.map(x => x.n)) };
     if (DETAIL) row.cases = cases;
     row._all = cases;
     return row;
   });
 
   // Case#N restarts on every board — duplicates only mean something INSIDE one board.
+  // a node that is only a link target (no name, no stamp) and holds no case is not a board (`Other Logic` boxes)
+  for (let i = out.length - 1; i >= 0; i--) if (!out[i].count && !out[i].stamp && !isContainerName(out[i].name)) out.splice(i, 1);
   const all = out.flatMap(c => c._all);
   out.forEach(c => { delete c._all; });
   const dup = [...new Set(out.flatMap(c => c.dupNumbers))].sort(byLabel);
@@ -164,7 +172,33 @@ function scanCases() {
   };
 }
 
-if (typeof figma !== 'undefined') return scanCases();
+// Resolve the scope and the Permutation links (async), then scan (sync).
+async function run() {
+  let roots = null;
+  if (SCOPE_ID) {
+    const scope = await figma.getNodeByIdAsync(SCOPE_ID);
+    if (!scope) return { error: 'SCOPE_ID not found: ' + SCOPE_ID };
+    let pg = scope; while (pg && pg.type !== 'PAGE') pg = pg.parent;
+    if (pg && pg.loadAsync) await pg.loadAsync();
+    roots = [scope];
+  }
+  const start = roots || (figma.currentPage.selection.length ? figma.currentPage.selection : figma.currentPage.children);
+  const lines = [];
+  (function find(n, d) { if (d > 3) return; if (n.type === 'CONNECTOR' && /permutation/i.test(n.name || '')) lines.push(n); else if ('children' in n) n.children.forEach(c => find(c, d + 1)); })({ children: start }, 0);
+  const linked = new Map();
+  for (const c of lines) {
+    const e = c.connectorEnd && c.connectorEnd.endpointNodeId, s = c.connectorStart && c.connectorStart.endpointNodeId;
+    if (!e) continue;
+    let board = await figma.getNodeByIdAsync(e);
+    while (board && board.parent && board.parent.type !== 'SECTION' && board.parent.type !== 'PAGE') board = board.parent;
+    if (!board) continue;
+    const from = s ? await figma.getNodeByIdAsync(s) : null;
+    if (!linked.has(board)) linked.set(board, []);
+    linked.get(board).push(from ? { id: from.id, name: from.name } : { id: null, name: 'loose' });
+  }
+  return scanCases(roots, linked);
+}
+if (typeof figma !== 'undefined') return run();
 
 // --- node self-check ---
 const A = (c, m) => { if (!c) throw new Error('FAIL: ' + m); };
