@@ -75,18 +75,6 @@ function scanCases(roots, linked) {
     'children' in frame && frame.findOne &&
     !!frame.findOne(x => x.type === 'TEXT' && /awaiting design/i.test(x.characters || ''));
 
-  // designed = the cell holds something besides its caption that is not the placeholder. The caption is
-  // the child that holds this cell's label; no height gate, because a component-level case holds a crop
-  // (PTP `SOFCard_CASA` 390x108), not a screen.
-  function isDesigned(cell, labelNode) {
-    if (!('children' in cell)) return false;
-    if (cell.children.some(isPlaceholder)) return false;       // still holds its empty slot → spec, whatever sits beside it
-    const holdsLabel = k => k === labelNode || (k.findOne && !!k.findOne(x => x === labelNode));
-    return cell.children.some(f =>
-      (f.type === 'FRAME' || f.type === 'INSTANCE') && !holdsLabel(f) &&
-      !isPlaceholder(f) && 'children' in f && f.children.length > 0);
-  }
-
   function labelCount(n, cap) {
     let c = 0;
     (function w(x) {
@@ -95,6 +83,18 @@ function scanCases(roots, linked) {
       else if ('children' in x) x.children.forEach(w);
     })(n);
     return c;
+  }
+
+  // designed = the cell holds something besides its caption that is not the placeholder. The caption is
+  // the child that holds this cell's label; no height gate, because a component-level case holds a crop
+  // (PTP `SOFCard_CASA` 390x108), not a screen.
+  function isDesigned(cell, labelNode) {
+    if (!('children' in cell)) return false;
+    if (cell.children.some(isPlaceholder)) return false;       // still holds its empty slot → spec, whatever sits beside it
+    const holdsLabel = k => k === labelNode || labelCount(k, 1) > 0;   // any caption — a cell may carry several
+    return cell.children.some(f =>
+      (f.type === 'FRAME' || f.type === 'INSTANCE') && !holdsLabel(f) &&
+      !isPlaceholder(f) && 'children' in f && f.children.length > 0);
   }
 
   // The label TEXT can be nested inside an INSTANCE (CLICX title block) — climb up to the node
@@ -112,8 +112,8 @@ function scanCases(roots, linked) {
     return cell;
   }
 
-  function readCell(labelNode) {
-    const cell = findCell(labelNode);
+  function readCell(labelNode, sharedCell) {
+    const cell = sharedCell || findCell(labelNode);
     let pd = null;
     try { pd = JSON.parse(readPD(cell, 'permBuild') || 'null'); } catch (e) {}
     const lab = parseLabel(labelNode.characters);
@@ -140,7 +140,17 @@ function scanCases(roots, linked) {
     (function walk(n) {
       // A group header can share the label grammar (PTP `#1 E-Saving Account`): its "cell" resolves to the
       // title instance itself — nothing sits beside the label — so it is not a case.
-      if (n.type === 'TEXT' && isLabelText(n.characters)) { const c = findCell(n); if (c && c.type !== 'INSTANCE' && c.type !== 'TEXT') cases.push(readCell(n)); }
+      // Several captions can also SHARE one cell (two callouts on the same screen, in a loose group): every other
+      // label holder beside this one is a bare caption too → a case whose cell is that shared parent. A header's
+      // neighbour is a container of cases (FRAME / GROUP), never a bare caption.
+      if (n.type === 'TEXT' && isLabelText(n.characters)) {
+        const c = findCell(n);
+        if (c && c.type !== 'INSTANCE' && c.type !== 'TEXT') cases.push(readCell(n));
+        else if (c && c.parent && !isContainer(c.parent)) {
+          const others = c.parent.children.filter(k => k !== c && labelCount(k, 1) > 0);
+          if (others.length && others.every(k => k.type === 'INSTANCE' || k.type === 'TEXT')) cases.push(readCell(n, c.parent));
+        }
+      }
       if ('children' in n) n.children.forEach(walk);
     })(c);
     cases.sort((a, b) => byLabel(a.n, b.n));

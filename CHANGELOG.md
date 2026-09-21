@@ -16,6 +16,8 @@
 - **script อ่านโหลดหน้าเอง** — scan-cases รับ `SCOPE_ID`, harvest/verify โหลดหน้าจาก board id → วาง verbatim ใต้ use_figma ได้จริง
   (เดิมต้องเติม prelude เอง · โมเดลเล็กวางตามหัวไฟล์แล้วได้ผลว่างเพราะ use_figma เริ่มที่หน้าแรก)
 - **cell ที่ยังมี placeholder = spec เสมอ** แม้มี note/tag วางข้าง ๆ
+- **caption หลายอันใช้ cell เดียวกันได้** (callout 2 จุดบนจอเดียวใน group หลวม ๆ เช่น `#1.1` / `#1.2` บน board
+  `Guideline: Select Account`) — นับเป็นเคส ส่วนหัวกลุ่มเหนือมันยังไม่นับ · board นั้นอ่านได้ 4/4 (เดิม 2/4)
 - **verify-board: magnet ของเส้น** (`linkMagnets` ค่าเริ่ม BOTTOM→TOP) — magnet `AUTO` เคยทำให้ข้ามการเช็คจุดเริ่มเส้นไปเงียบ ๆ
 - **scaffold-kit: `gridPlan()`** คำนวณจำนวนแถว + ตำแหน่งทุก cell ก่อนสร้าง grid · `freshInstance()` รับ component key ได้ ·
   `equalizeRow()` ไม่เติมบรรทัดว่างลง text ที่สูงคงที่
@@ -30,6 +32,7 @@
 - board-grammar: label ตาม labelStyle ของโปรเจค (เดิมเขียนว่าทุกโปรเจคต้องเป็น `Case#N` — ขัดกับ CLICX / PTP)
 - case-library: ตาราง id ของแถวที่ derive ไม่ได้ (ชื่อไทย/มี `/`) · รายการ **Never a pack ทุกโปรเจค** (chrome · ไอคอน · ของตกแต่ง)
 - next.md / ptp.md: ความกว้าง board ขั้นต่ำ (518 / 535) · ptp.md dialect B: สูตรความกว้าง · ชื่อ board อิสระ · จอเป็น variant
+- SKILL.md ลดจาก 26.5 เหลือ 25 KB โดยกฎครบทุกข้อ (ตรวจด้วยรายการ token 47 ตัว) · Phase 1 ชี้ไป `case-library.md` §Never a pack แล้ว
 - Runtime: response ~20 KB ล้มทั้ง `use_figma` และ `get_metadata` (นับ script ที่ echo กลับด้วย) · Bridge อ่านข้ามหน้าต้อง `page.loadAsync()`
 
 ---
