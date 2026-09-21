@@ -3,6 +3,7 @@
 > Read in Phase 2 (Enumerate). Sources: the team's **FigJam canonical library** (`pFnfToBs4ecxvqrTWxqhaM` node `129:5011`, verified at full resolution 2026-07-24) and **corpus §8** (`permutation-reference.md`: 16 universal + 11 templates). Tier 3 (project-specific) lives in `projects/<name>.md`.
 >
 > **How to use:** whichever components Phase 1 found on the base → pull their packs from §L2 (plus chained packs). Whatever archetype it is → pull the screen-level states from §L1 and `archetype-cases.md`. Every case carries: `id` · level · tier · opt-in · caption.
+> **Row ids inside a pack are derived, never invented**: `<pack>/<row name in kebab-case>` — `textfield/focus`, `image/asset-load-fail`, `text/maximum-characters`. No abbreviations, no re-wording; that is what lets `knownCaseIds` be built mechanically from this file.
 > `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → offer it as 🟡/⚪ for the user to decide.
 >
 > **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (the 2026-08-06 test run named the same situation "Session timeout" on one board and "Network reconnect" on its sibling, and the boards stopped being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.

@@ -69,7 +69,7 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 
 ### Phase 0 — Preflight + detect
 1. **Probe write access** (if heading for Scaffold): run `const n=figma.createRectangle();n.remove();` — a throw means view-only, stop and tell the user
-2. **Detect the project**: from a sample node in the base → `get_variable_defs` (official MCP) or resolve `boundVariables` → match the collection names against the "About" section of each `projects/<name>.md`. If the user names the project, skip detection. No match → fall back to generic Tier 1/2 and offer LEARN
+2. **Detect the project**: from a sample node in the base → `get_variable_defs` (official MCP) or resolve `boundVariables` → match the collection names against the "About" section of each `projects/<name>.md`. If the user names the project, skip detection. No match → fall back to generic Tier 1/2 and offer LEARN. **The board's project follows the FLOW, not the screen's own DS**: a screen from another design system embedded in the flow (e.g. a partner-app webview inside a NEXT flow — it binds another font and color set, no `❖ NEXT`) still gets the flow's board style. When variable signals disagree with the screen name / section name / sibling boards → go with the flow signals, say so in the profile, and let G1 confirm
 3. Load `projects/<name>.md` in full, plus the references needed (see the References table)
 
 ### Phase 1 — Profile (read-only)
@@ -115,9 +115,9 @@ Anyone who only wanted the case list stops here.
 
 ### Phase 4 — Scaffold
 **Gate G1 first: §Board anatomy in `projects/<name>.md` must be verified against a live board in THIS file — not yet (or the team's style changed) → run `scripts/harvest-board.js` VERBATIM** against a board the team already made in that file — never a hand-shortened version (a shortened harvest missed a connector in the pilot). It returns all 10 items (shell · spacing per level · font + weight + lineHeight · colors · caption shape · slot sizes · sub-groups · links incl. `otherLinesNearby` · placement + `siblingBoards` · naming). Compare with `projects/<name>.md`; if it differs or is missing, **update the project file first**. Record the base's node count now (for G5). Then build:
-0. **Sibling-duplicate guard**: run `scripts/scan-cases.js` over the sibling boards in the same section first; if the confirmed case set is **≥90% identical (by caseId) to a sibling board whose base is a different screen** → stop and confirm with the user before building — an enumeration that ignores its own base produces exactly this signature (three near-identical boards shipped this way on 2026-08-06)
+0. **Sibling-duplicate guard**: run `scripts/scan-cases.js` over the sibling boards in the same section first; if the confirmed case set is **≥90% identical (by caseId) to a sibling board whose base is a different screen** → stop and confirm with the user before building — an enumeration that ignores its own base produces exactly this signature (three near-identical boards shipped this way on 2026-08-06). Siblings without stamps carry no caseIds → compare by case **names**; if that is not possible either, report `guard skipped — siblings unstamped` instead of passing silently
 1. **Paste `scripts/scaffold-kit.js` as the prelude** of the build call, then write project-specific code with its factories (`alFrame` → append → `finalizeFixed` / `growWithContent`; `placeholder`; `stampCase`/`stampBoard`; `elbowLink`) — the factories encode the auto-layout ordering that silently collapsed frames in both pilots
-2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node)
+2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node + its screen→board link, which has to live on the SECTION)
 3. Placement from `siblingBoards`: pick a column count whose width fits the free span
 4. Per case: label node (project's label style) + caption nodes + `placeholder()` + `stampCase()`
 5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). **The clone gate is per-RUNTIME**: the desktop Bridge may throw *"Cloning CONNECTOR nodes is not supported"* where `use_figma` clones the very same line fine (proven 2026-08-18) → on a Bridge throw, run the clone + re-point through **`use_figma`** instead; re-pointing works on both runtimes. Every runtime blocked → the user hand-draws or Cmd+D's an exemplar and you re-point it. `elbowLink`'s VECTOR is a placeholder of last resort — it never attaches; when the project's links attach, say so. Either way **replicate the exemplar: anchor (NEXT: the main INSTANCE inside the screen, magnet BOTTOM) · route (screen bottom-center → board top-center) · BOTH end caps** (VECTOR: per-vertex `strokeCap` via `setVectorNetworkAsync`) — the capless unattached "close enough" line is the most-repeated link mistake across projects (`board-grammar.md` §Link rule)
@@ -129,7 +129,7 @@ Anyone who only wanted the case list stops here.
 - Report in Thai, in this shape (values are an example):
 ```
 สรุป: 14 cells → 🔴5 🟡6 ⚪3 · S:8 C:6 · T1:10 T2:3 T3:1
-🔗 figma.com/design/…?node-id=… · rollback: ลบ node "Permutation: Home" ก้อนเดียว
+🔗 figma.com/design/…?node-id=… · rollback: ลบ board "Permutation: Home" + เส้น link ของมัน
 fill ต่อ: Case#2 #5 #9 (🔴 ก่อน) · renumber-cases: ใช้ได้ (strict) · จอถัดไป: eKYC intro
 ```
 
@@ -181,7 +181,7 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 - `strict` = the label node is exactly `Case#N` → **renumber-cases compatible** (NEXT)
 - `loose` = `Case #N - <name>` in one node (CLICX) → NOT renumber-compatible; renumbering there is manual — say so in the report
 
-**Board container**: named per the project's convention. `scan-cases.js` recognizes `Permutation:` / `Permutation_` / `… Permutations` / CLICX `X.NN-NN.B`, plus any `permBuildBoard`-stamped node. **Everything is written inside it, so deleting that one node rolls back the whole build.**
+**Board container**: named per the project's convention. `scan-cases.js` recognizes `Permutation:` / `Permutation_` / `… Permutations` / CLICX `X.NN-NN.B`, plus any `permBuildBoard`-stamped node. **Everything is written inside it, so deleting that one node rolls back the whole build** — the screen→board link is the one exception (it sits on the SECTION); delete it too.
 
 **Layout schools** (details in `references/board-grammar.md`): A flow+link · B grid-matrix · C section-per-tab. The school is a field in `projects/<name>.md` and projects can mix them.
 
@@ -195,6 +195,7 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 | Clone + re-point the screen→board CONNECTOR | **try the active runtime; Bridge throws in some files where `use_figma` succeeds (proven 2026-08-18)** |
 
 - **`guard(<EXPECTED>)`** at the top of every write batch (the desktop's active file can drift). Bridge: pass the file **name**. use_figma: pass the **fileKey** — `figma.root.name` is always `"Document"` there (verified 2026-09-21), so a name guard throws on every call
+- **use_figma starts every call on the file's FIRST page, with no user selection** (verified 2026-09-21) → put `await figma.setCurrentPageAsync(<page>)` above every script — the *paste verbatim* ones included — address nodes by id, and scope `scan-cases.js` yourself with `figma.currentPage.selection = [<section node>]`; without it the scan walks the whole first page
 - **Only touch what this skill created; never modify the base** — phase 1 does not even clone screens
 - **Never call `figma.commitUndo()` under use_figma** (it throws and the whole atomic batch silently no-ops)
 - On the Bridge, use **`getNodeByIdAsync`** only (`getNodeById` throws under documentAccess: dynamic-page)

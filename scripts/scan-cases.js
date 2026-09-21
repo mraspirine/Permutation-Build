@@ -69,15 +69,29 @@ function scanCases() {
       !isPlaceholder(f) && 'children' in f && f.children.length > 0);
   }
 
+  function labelCount(n, cap) {
+    let c = 0;
+    (function w(x) {
+      if (c >= cap) return;
+      if (x.type === 'TEXT') { if (LOOSE_RE.test(x.characters) && /^\s*Case/i.test(x.characters)) c++; }
+      else if ('children' in x) x.children.forEach(w);
+    })(n);
+    return c;
+  }
+
   // The label TEXT can be nested inside an INSTANCE (CLICX title block) — climb up to the node
-  // that actually carries the permBuild stamp; fall back to the direct parent.
+  // that actually carries the permBuild stamp. Unstamped (team-made) board: the cell is the LARGEST
+  // ancestor that still holds only this one label, i.e. the case column — the label's own wrapper
+  // has no screen in it, which made every team board read 0 designed.
   function findCell(labelNode) {
     let p = labelNode.parent, hops = 0;
     while (p && hops < 6) {
       if (readPD(p, 'permBuild')) return p;
       p = p.parent; hops++;
     }
-    return labelNode.parent;
+    let cell = labelNode.parent;
+    while (cell && cell.parent && !isContainer(cell.parent) && labelCount(cell.parent, 2) === 1) cell = cell.parent;
+    return cell;
   }
 
   function readCell(labelNode) {
@@ -112,11 +126,12 @@ function scanCases() {
       if ('children' in n) n.children.forEach(walk);
     })(c);
     cases.sort((a, b) => (a.n || 0) - (b.n || 0));
-    return { id: c.id, name: c.name, stamp: boardStamp, count: cases.length, cases };
+    return { id: c.id, name: c.name, stamp: boardStamp, count: cases.length, dupNumbers: findDupNumbers(cases.map(x => x.n)), cases };
   });
 
+  // Case#N restarts on every board — duplicates only mean something INSIDE one board.
   const all = out.flatMap(c => c.cases);
-  const dup = findDupNumbers(all.map(x => x.n));
+  const dup = [...new Set(out.flatMap(c => c.dupNumbers))].sort((a, b) => a - b);
   return {
     containers: out,
     counts: {

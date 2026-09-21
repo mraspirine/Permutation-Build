@@ -76,7 +76,7 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | `/radio/i` | `selection-radio/*` |
 | `/checkbox/i` | `selection-checkbox/*` |
 | `/image\|banner\|thumbnail\|logo/i` | `image/*` |
-| `/button\|cta/i` | interaction states (Default/Pressed/Disabled) — not a separate pack |
+| `/button\|cta/i` | interaction states (Default/Pressed/Disabled) — not a separate pack · id `button/interaction-states` (Tier-3 ids table) |
 | `/search ?bar\|search/i` | `textfield/*` (search field — no validation pack, no mandatory/optional) · confirmed 2026-08-11 |
 | `/switch\|segment\|tab ?bar/i` | navigation — tab change (axis 9), not a component pack · confirmed 2026-08-11 |
 | `/quick ?(button\|menu)\|shortcut/i` | `fav/list-count` + `scrolling/*` (horizontal rail) · confirmed 2026-08-11 |
@@ -104,6 +104,20 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | Bill payment input | 5 | empty stage · multiple fields · biller to favorite · field display |
 | Bill payment error handling | 5 | reference number incorrect · incorrect biller code · outstanding payment |
 | Face liveness | 12+5+3 | error catalog · motion challenge · environment — **module: run on the eKYC screen itself** |
+
+### Tier-3 ids already on boards — reuse id + caption **verbatim** (read back from the canvas 2026-09-21)
+> A Tier-3 case that recurs gets its row here the first time it is minted; the next board copies it. (`button/interaction-states` drifted to "Button states" on its second board before this table existed.)
+
+| id | caption (EN — TH) | on boards |
+|---|---|---|
+| `coupon/expired-at-confirm` | Coupon expired at confirm — กรณีคูปองหมดอายุ/ถูกใช้ไประหว่างยืนยันรายการ ⚠️ ยืนยัน business rule | 29.1 Confirmation |
+| `coupon/zero-payable` | Zero payable — กรณีส่วนลดเต็มยอด ยอดชำระ 0.00 บาท | 29.1 Confirmation |
+| `coupon/none` | No coupon — กรณีไม่ใช้คูปอง ⚠️ ยืนยันการแสดงแถวส่วนลด | 29.1 Confirmation |
+| `coupon/percent` | Coupon discount % — กรณีส่วนลดแบบ % ⚠️ ยืนยันการแสดงผล | 29.1 Confirmation |
+| `coupon/discount-type` | Discount type — กรณีคูปองส่วนลดแบบ % / จำนวนเงิน / สินค้า / ของแถม | 19.1 Coupon Chooser |
+| `coupon/expired` | Expired — กรณีคูปองหมดอายุ | 19.1 Coupon Chooser |
+| `coupon/ineligible` | Ineligible — กรณีคูปองใช้กับรายการนี้ไม่ได้ | 19.1 Coupon Chooser |
+| `button/interaction-states` | Button interaction states — กรณีปุ่ม Default / Pressed / Disabled | 29.1 · 19.1 |
 
 ## Screen facts (persisted ⊘ — pre-bucket these before enumerating; do not re-propose)
 | Screen | caseId | reason | date |

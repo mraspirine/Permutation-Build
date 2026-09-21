@@ -32,6 +32,22 @@
 - **NEXT link note** — ตัดบรรทัดเก่า 2 บรรทัด ("VECTOR เป็นทางเดียว", 2026-08-11) ที่ถูก
   หักล้างโดย note 2026-08-18 ในย่อหน้าเดียวกัน
 
+**จาก BUILD เต็มผ่าน `use_figma` (รอบสาม วันเดียวกัน — จอ 19.1 Coupon Chooser, G5 pass)**
+- **scan-cases: board ที่ทีมทำเอง (ไม่มี stamp) นับ designed ได้แล้ว** — เดิม cell ถอยไปที่ parent ของ label
+  ซึ่งเป็นกล่อง label ไม่ใช่คอลัมน์เคส → ทุก board ของทีมอ่านได้ 0 designed (เจอจริง 0/53) · ตอนนี้ cell =
+  ancestor ที่ใหญ่ที่สุดที่ยังมี label เดียว · ผลบนไฟล์จริง: 14.1 = 32/34 · Common Handling = 5/5
+- **scan-cases: เลขซ้ำนับราย board** — `Case#N` เริ่มใหม่ทุก board การสแกนหลาย board พร้อมกันเคยฟ้องซ้ำ
+  [1..14] ทั้งที่ไม่ซ้ำ · เพิ่ม `dupNumbers` ราย container
+- **harvest-board: ขนาด slot ถูกแล้ว** — frame ขนาดจอที่ "มี Case label อยู่ข้างใน" คือคอลัมน์ ไม่ใช่จอ
+  (เดิมรายงาน 390×2062 ซึ่งเป็นคอลัมน์ · ตอนนี้ 390×1878 / 375×812 ตามจริง)
+- **Phase 0: project ของ board ตาม flow ไม่ใช่ DS ของจอ** (จอจาก DS อื่นที่ฝังใน flow)
+- **use_figma prelude** — ทุก call เริ่มที่หน้าแรกและไม่มี selection → ใส่ `setCurrentPageAsync` เหนือทุก
+  script และตั้ง selection เองให้ `scan-cases.js`
+- **Rollback = board + เส้น link** (เส้นอยู่บน SECTION ไม่ได้อยู่ใน board)
+- **Sibling-duplicate guard** — board ข้างเคียงไม่มี stamp ให้เทียบด้วยชื่อเคส หรือรายงานว่าข้าม ห้ามผ่านเงียบ
+- **case-library: id ของแถวใน pack = `<pack>/<ชื่อแถว kebab-case>`** — สร้าง `knownCaseIds` ได้แบบ mechanical
+- **next.md: ตาราง Tier-3 ids ที่อยู่บน board แล้ว** (8 id อ่านกลับจาก canvas) — กัน caption เพี้ยนข้าม board
+
 **เอกสาร**
 - ตัดชื่อบุคคลออกจากทุกไฟล์ ใช้ชื่อโปรเจคแทน
 - ตัวอย่างใน report shape ไม่ใช้ชื่อแบรนด์ · อ้างถึงรอบเทสโดยไม่ระบุชื่อโมเดล

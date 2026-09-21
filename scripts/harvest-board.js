@@ -25,9 +25,12 @@ function lh(t) {
 }
 // ponytail: a screen = a frame taller than 600 whose width is device-sized (300-500); do not descend
 // into it. Anything wider is a row wrapper, not a screen. Widen SCREEN_W for tablet/desktop projects.
+// A device-sized frame that HOLDS a Case label is the case column (caption + slot), not the screen —
+// without this the harvest reported the column (390×2062) as the slot size.
 const SCREEN_MIN_H = 600, SCREEN_W = [300, 500];
+const holdsCaseLabel = n => !!n.findOne && !!n.findOne(x => x.type === "TEXT" && /^\s*Case\s*#?\s*\d+/.test(x.characters || ""));
 const isScreen = n => n.height > SCREEN_MIN_H && n.width >= SCREEN_W[0] && n.width <= SCREEN_W[1] &&
-  (n.type === "INSTANCE" || n.type === "FRAME" || n.type === "COMPONENT");
+  (n.type === "INSTANCE" || n.type === "FRAME" || n.type === "COMPONENT") && !holdsCaseLabel(n);
 
 async function harvest() {
   let board = null;
