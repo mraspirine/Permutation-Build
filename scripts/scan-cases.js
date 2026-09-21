@@ -285,4 +285,10 @@ A(lscan.containers[0].linkedFrom[0].name === 'Select account', 'each board repor
 const noted = N('FRAME', 'Case', [N('INSTANCE', 'Title Block', [T('1.1 | Default')]), N('INSTANCE', 'Note', [T('todo')]), emptySlot()]);
 const nscan = scanCases([N('FRAME', 'Permutation: X', [N('FRAME', 'Case', [noted])])]);
 A(nscan.counts.designed === 0, 'a cell that still holds its placeholder is spec, whatever sits beside it');
+// several captions can share ONE cell (PTP `Guideline: Select Account`: `#1.1` and `#1.2` annotate the same screen
+// inside a loose GROUP) — they are cases; the group header above them (`#1 Card States & Sorting`) is not
+const cap = s => N('INSTANCE', 'Title Block', [N('FRAME', 'Content', [T(s)])]);
+const shared = N('GROUP', 'Group 1000002629', [cap('#1.1 Account that can link'), cap('#1.2 Account already Linked'), designedScreen()]);
+const gscan = scanCases([N('FRAME', 'Permutation:', [N('FRAME', 'Content', [N('FRAME', 'Frame 1000004022', [cap('#1 Card States & Sorting'), shared])])])]);
+A(gscan.counts.cases === 2 && gscan.counts.designed === 2, 'captions sharing one cell are cases, their group header is not, got ' + JSON.stringify(gscan.counts));
 console.log('scan-cases v2 self-check OK');
