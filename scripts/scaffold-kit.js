@@ -115,5 +115,25 @@ if (typeof figma === "undefined") {
   const A = (c, m) => { if (!c) throw new Error("FAIL: " + m); };
   A(typeof guard === "function" && typeof alFrame === "function" && typeof finalizeFixed === "function", "factories defined");
   A(typeof placeholder === "function" && typeof stampCase === "function" && typeof elbowLink === "function", "all exports");
+
+  const mockNode = plainWorks => {
+    const store = { plain: {}, shared: {} };
+    return { store,
+      setPluginData(k, v) { if (!plainWorks) throw new Error("setPluginData is not supported in this host runtime"); store.plain[k] = v; },
+      setSharedPluginData(ns, k, v) { store.shared[ns + "/" + k] = v; } };
+  };
+  const C = { caseId: "screen/default", level: "S", tier: 1, priority: "must" };
+  let m = mockNode(true); stampCase(m, C); stampBoard(m, { project: "NEXT" });
+  A(m.store.plain.permBuild && m.store.plain.permBuildBoard && Object.keys(m.store.shared).length === 0, "Bridge: plain store only, shared untouched");
+  m = mockNode(false); stampCase(m, C); stampBoard(m, { project: "NEXT" });
+  A(JSON.parse(m.store.shared["permBuild/permBuild"] || "{}").caseId === "screen/default", "use_figma: stampCase falls back to shared 'permBuild'");
+  A(JSON.parse(m.store.shared["permBuild/permBuildBoard"] || "{}").project === "NEXT", "use_figma: stampBoard falls back to shared 'permBuild'");
+
+  const throws = fn => { try { fn(); return false; } catch (e) { return true; } };
+  globalThis.figma = { root: { name: "My file" } };
+  A(!throws(() => guard("My file")) && throws(() => guard("Other file")), "Bridge: guard matches the file name");
+  globalThis.figma = { root: { name: "Document" }, fileKey: "KEY123" };
+  A(!throws(() => guard("KEY123")) && throws(() => guard("OTHERKEY")), "use_figma: root.name is always 'Document' → guard matches the fileKey");
+  delete globalThis.figma;
   console.log("scaffold-kit self-check OK");
 }
