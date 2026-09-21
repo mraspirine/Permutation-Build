@@ -37,6 +37,22 @@
 - **next.md**: สัญญาณ detect แบบชื่อ variable · ตาราง T3 ระบุ flow (Top-Up) · แถว Common Handling ใช้ได้ทุก flow ที่มี board นั้น ·
   `button/interaction-states` = 1 เคส · pack ที่ยังไม่มี id ให้ mint แล้วลงตาราง · สูตรความกว้างเป็นค่าเริ่มต้น ไม่ใช่กฎ
 
+**รอบสาม (วันเดียวกัน) — audit `SKILL.md` ด้วย checklist 12 ข้อ (10/12) + Opus รัน BUILD จอ Payment 29.1 ถึง G3**
+- **ไฟล์อ้างอิงตามกฎไม่ทัน** (แก้ `SKILL.md` อย่างเดียวในรอบสอง): `board-grammar.md` Hard rule ขาดขั้น "flow เดียวกัน" ·
+  `case-library.md` ยังใช้ fintech modifier แบบกว้าง → แก้ให้ตรงกันแล้ว · README ตามด้วย
+- **G5 พูด 3 ที่แล้วไม่ตรงกัน**: ตาราง gate + ตาราง References ไม่มี `stats.skipped` → เหลือกฎเต็มที่ Phase 5 ที่เดียว
+- **AUDIT เป็นขั้นตอน 1-2-3** (หา base จาก stamp / `linkedFrom` → รัน Phase 0–2 → `scan-cases.js` → diff ตาม `caseId`) — เดิมไม่บอกว่า matrix มาจากไหน
+- **Phase 3 มี shape ของข้อเสนอตำแหน่ง board** (`placement (pending G1): …` หรือ `STOP <why> · options A / B`) · Phase 1 / 5 ใส่เลขขั้น
+- ตัวอย่างตรงกฎ: id `textfield/error-empty` แทน wildcard · บรรทัด counts มี `elsewhere in the flow`
+- Hard rule ใน CONTRACT เหลือเฉพาะส่วนที่ไม่ซ้ำ G1 · "nearest" = ใกล้ช่องที่จะวาง board · วันที่ "proven …" ย้ายมาอยู่ที่ CHANGELOG นี้
+  (use_figma clone connector ได้ 2026-08-18 · official MCP ล้นกับ board ใหญ่ 2026-07-24 · `root.name` = "Document" 2026-09-21)
+- `next.md` Placement: band เป็นของ section ที่ถือ board ของ flow — base อยู่ section ข้าง ๆ ที่ไม่มี board = ต้องถาม
+- **ไม่ทำตาม audit**: §Principles (ย้ำ walk every row / never guess ท้ายไฟล์ — โมเดลเล็กยังทำแถวหาย) · กฎ verbatim 2 ที่ · วิธีหา board 2 ที่ — ซ้ำโดยตั้งใจ ไม่ drift
+- จากการรันเทียบ 2 โมเดลหลังแก้ (Opus 95 แถว / Sonnet 38 แถว บนจอเดียวกัน): pack ของ component ที่ไม่อยู่บนจอ **ไม่ pull และไม่ลงตาราง** ·
+  `next.md`: id ของ Tier-3 ใช้ข้าม flow ได้ (สถานการณ์เดียวกัน = id เดิม)
+- ตรวจซ้ำบนไฟล์จริง: `scan-cases.js` 5 จุด ตัวเลขเท่ารอบสองทุก board · `harvest-board.js` 5 board (strict / strict / loose / indexed / indexed) ·
+  `verify-board.js` บน board 13.1 ที่ stamp ไว้ → `pass: true`, `skipped` รายงานเฉพาะ `knownCaseIds`
+
 **กฎ**
 - Phase 1: **board เป็นของ base นี้เมื่อ stamp `baseNodeId` หรือ `linkedFrom` ตรงกับ base เท่านั้น — ไม่ใช่ตามชื่อ** ·
   base อาจเป็น variant/state ของจอที่มี board อยู่แล้ว → เข้ากรณี states-of-one-screen

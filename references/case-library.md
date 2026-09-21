@@ -147,7 +147,7 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 
 ## Priority (defaults when proposing the matrix)
 🔴 **Must** breaks the flow / user stuck / money at risk · 🟡 **Should** clearly worse but not blocking · ⚪ **Edge** rare
-**Fintech modifier:** money and confirmation cases move up one level; idempotency and mid-transaction timeout are always Must.
+**Fintech modifier:** cases about the money outcome (amount, fee, payable, balance, double submission) move up one level — not every row of a payment or confirmation screen; idempotency and mid-transaction timeout are always Must.
 
 ## Chain links (finding A should also surface B)
 - Date Picker → Date Calendar + Date Roller

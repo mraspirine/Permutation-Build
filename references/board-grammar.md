@@ -7,7 +7,7 @@
 ---
 
 ## Hard rule: harvest before scaffold
-> **The nearest sibling board in the same SECTION is the ground truth** — harvest it on every build (one call). Projects run several dialects per flow or page, so the neighbour outranks the project file; the project file supplies the defaults when there is no neighbour.
+> **The nearest sibling board is the ground truth** — same SECTION first, else the same FLOW (the outer section); harvest it on every build (one call). Projects run several dialects per flow or page, so the neighbour outranks the project file; the project file supplies the defaults only when the flow has no board at all.
 **Never build a board from memory, from defaults, or from another project.** Every time you scaffold in a file you have not built in before:
 1. Find a board the team made in that file (`scan-cases.js` locates containers)
 2. **Run `scripts/harvest-board.js` verbatim** against it (replace `BOARD_HINT`). **Never hand-write a shortened version** — a shortened one drops sections (the links, typically) and then reports "no connector" for a project that clearly has one. The script exists precisely so nothing gets skipped.
