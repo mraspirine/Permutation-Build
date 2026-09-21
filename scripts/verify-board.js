@@ -263,4 +263,9 @@ A(outsideParent({ x: 152, y: 3810, width: 1650, height: 3580 }, { type: "SECTION
 A(outsideParent({ x: 152, y: 3810, width: 1650, height: 3556 }, { type: "SECTION", width: 8528, height: 7386 }) === 0 && outsideParent({ x: -5, y: 0, width: 10, height: 10 }, { type: "PAGE" }) === 0, "inside / not a section");
 A(linkFailures(Object.assign({}, okLink, { connectorStart: { endpointNodeId: "base", magnet: "AUTO" } }), ctx).some(f => /magnet/.test(f)), "an AUTO start magnet is reported, not skipped");
 A(linkFailures(Object.assign({}, okLink, { connectorStart: { endpointNodeId: "base", magnet: "AUTO" } }), Object.assign({}, ctx, { magnets: null })).length === 0, "magnets: null switches the magnet rule off");
+A(skippedChecks({ linkId: "", baseNodeId: "", expectedBaseNodes: 0, knownCaseIds: [], expectedCases: 0 }).length === 4, "every check that an empty CONFIG switches off is listed");
+A(skippedChecks({ linkId: "1:2", baseNodeId: "1:3", expectedBaseNodes: 9, knownCaseIds: ["a"], expectedCases: 3 }).length === 0, "a full CONFIG skips nothing");
+A(sizeExempt({ level: "C" }, false, { componentCrops: true }) && !sizeExempt({ level: "C" }, false, { componentCrops: false }) && !sizeExempt({ level: "C" }, true, { componentCrops: true }) && !sizeExempt({ level: "S" }, false, { componentCrops: true }),
+  "only a designed level-C cell is size-exempt, and only in a project that says its component cases are crops");
+A(linkFailures(okLink, Object.assign({}, ctx, { caps: ["TRIANGLE_FILLED", "ARROW_LINES"] })).length === 0 && linkFailures(okLink, Object.assign({}, ctx, { caps: ["ARROW_LINES", "ARROW_LINES"] })).some(f => /caps/.test(f)), "wrong-but-present caps are caught when the project pins them");
 console.log("verify-board self-check OK");

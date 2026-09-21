@@ -301,4 +301,21 @@ const cap = s => N('INSTANCE', 'Title Block', [N('FRAME', 'Content', [T(s)])]);
 const shared = N('GROUP', 'Group 1000002629', [cap('#1.1 Account that can link'), cap('#1.2 Account already Linked'), designedScreen()]);
 const gscan = scanCases([N('FRAME', 'Permutation:', [N('FRAME', 'Content', [N('FRAME', 'Frame 1000004022', [cap('#1 Card States & Sorting'), shared])])])]);
 A(gscan.counts.cases === 2 && gscan.counts.designed === 2, 'captions sharing one cell are cases, their group header is not, got ' + JSON.stringify(gscan.counts));
+// review 2: the note-beside-an-empty-slot check above never reached the no-height-gate path (its slot carried the
+// placeholder text). A TEAM-made empty slot is a plain empty frame, or says "Pending Design".
+const bareSlot = () => N('FRAME', 'screen', [], { height: 844 });
+const pending = () => N('FRAME', 'screen', [T('Pending Design')], { height: 844 });
+const noteFrame = () => N('FRAME', 'Note', [T('todo: confirm with BA')], { height: 140 });
+const tcell = (num, kids) => N('FRAME', 'case', [N('FRAME', 'Description', [N('FRAME', 'case', [T('Case#' + num), T('Name')])])].concat(kids));
+const eboard = N('FRAME', 'Permutation_E', [N('FRAME', 'case', [T('Group'), N('FRAME', 'case', [tcell(1, [noteFrame(), bareSlot()]), tcell(2, [pending()]), tcell(3, [noteFrame(), designedScreen()])])])]);
+const escan = scanCases([eboard]);
+A(escan.counts.designed === 1, 'a note beside a bare empty slot, or a "Pending Design" slot, is not designed — got ' + escan.counts.designed + '/3');
+// review 2: the PTP indexed grammar must not fire on a board that labels its cases with "Case"
+const stray = N('INSTANCE', 'screen', [T('#2 ทำรายการซ้ำ'), T('content')], { height: 844 });
+const mixed = scanCases([N('FRAME', 'Permutation_M', [N('FRAME', 'case', [T('Group'), N('FRAME', 'case', [tcell(1, [stray]), tcell(2, [designedScreen()])])])])]);
+A(mixed.counts.cases === 2 && mixed.counts.indexedLabels === 0, 'a "#2 …" text inside a screen on a Case-labelled board is not a case, got ' + JSON.stringify(mixed.counts));
+// review 2: a board found only through its connector, holding ONE case — the cell must not climb up to the board
+const solo = N('FRAME', 'Guideline: One', [cap('Permutation:'), N('FRAME', 'Content', [N('FRAME', 'row', [hcell('#1 Only case', designedScreen())])])]);
+const sscan = scanCases([N('SECTION', 'flow', [solo])], new Map([[solo, [{ id: '9:9', name: 'screen' }]]]));
+A(sscan.counts.cases === 1 && sscan.counts.designed === 1, 'one-case board found by its link: the cell stops below the board, got ' + JSON.stringify(sscan.counts));
 console.log('scan-cases v2 self-check OK');
