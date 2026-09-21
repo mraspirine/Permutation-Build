@@ -11,6 +11,8 @@
 //   cell that carries the permBuild pluginData.
 // - isDesigned() only counts SCREEN-SIZED children (h > 600): caption frames were false positives.
 
+const DETAIL = true; // false = per-board counts only. Use false under use_figma: its responses die around 20 KB.
+
 const STRICT_RE = /^\s*Case\s*#?\s*(\d+)\s*$/;                     // renumber-compatible
 const LOOSE_RE = /^\s*Case\s*#?\s*(\d+)\s*(?:[-–—:.]\s*(.+))?\s*$/s; // also "Case #1 - Name"
 const INDEXED_RE = /^\s*(?:#\s*(\d+(?:\.\d+)*)\s+|(\d+\.\d+)\s*\|\s*)(.+?)\s*$/s; // PTP: "1.2 | Name" or "#2.1 Name" — no "Case" word
@@ -68,12 +70,14 @@ function scanCases() {
     'children' in frame && frame.findOne &&
     !!frame.findOne(x => x.type === 'TEXT' && /awaiting design/i.test(x.characters || ''));
 
-  // designed = the cell holds a SCREEN-SIZED child (h > 600) that is not the placeholder.
-  // Height gate matters: caption blocks are frames too and made short cells read as designed.
-  function isDesigned(cell) {
+  // designed = the cell holds something besides its caption that is not the placeholder. The caption is
+  // the child that holds this cell's label; no height gate, because a component-level case holds a crop
+  // (PTP `SOFCard_CASA` 390x108), not a screen.
+  function isDesigned(cell, labelNode) {
     if (!('children' in cell)) return false;
+    const holdsLabel = k => k === labelNode || (k.findOne && !!k.findOne(x => x === labelNode));
     return cell.children.some(f =>
-      (f.type === 'FRAME' || f.type === 'INSTANCE') && f.height > 600 &&
+      (f.type === 'FRAME' || f.type === 'INSTANCE') && !holdsLabel(f) &&
       !isPlaceholder(f) && 'children' in f && f.children.length > 0);
   }
 
@@ -107,7 +111,7 @@ function scanCases() {
     let pd = null;
     try { pd = JSON.parse(readPD(cell, 'permBuild') || 'null'); } catch (e) {}
     const lab = parseLabel(labelNode.characters);
-    const designed = pd && pd.status === 'designed' ? true : isDesigned(cell);
+    const designed = pd && pd.status === 'designed' ? true : isDesigned(cell, labelNode);
     return {
       n: lab ? lab.n : null,
       label: labelNode.characters.split('\n')[0],
@@ -134,11 +138,15 @@ function scanCases() {
       if ('children' in n) n.children.forEach(walk);
     })(c);
     cases.sort((a, b) => byLabel(a.n, b.n));
-    return { id: c.id, name: c.name, stamp: boardStamp, count: cases.length, dupNumbers: findDupNumbers(cases.map(x => x.n)), cases };
+    const row = { id: c.id, name: c.name, stamp: boardStamp, count: cases.length, designed: cases.filter(x => x.designed).length, dupNumbers: findDupNumbers(cases.map(x => x.n)) };
+    if (DETAIL) row.cases = cases;
+    row._all = cases;
+    return row;
   });
 
   // Case#N restarts on every board — duplicates only mean something INSIDE one board.
-  const all = out.flatMap(c => c.cases);
+  const all = out.flatMap(c => c._all);
+  out.forEach(c => { delete c._all; });
   const dup = [...new Set(out.flatMap(c => c.dupNumbers))].sort(byLabel);
   return {
     containers: out,

@@ -50,13 +50,14 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 | Gate | Must hold before moving on | Enforced by |
 |---|---|---|
 | **G0** | write probe OK · project resolved (see Project index) | Phase 0 |
-| **G1** | `projects/<name>.md` §Board anatomy verified against a live board in THIS file | `scripts/harvest-board.js` **run verbatim** |
+| **G1** | board style measured on the **nearest sibling board in the same SECTION** (one call); no sibling → `projects/<name>.md` §Board anatomy, verified in this file | `scripts/harvest-board.js` **run verbatim** |
 | **G2** | every row bucketed ✓ / ✗ / ⊘-with-reason | Phase 2 |
 | **G3** | user confirmed matrix + placement | AskUserQuestion |
 | **G4** | build uses `scripts/scaffold-kit.js` factories · chunked · guarded | Phase 4 |
-| **G5** | `scripts/verify-board.js` returns `pass: true` | Phase 5 |
+| **G5** | `scripts/verify-board.js` returns `pass: true` — cells, stamps, labels, slots, overlap, **inside its section, link attached** | Phase 5 |
 
 ## Project index (Phase 0 detection — details in each projects/<name>.md)
+> Read the signals in this order: **screen / section / board naming → sibling boards → variables**. Naming decided every run; variables misled once (a partner screen inside another project's flow).
 | Project | Detect signals | File |
 |---|---|---|
 | **NEXT** | collections `❖ NEXT` + `3. Size` + `4. Typography` · file name contains "NEXT" | `projects/next.md` |
@@ -115,17 +116,17 @@ plus where the board will be placed. **The user trims / adds / reorders, then co
 Anyone who only wanted the case list stops here.
 
 ### Phase 4 — Scaffold
-**Gate G1 first: §Board anatomy in `projects/<name>.md` must be verified against a live board in THIS file — not yet (or the team's style changed) → run `scripts/harvest-board.js` VERBATIM** against a board the team already made in that file — never a hand-shortened version (a shortened harvest drops items, e.g. the links). It returns all 10 items (shell · spacing per level · font + weight + lineHeight · colors · caption shape · slot sizes · sub-groups · links incl. `otherLinesNearby` · placement + `siblingBoards` · naming). Compare with `projects/<name>.md`; if it differs or is missing, **update the project file first**. Record the base's node count now (for G5). Then build:
+**Gate G1 first: a sibling board in the same SECTION → run `scripts/harvest-board.js` VERBATIM on the nearest one, every time** — one call, and projects run several dialects (per flow, per page), so the neighbour outranks the project file. It differs from `projects/<name>.md` → follow the neighbour and record the variant in the project file. No sibling → use §Board anatomy (harvest any team board in the file if it was never verified here). Never a hand-shortened harvest (it drops items, e.g. the links). Record the base's node count now (for G5). Then build:
 0. **Sibling-duplicate guard**: run `scripts/scan-cases.js` over the sibling boards in the same section first; if the confirmed case set is **≥90% identical (by caseId) to a sibling board whose base is a different screen** → stop and confirm with the user before building — an enumeration that ignores its own base produces exactly this signature. Siblings without stamps carry no caseIds → compare by case **names**; if that is not possible either, report `guard skipped — siblings unstamped` instead of passing silently
-1. **Paste `scripts/scaffold-kit.js` as the prelude** of the build call, then write project-specific code with its factories (`alFrame` → append → `finalizeFixed` / `growWithContent`; `placeholder`; `stampCase`/`stampBoard`; `elbowLink`) — the factories encode the auto-layout ordering that otherwise silently collapses frames
+1. **Paste `scripts/scaffold-kit.js` as the prelude** of the build call, then write project-specific code with its factories (`alFrame` → append → `finalizeFixed` / `growWithContent`; `placeholder`; `stampCase`/`stampBoard`; captions from a library component: `freshInstance` + `setInstanceTexts` + `equalizeRow`; GRID groups: `gridFrame` + `placeInGrid`; `elbowLink`) — the factories encode the auto-layout ordering that otherwise silently collapses frames
 2. One board container, `stampBoard`-ed — **everything goes inside it** (rollback = delete that one node + its screen→board link, which has to live on the SECTION)
 3. Placement from `siblingBoards`: pick a column count whose width fits the free span. **No free span where the project's ordering puts this board** (or the slot is narrower than the project's minimum board width) → **STOP and ask the user where it goes** — never squeeze the board, resize the team's section, or relocate it silently. Read the board's width back after the first group is appended, before building the rest
 4. Per case: label node (project's label style) + caption nodes + `placeholder()` + `stampCase()`
-5. Draw the screen→board link if the project uses one — **clone an existing CONNECTOR and re-point `connectorStart` / `connectorEnd`** (it stays a real connector and auto-attaches). **The clone gate is per-RUNTIME**: the desktop Bridge may throw *"Cloning CONNECTOR nodes is not supported"* where `use_figma` clones the very same line fine (proven 2026-08-18) → on a Bridge throw, run the clone + re-point through **`use_figma`** instead; re-pointing works on both runtimes. Every runtime blocked → the user hand-draws or Cmd+D's an exemplar and you re-point it. `elbowLink`'s VECTOR is a placeholder of last resort — it never attaches; when the project's links attach, say so. Either way **replicate the exemplar: anchor (NEXT: the main INSTANCE inside the screen, magnet BOTTOM — but the screen FRAME when that instance overflows a clipping frame, else the line starts below the visible screen) · route (screen bottom-center → board top-center) · BOTH end caps** (VECTOR: per-vertex `strokeCap` via `setVectorNetworkAsync`) — the capless unattached "close enough" line is the most-repeated link mistake across projects (`board-grammar.md` §Link rule)
+5. Draw the screen→board link if the project uses one: **clone a healthy team CONNECTOR and re-point `connectorStart` / `connectorEnd`** — anchor, route, caps and the clone ladder (the clone gate is per runtime: Bridge throws → `use_figma`; all blocked → the user duplicates one and you re-point it; a VECTOR is a placeholder that never attaches) are in `board-grammar.md` §Link rule. Pass the link's id to G5 as `linkId` — it fails a line that is unattached, capless, or does not start at the screen's bottom edge
 6. Chunks of ~10 cells per call; every call starts with `guard(<file name>)` on the Bridge · `guard(<fileKey>)` under use_figma
 
 ### Phase 5 — Verify + report (gate G5)
-- **Run `scripts/verify-board.js`** with CONFIG from `projects/<name>.md` §Verify config (label style · slot sizes · expected case count · baseNodeId + node count from G1). **The scaffold is done only when `pass: true`.** Never hand-write a subset of these checks
+- **Run `scripts/verify-board.js`** with CONFIG from `projects/<name>.md` §Verify config (label style · slot sizes · expected case count · baseNodeId + node count from G1 · `linkId`). **The scaffold is done only when `pass: true`.** Never hand-write a subset of these checks
 - Screenshot the board (≤3 rounds) and eyeball against the matrix — the script checks structure, the screenshot checks looks
 - Report in Thai, in this shape (values are an example):
 ```
@@ -166,7 +167,7 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 
 **Standard-case naming**: a case that exists in `case-library.md` keeps its library `id` and caption **verbatim** — never re-word a standard situation, and never invent a new name for one (e.g. "Session timeout" on one board and "Network reconnect" on its sibling). New recurring situation → propose it as a library addition. Captions refer to sections/components by the **team's names from the component → category map** in `projects/<name>.md`, never the model's own labels — an unmapped component is already flagged in Phase 1, so by caption time every name has a source.
 
-> **🔴 Hard rule: harvest before scaffold.** Board style **differs per project** (spacing · weight · lineHeight · node count · link style). Before writing into a file you have not built in before, run **Gate G1** (Phase 4) first.
+> **🔴 Hard rule: harvest before scaffold.** Board style **differs per project** (spacing · weight · lineHeight · node count · link style). Before writing, run **Gate G1** (Phase 4): the nearest sibling board is the ground truth.
 > Never build from memory, from defaults, or from another project. No existing board at all → use the project file's defaults; none there either → **ask the user**.
 
 **Placeholder frame** (phase 1): sized like the project's real screen slot, with a centered label
@@ -210,9 +211,10 @@ orphan 1 (Case#13) → รายงานเฉย ๆ · fill: 🔴 3/5 🟡 1/
 | `references/case-library.md` | Phase 2 — the 2-level case base (Tier 1/2), caption templates, chain links |
 | `references/archetype-cases.md` | Phase 1–2 — archetype → signature cases + the 9 permutation axes |
 | `references/board-grammar.md` | Phase 4 — cross-project grammar + **the 10-item harvest checklist** (contains no project-specific numbers) |
-| `scripts/scan-cases.js` | Phase 1 (existing cases) + AUDIT — inventory, fill status, strict/loose label stats |
+| `scripts/scan-cases.js` | Phase 1 (existing cases) + AUDIT — inventory, fill status, label-style stats · set `DETAIL = false` under use_figma |
 | `scripts/harvest-board.js` | **Gate G1** — captures the team's board style (shell · spacing · fonts · links · neighbours) |
-| `scripts/scaffold-kit.js` | **Phase 4 prelude** — build factories (sizing-order-safe frames, placeholder, stamps, elbow link) |
+| `scripts/scaffold-kit.js` | **Phase 4 prelude** — build factories (sizing-order-safe frames, placeholder, stamps, instance captions, GRID, elbow link) |
+| `scripts/smoke-test.js` | First run on a new machine — proves the runtime can write, stamp and guard (creates and removes one throwaway frame) |
 | `scripts/verify-board.js` | **Gate G5** — the full check battery; scaffold is done only on `pass: true` |
 | `projects/<name>.md` | Phase 0–5 — board anatomy, school, naming, component map, Tier-3 packs, **§Verify config** |
 

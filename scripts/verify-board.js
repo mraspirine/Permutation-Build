@@ -10,6 +10,7 @@ const CONFIG = {
   expectedCases: 0,                // number confirmed in Phase 3 (0 = skip)
   slotSizes: ["390x844"],          // allowed screen-slot sizes for this project, "WxH"
   baseNodeId: "",                  // the base screen ("" = skip base-intact check)
+  linkId: "",                      // the screen→board link ("" = skip). Must be an attached CONNECTOR with both caps
   expectedBaseNodes: 0,            // node count measured BEFORE scaffolding (0 = skip)
   titlesFullWidth: false,          // true = every group header must span its group's full width
   numbersScopedPerGroup: false,    // true = Case#N restarts inside each group (DGL) → dup check runs per group
@@ -46,6 +47,25 @@ function labelKey(text) {
   const i = text.match(INDEXED_RE); if (i) return i[1] || i[2];
   const m = text.match(LOOSE_RE); return m ? Number(m[1]) : null;
 }
+// How far the board sticks out of its parent SECTION, in px (0 = inside; section children use local coordinates).
+function outsideParent(board, parent) {
+  if (!parent || parent.type !== "SECTION") return 0;
+  return Math.max(0, -board.x, -board.y, board.x + board.width - parent.width, board.y + board.height - parent.height);
+}
+// The link is the most-rejected part of a build: capless, unattached, or starting below a clipped screen.
+// ctx = { inBoard:Set, inBase:Set|null, baseBottom, lineTop, tolerance }
+function linkFailures(link, ctx) {
+  if (link.type !== "CONNECTOR") return ["link is a " + link.type + ", not a CONNECTOR — it cannot attach (placeholder line: say so to the user)"];
+  const F = [], s = link.connectorStart || {}, e = link.connectorEnd || {};
+  if (!s.endpointNodeId) F.push("link start is loose (not attached to a node)");
+  if (!e.endpointNodeId) F.push("link end is loose (not attached to a node)");
+  if (e.endpointNodeId && !ctx.inBoard.has(e.endpointNodeId)) F.push("link does not end on this board");
+  if (ctx.inBase && s.endpointNodeId && !ctx.inBase.has(s.endpointNodeId)) F.push("link does not start on the base screen");
+  if (link.connectorStartStrokeCap === "NONE" || link.connectorEndStrokeCap === "NONE") F.push("link is missing an end cap");
+  if (s.magnet === "BOTTOM" && ctx.baseBottom != null && ctx.lineTop != null && Math.abs(ctx.lineTop - ctx.baseBottom) > ctx.tolerance)
+    F.push("link starts " + Math.round(ctx.lineTop - ctx.baseBottom) + "px from the screen's bottom edge — anchor the FRAME when the main instance overflows it");
+  return F;
+}
 function findDup(nums) {
   const seen = new Set(), dup = new Set();
   nums.forEach(n => { if (n != null) { if (seen.has(n)) dup.add(n); seen.add(n); } });
@@ -72,9 +92,11 @@ async function verify() {
     const label = cell.findOne
       ? cell.findOne(x => x.type === "TEXT" && isLabelText(x.characters || ""))
       : null;
-    const slot = cell.findOne
-      ? cell.findOne(x => (x.type === "FRAME" || x.type === "INSTANCE") && x.height > 600)
-      : null;
+    // the slot = the cell's child that is not its caption; component-level cells hold a crop, not a screen
+    const holdsLabel = k => k === label || (k.findOne && !!k.findOne(x => x === label));
+    const direct = "children" in cell ? cell.children.filter(k => (k.type === "FRAME" || k.type === "INSTANCE") && !holdsLabel(k)) : [];
+    const slot = direct.find(k => k.height > 600) || (pd && pd.level === "C" ? direct[0] : null) ||
+      (cell.findOne ? cell.findOne(x => (x.type === "FRAME" || x.type === "INSTANCE") && x.height > 600) : null);
     return { cell, pd, label, slot };
   });
 
@@ -94,7 +116,8 @@ async function verify() {
     if (!r.slot) F.push(tag + ": no screen slot (placeholder or screen) found");
     else {
       const size = Math.round(r.slot.width) + "x" + Math.round(r.slot.height);
-      if (CONFIG.slotSizes.length && CONFIG.slotSizes.indexOf(size) === -1)
+      const crop = r.pd.level === "C" && !isPlaceholder(r.slot);   // a designed component crop has no fixed size
+      if (!crop && CONFIG.slotSizes.length && CONFIG.slotSizes.indexOf(size) === -1)
         F.push(tag + ": slot " + size + " not in " + JSON.stringify(CONFIG.slotSizes));
       if (r.pd.status === "spec" && !isPlaceholder(r.slot) && !("children" in r.slot && r.slot.children.length === 0))
         F.push(tag + ": status 'spec' but slot is not a placeholder");
@@ -128,6 +151,21 @@ async function verify() {
       n.y < board.y + board.height && n.y + n.height > board.y)
     .map(n => (n.name || "").slice(0, 40));
   if (overlaps.length) F.push("board overlaps: " + overlaps.join(" · "));
+  const out = outsideParent(board, parent);
+  if (out > 0) F.push("board leaves its section by " + Math.round(out) + "px");
+
+  // ---- link ----
+  if (CONFIG.linkId) {
+    const link = await figma.getNodeByIdAsync(CONFIG.linkId);
+    if (!link) F.push("link not found: " + CONFIG.linkId);
+    else {
+      const ids = root => { const s = new Set(); (function c(n) { s.add(n.id); if ("children" in n) n.children.forEach(c); })(root); return s; };
+      const base = CONFIG.baseNodeId ? await figma.getNodeByIdAsync(CONFIG.baseNodeId) : null;
+      const bb = base && base.absoluteBoundingBox, lb = link.absoluteBoundingBox;
+      linkFailures(link, { inBoard: ids(board), inBase: base ? ids(base) : null,
+        baseBottom: bb ? bb.y + bb.height : null, lineTop: lb ? lb.y : null, tolerance: 12 }).forEach(f => F.push(f));
+    }
+  }
 
   // ---- base intact ----
   let baseNodes = null;

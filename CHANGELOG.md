@@ -63,6 +63,21 @@
 - **clicx.md: board กว้างขั้นต่ำ 1200** (title block `minWidth 1000`) + page variant `Im (CLICX)`
 - **next.md: ตาราง Tier-3 ids ที่อยู่บน board แล้ว** (8 id อ่านกลับจาก canvas) — กัน caption เพี้ยนข้าม board
 
+**ย้ายกฎจากข้อความไปเป็นด่านใน script (รอบสี่ วันเดียวกัน — สรุปจาก 3 รอบรันจริง NEXT / CLICX / PTP)**
+- **G5 ตรวจเส้นโยง** — CONFIG `linkId`: ต้องเป็น CONNECTOR · ปลายทั้งสองเกาะ node · จบที่ board นี้ · เริ่มที่จอ base ·
+  มีหัวเส้นครบ · เส้นเริ่มห่างขอบล่างจอไม่เกิน 12px (เส้นโยงโดนตีกลับ 4 ครั้ง และกฎเป็นข้อความถูกเขียนใหม่ 3 รอบ)
+- **G5 ตรวจว่า board อยู่ใน section** (เคยล้น 4px แล้วยังผ่าน)
+- **เคสระดับ component ที่ใส่ crop** (เช่น SOF card สูง 108) นับเป็น designed ได้แล้ว — scan-cases เลิกใช้เกณฑ์สูง > 600
+  เปลี่ยนเป็น "สิ่งที่อยู่ข้าง caption และไม่ใช่ placeholder" · verify-board ข้ามการเช็คขนาดให้ cell `level:"C"` ที่ออกแบบแล้ว ·
+  ผลจริง: board ทีม PTP 30/30 (เดิม 22/30)
+- **scaffold-kit: factory สำหรับ caption จาก library component + GRID** — `freshInstance` · `setInstanceTexts` ·
+  `equalizeRow` · `gridFrame` · `placeInGrid` (error ทุกครั้งใน 3 รอบเกิดในโค้ดส่วนนี้ที่เคยต้องเขียนเอง)
+- **G1: board ข้างเคียงใน section เดียวกันคือความจริง** — harvest ทุกครั้งที่มี (1 call) · project file เป็นค่าเริ่มต้น
+  (โปรเจคเดียวมีหลาย dialect: PTP 2 flow · CLICX หน้าต้นฉบับ · NEXT 2 รูปแบบชื่อ)
+- **scan-cases `DETAIL = false`** — คืนเฉพาะสรุปราย board สำหรับ use_figma ที่ response เกิน ~20 KB แล้ว error
+- **Project index: อ่านสัญญาณจากชื่อก่อน variables** · Phase 4 ข้อ 5 (เส้นโยง) ย่อจาก ~1,170 เหลือ ~520 ตัวอักษร รายละเอียดอยู่ใน board-grammar
+- **`scripts/smoke-test.js`** + README "เช็คว่าเครื่องพร้อม" — ให้คนในทีมเช็คเครื่องตัวเองก่อนใช้ครั้งแรก
+
 **เอกสาร**
 - ตัดชื่อบุคคลออกจากทุกไฟล์ ใช้ชื่อโปรเจคแทน
 - ตัวอย่างใน report shape ไม่ใช้ชื่อแบรนด์ · อ้างถึงรอบเทสโดยไม่ระบุชื่อโมเดล

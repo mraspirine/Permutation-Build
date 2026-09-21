@@ -31,6 +31,23 @@ cp -R figma-permutation-build ~/.claude/skills/
 | **figma-console Desktop Bridge** | ใช้ตอนไปอ่าน board ใหญ่ๆ ที่มีอยู่แล้ว (MCP ตัว official อ่านแล้วล้น) และ board ที่เคยสร้างผ่าน Bridge |
 | Node.js *(ไม่บังคับ)* | ไว้รัน self-check ของสคริปต์ เช่น `node scripts/scan-cases.js` |
 
+## เช็คว่าเครื่องพร้อม (ทำครั้งเดียวตอนติดตั้ง)
+
+1. ต่อ **Figma MCP ตัว official** ให้ Claude Code แล้วลองสั่ง "อ่านจอนี้ให้หน่อย" พร้อมลิงก์ Figma สักจอ — อ่านได้ = ผ่าน
+2. เปิดไฟล์ Figma ที่คุณ **แก้ไขได้** (ไฟล์ทดลองก็ได้) แล้วบอก Claude ว่า
+   "รัน `scripts/smoke-test.js` ของ figma-permutation-build กับไฟล์นี้"
+3. ผลที่ต้องได้:
+
+```
+{ "ready": true, "checks": { "guard": "ok", "write": "ok", "stamp": "ok (shared store)" } }
+```
+
+สคริปต์สร้าง frame ทิ้ง 1 อันนอกจอแล้วลบเองทันที ไม่มีอะไรค้างในไฟล์
+`write` ไม่ผ่าน = ไฟล์เป็น view-only · `guard` ไม่ผ่าน = ส่งชื่อ/คีย์ไฟล์ผิด (ข้อความ error บอกว่าต้องใช้อันไหน)
+
+> **figma-console Desktop Bridge ไม่จำเป็นสำหรับการเริ่มใช้** — ต้องใช้เมื่อ section มี board เยอะจนคำตอบจาก MCP ตัว official
+> ใหญ่เกิน (~20 KB แล้วจะ error) หรือเมื่อจะ AUDIT board รุ่นเก่าที่ stamp ไว้ผ่าน Bridge
+
 ## ใช้กับโปรเจคตัวเองครั้งแรก
 
 ในนี้แถมโปรเจคที่สอนไว้แล้ว 4 ตัว (`projects/next.md`, `projects/dgl.md`, `projects/clicx.md`, `projects/ptp.md`)
@@ -70,7 +87,8 @@ figma-permutation-build/
     ├── scan-cases.js           สำรวจว่ามี board/เคสอะไรอยู่แล้ว ทำไปกี่ %
     ├── harvest-board.js        วัดสไตล์ board ของทีม (ด่าน G1)
     ├── scaffold-kit.js         ชุดฟังก์ชันสร้างของ — ตัวเดียวที่เขียนไฟล์จริง
-    └── verify-board.js         ชุดตรวจ 7 ข้อ ต้องผ่านถึงเรียกว่าเสร็จ (ด่าน G5)
+    ├── smoke-test.js           เช็คว่าเครื่องพร้อม: เขียนได้ · stamp ติด · guard ทำงาน
+    └── verify-board.js         ชุดตรวจ 9 ข้อ (รวมเส้นโยง + ขอบ section) ต้องผ่านถึงเรียกว่าเสร็จ (ด่าน G5)
 ```
 
 ## มันทำงานยังไง
@@ -84,9 +102,11 @@ figma-permutation-build/
 ทุกขั้นมีด่านกั้น สองด่านที่สำคัญสุด:
 
 - **G1 — วัดก่อนสร้าง** ทุกโปรเจควาง board ไม่เหมือนกัน (ระยะ ฟอนต์ line-height
-  รูปแบบ caption เส้นโยง) skill เลยต้องไปวัด board จริงในไฟล์นั้นก่อนเสมอ ห้ามเดา
+  รูปแบบ caption เส้นโยง) และโปรเจคเดียวกันยังต่างกันราย flow ได้ skill เลยวัด **board ข้างเคียงใน section เดียวกัน**
+  ทุกครั้งที่มี (1 call) ห้ามเดา
 - **G5 — ตรวจก่อนจบ** `verify-board.js` เช็คให้หมด: จำนวนเคส เลขซ้ำ รูปแบบ label
-  ขนาดช่องจอ ไม่ทับ board ข้างๆ และ**จอต้นทางต้องไม่โดนแตะแม้แต่ node เดียว**
+  ขนาดช่องจอ ไม่ทับ board ข้างๆ ไม่ล้น section **เส้นโยงต้องเกาะจริง มีหัวเส้น และเริ่มที่ขอบล่างของจอ**
+  และ**จอต้นทางต้องไม่โดนแตะแม้แต่ node เดียว**
   (นับ node ก่อน-หลังเทียบกัน) ยังไม่ `pass: true` = ยังไม่เสร็จ
   โปรเจคไหนนับ `Case#N` ใหม่ทุกกลุ่ม (อย่าง DGL) ก็เปิด `numbersScopedPerGroup: true`
   ให้การเช็คเลขซ้ำทำงานเป็นรายกลุ่ม
@@ -111,7 +131,8 @@ figma-permutation-build/
 node scripts/scan-cases.js      # เทส regex, ชื่อ board, เลขซ้ำ
 node scripts/scaffold-kit.js    # เช็ค factory + stamp/guard ทั้งสอง runtime (mock)
 node scripts/harvest-board.js   # เทสการจำชื่อ board + รูปแบบ label
-node scripts/verify-board.js    # เทส logic ของ label + เลขซ้ำ
+node scripts/verify-board.js    # เทส logic ของ label + เลขซ้ำ + เส้นโยง + ขอบ section
+node scripts/smoke-test.js      # เทสตัวเช็คความพร้อม (mock ทั้งสอง runtime)
 ```
 
 ## ข้อจำกัดที่รู้อยู่

@@ -57,6 +57,51 @@ async function textNode(str, font, size, opts) {
   return t;
 }
 
+// ---- captions built from a library component (CLICX, PTP) ----
+// A fresh instance of the same variant as `src`, with its boolean/text props copied. Never `src.clone()`:
+// a clone is born inside the team's own board (and, in a GRID, carries that grid's column span).
+async function freshInstance(src) {
+  const main = await src.getMainComponentAsync();
+  const inst = main.createInstance();
+  const props = {};
+  Object.keys(src.componentProperties || {}).forEach(k => { const p = src.componentProperties[k]; if (p.type !== "VARIANT") props[k] = p.value; });
+  if (Object.keys(props).length) inst.setProperties(props);
+  return inst;
+}
+// Override the VISIBLE text nodes of an instance, in layer order. Fonts are loaded per node.
+async function setInstanceTexts(inst, strings) {
+  const texts = inst.findAll(n => n.type === "TEXT" && n.visible !== false);
+  for (let i = 0; i < strings.length && i < texts.length; i++) {
+    for (const f of texts[i].getRangeAllFontNames(0, texts[i].characters.length)) await figma.loadFontAsync(f);
+    texts[i].characters = strings[i];
+  }
+  return texts.length;
+}
+// Same-role text nodes across ONE row (all labels, or all notes): pad with trailing blank lines until they
+// match the tallest — the caption frames stay HUG, so later copy edits never clip. Fonts must be loaded.
+function equalizeRow(texts, floor) {
+  const target = Math.max(floor || 0, ...texts.map(t => t.height));
+  texts.forEach(t => { let guardCount = 0; while (t.height < target - 0.5 && guardCount++ < 40) t.characters = t.characters + "\n"; });
+  return target;
+}
+// ---- GRID groups (PTP) ----
+function gridFrame(name, cols, rows, opts) {
+  opts = opts || {};
+  const g = figma.createFrame(); g.name = name; g.fills = []; g.clipsContent = false;
+  g.layoutMode = "GRID";                              // FIRST
+  g.gridColumnCount = cols; g.gridRowCount = rows;
+  g.gridColumnGap = opts.colGap || 0; g.gridRowGap = opts.rowGap || 0;
+  g.gridColumnSizes.forEach(t => { t.type = "HUG"; });  // FLEX tracks are invalid inside a HUG frame
+  g.gridRowSizes.forEach((t, i) => { const fixed = (opts.fixedRows || {})[i]; if (fixed) { t.type = "FIXED"; t.value = fixed; } else t.type = "HUG"; });
+  return g;                                           // append it to its parent, THEN set layoutSizing* = "HUG"
+}
+// Place at span 1, widen afterwards — a span set before the node sits in THIS grid collides ("position occupied").
+function placeInGrid(grid, node, row, col, span) {
+  node.gridColumnSpan = 1;
+  grid.appendChildAt(node, row, col);
+  if (span && span > 1) node.gridColumnSpan = span;
+}
+
 // Empty screen slot per the Contract. Appends to parent and locks size — ready to use.
 async function placeholder(parent, w, h, font, opts) {
   opts = opts || {};
