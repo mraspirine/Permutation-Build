@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-10-06 — NEXT: บันทึกจากงานจริง 2 รอบ (27 และ 29 ก.ย.)
+
+- `next.md` §Board anatomy: มาตรฐานชื่อ layer ของทีมเมื่อสร้าง board ใหม่หรือแปลง board เก่า (group = ชื่อหมวด · row = `Row` ·
+  คอลัมน์เคส = `Case#N - <name>` · กล่องคำอธิบาย = `Description` · คำอธิบายไทย = `Note`) รูปทรงเดิม เปลี่ยนแค่ชื่อ
+- `next.md` §Naming: board 1.14.1 Payment ใช้ label แบบ `Case #N` (มีเว้นวรรค ยังเป็น strict) และ board Payment 29.1 ทำตาม
+- `next.md` Tier-3 ids: เพิ่ม `fee/charged` · `memo/empty` · `bill-payment-input/multiple-fields` (ตั้งตอนสร้าง board Payment 29.1
+  Confirmation) · จด component ที่ยัง map ไม่ได้: `Transaction` · `Text Information`
+- แก้ตัวอย่างที่ล้าสมัย: Payment 29.1 มี board แล้วตั้งแต่ 2026-09-29
+
+---
+
 ## 2026-10-05 — เลข Case เรียงตามตำแหน่งบน board (ค่าเริ่มต้น)
 
 ที่มา: board Top-Up 29.1 (สร้าง 2026-08-18) ให้เลขตาม Priority แล้วจัดลงกลุ่ม แถวแรกจึงอ่านเป็น `Case#1 · #2 · #10`
