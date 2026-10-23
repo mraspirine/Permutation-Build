@@ -5,7 +5,7 @@
 > **How to use:** whichever components Phase 1 found on the base → pull their packs from §L2 (plus chained packs). Whatever archetype it is → pull the screen-level states from §L1 and `archetype-cases.md`. Every case carries: `id` · level · tier · opt-in · caption.
 > **Row ids inside a pack are derived, never invented**: `<pack>/<row name in kebab-case>` — `textfield/focus`, `image/asset-load-fail`, `text/maximum-characters`. No abbreviations, no re-wording. Rows whose name is Thai or carries a slash have their id written out in **§Row ids that cannot be derived** below.
 > `knownCaseIds` for G5 = every L1 id + every `tmpl/*` id + the row ids this run actually used.
-> `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → propose it as 🟡 Should / 🔵 Edge (the user can trim it at Confirm; never its own question box).
+> `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → propose it as 🟠 Should / 🟡 Edge (the user can trim it at Confirm; never its own question box).
 >
 > **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (e.g. "Session timeout" on one board and "Network reconnect" on its sibling — the boards stop being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
 >
@@ -153,7 +153,7 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 - **Group order for a Key Screen with no board yet**: the Group titles + order of the nearest sibling Permutation Board in THIS flow; none → the project file's categories in file order; never a board on another page.
 
 ## Priority (defaults when proposing the matrix)
-🔴 **Must** breaks the flow / user stuck / money at risk · 🟡 **Should** clearly worse but not blocking · 🔵 **Edge** rare
+🔴 **Must** breaks the flow / user stuck / money at risk · 🟠 **Should** clearly worse but not blocking · 🟡 **Edge** rare
 **Fintech modifier:** cases about the money outcome (amount, fee, payable, balance, double submission) move up one level — not every row of a payment or confirmation screen; idempotency and mid-transaction timeout are always Must. The modifier applies to Tier-3 rows too: a Case whose caption names the payable amount, fee or discount outcome (Zero payable · Fee charged · Coupon expired at confirm) is Must.
 **Case numbers follow the board's reading order, not priority** — number the confirmed cases group by group (top → bottom), then left → right inside a group: `1..N` across the board, or `1..k` inside each group where the project restarts per group. This is the default; a project that numbers differently says so in `projects/<name>.md`. (Top-Up 29.1 was numbered by priority and read `Case#1 · #2 · #10` in one row, 2026-08-18.)
 

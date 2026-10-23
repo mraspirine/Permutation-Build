@@ -102,6 +102,8 @@
   pointer Connector Line ใน clicx.md · rollback ใน board-grammar รวม Connector Line · DETAIL ยกเว้น AUDIT ใน contract-and-runtime ·
   note ในวงเล็บไม่ใช่ caption ใน case-library · pointer มีแล้ว ใน next.md · ตัวอย่าง draft ของ LEARN) —
   ขนาดสุดท้าย SKILL.md 24,989 ตัวอักษร · 193 บรรทัด (`LC_ALL=en_US.UTF-8 wc -m`)
+- **ไอคอน Priority ไล่ระดับใหม่ (2026-10-23):** `🔴 Must · 🟠 Should · 🟡 Edge` — สเกลความร้อนแดง→ส้ม→เหลือง (user ขอ: 🔴🟡🔵 เดิมไม่ไล่ระดับกัน
+  น้ำเงินหลุดจากสเกล) · เปลี่ยนใน `SKILL.md` §How to talk + ตัวอย่าง Phase 3 และ `case-library.md` §Priority · stamp `priority` ใน pluginData ไม่เปลี่ยน (เป็นคำ must/should/edge)
 
 ---
 

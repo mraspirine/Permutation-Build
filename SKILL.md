@@ -30,7 +30,7 @@ compatibility: "Reading the base and writing the scaffold work through the offic
 The user is a designer, not this skill's maintainer. Every message shows only **what Skill saw · what Skill proposes · what the user must decide**, in the words of the team's user-guide deck (Figma Slides `DcZuIPb5M4BuCrJPyfdpSU`) — never invent synonyms.
 - **Voice**: `Skill` is the subject, never "ผม" ("Skill อ่าน Key Screen แล้ว" · "Skill ยังไม่รู้จัก" · "Skill ไม่เดาเอง"); the user is `ผู้ใช้ Skill` / `Designer`. Short sentences; English term first, Thai gloss after it the first time a reader may not know it
 - **Words**: `Key Screen` (the base) · `Permutation Board` (always in full) · `Connector Line` (the link) · `Case` / `Cases` · `Group` (`Error Handling` · `Coupon State` · `Screen State` · `Component` …) · `Archetype (ประเภทจอ)` · `Case Library` · `Common Case` · `Placeholder` · `Confirm` · `Verify` · `Report` · `Rollback` · `BA` · AUDIT: `Missing` / `Stale` / `Orphan` + Thai gloss
-- **Priority**: icon + English word in table cells — `🔴 Must` · `🟡 Should` · `🔵 Edge` (never ⚪ — renders as a hollow glyph); Thai gloss once, in the Phase 3 summary line: `Must ต้องมี · Should ควรมี · Edge เกิดได้ยาก` (the Phase 5 Report keeps the bare words)
+- **Priority**: icon + English word in table cells — `🔴 Must` · `🟠 Should` · `🟡 Edge` (never ⚪ — renders as a hollow glyph); Thai gloss once, in the Phase 3 summary line: `Must ต้องมี · Should ควรมี · Edge เกิดได้ยาก` (the Phase 5 Report keeps the bare words)
 - **⚠ in chat** = the bare glyph ⚠ as a short tag in front of the Case (`⚠ ยืนยันค่า` · `⚠ Business Rule` · `⚠ แถวส่วนลด` · `⚠ ข้อ N` = waits on Confirm question N), defined once per message: `⚠ = ต้องยืนยันกับ BA ก่อน`. Board captions keep their verbatim text (the library writes `⚠️`)
 - **Never printed**: node ids · gate names (G0–G5) · tier / level (`T1`, `S/C`) · case ids (`coupon/none`) · label style (`strict`) · script names · bucket marks (✓ ✗ ⊘) · counts of any of these or of what Skill scanned. They live in stamps, `projects/<name>.md` and script JSON, shown only when asked ("ขอดูผล Verify"). **Layer names ARE printed**, with a Thai gloss: `Transaction (การ์ด จาก→ไปยัง)`
 - **Questions**: one decision per AskUserQuestion box, recommended option first marked `(แนะนำ)`, in the Phase 3 order. GUARD: never 2–3 questions in one box. An answer that changes the table → show the new table briefly before the next box
@@ -97,7 +97,7 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 2. Pull from `case-library.md` + `archetype-cases.md`: **L1** archetype states + FigJam Screen group + the 9 axes · **L2** the **whole pack** of each component found + chained packs (Date Picker → Calendar / Roller) · **Tier 2** templates the flow uses (parameterized) · **Tier 3** from the project file. **Multiply** only along axes the project file declares (device / language / branch / partner / stage), never the full cartesian. A pack whose component is not on screen is neither pulled nor listed; each pulled row → Case table or ตัดออก.
 3. GUARD: **captions verbatim** — a library or Tier-3 Case keeps its `id` and caption character for character; never re-word, translate, shorten or merge. Components by the team's names (component → category map), never your own. Row ids derived per the library, never invented. New situation → mint a Tier-3 id per `case-library.md` §Enumeration guards → pre-build question; recurring → propose a library addition.
 4. **Walk every row into exactly one bucket** (GUARD: an unbucketed row is a dropped Case — never skip silently): ✓ exists (this base's board, the flow's shared board, or `screen/default` when the base is that state) · ✗ missing + priority · ⊘ N/A + a reason you can point at (visible on screen — no list, no money input — or a §Screen facts row; `case-library.md` §Enumeration guards). A **business-assumption** Case ("this list is never empty") is ✗ + a pre-build question (`⚠ ข้อ N`), never ⊘. **Business values** (fees, limits) come from the brief, else `⚠️ ยืนยันค่า` on the caption — never invent numbers.
-5. **Priority** (`case-library.md` §Priority): 🔴 Must = breaks the flow / user stuck / money at risk · 🟡 Should · 🔵 Edge; fintech modifier for money-outcome cases only.
+5. **Priority** (`case-library.md` §Priority): 🔴 Must = breaks the flow / user stuck / money at risk · 🟠 Should · 🟡 Edge; fintech modifier for money-outcome cases only.
 6. **Number ✗ rows in board reading order** — group by group, top→bottom, then left→right; GUARD: never by priority. Keep the Case# ↔ caseId map for the run (stamps + G5).
 
 ### Phase 3 — Confirm ◄ stopping point
@@ -112,9 +112,9 @@ Component ที่ Skill ยังไม่รู้จัก: Transaction (ก
 |---|---|---|---|
 | Case#1 | Coupon State | ⚠ แถวส่วนลด · No coupon — กรณีไม่ใช้คูปอง | 🔴 Must |
 | Case#5 | Bill Detail | ⚠ ยืนยันค่า · Fee charged — กรณีมีค่าธรรมเนียม > 0 บาท | 🔴 Must |
-| Case#8 | Bill Detail | ⚠ ข้อ 2 · MWA overdue + VAT — กรณีค้างชำระเกิน 1 เดือน มี VAT | 🔵 Edge |
-| Case#9 | Screen State | Full screen loading — กรณีโหลดทั้งจอ (spinner) | 🟡 Should |
-| Case#15 | Button | Button interaction states — กรณีปุ่ม Default / Pressed / Disabled | 🟡 Should |
+| Case#8 | Bill Detail | ⚠ ข้อ 2 · MWA overdue + VAT — กรณีค้างชำระเกิน 1 เดือน มี VAT | 🟡 Edge |
+| Case#9 | Screen State | Full screen loading — กรณีโหลดทั้งจอ (spinner) | 🟠 Should |
+| Case#15 | Button | Button interaction states — กรณีปุ่ม Default / Pressed / Disabled | 🟠 Should |
 
 ตัดออก: มีแล้ว / ใช้กับจอนี้ไม่ได้
 | Case | เหตุผล |
