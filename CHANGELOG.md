@@ -104,6 +104,9 @@
   ขนาดสุดท้าย SKILL.md 24,989 ตัวอักษร · 193 บรรทัด (`LC_ALL=en_US.UTF-8 wc -m`)
 - **ไอคอน Priority ไล่ระดับใหม่ (2026-10-23):** `🔴 Must · 🟠 Should · 🟡 Edge` — สเกลความร้อนแดง→ส้ม→เหลือง (user ขอ: 🔴🟡🔵 เดิมไม่ไล่ระดับกัน
   น้ำเงินหลุดจากสเกล) · เปลี่ยนใน `SKILL.md` §How to talk + ตัวอย่าง Phase 3 และ `case-library.md` §Priority · stamp `priority` ใน pluginData ไม่เปลี่ยน (เป็นคำ must/should/edge)
+- **คำ Priority เป็น High / Medium / Low (2026-10-23):** ทุกข้อความถึงผู้ใช้ใช้ `🔴 High · 🟠 Medium · 🟡 Low` ไม่ต้องมีคำไทยกำกับ (user เลือก — เข้าใจทันทีแบบ Jira) ·
+  stamp ยังเป็น must/should/edge (= High/Medium/Low) เพื่อให้ board เก่าและ AUDIT ทำงานต่อได้ · แก้ `SKILL.md` · `case-library.md` §Priority · `learn-audit.md` ตัวอย่าง AUDIT ·
+  `contract-and-runtime.md` §2 จดการแปลงไว้
 
 ---
 

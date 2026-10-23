@@ -21,7 +21,7 @@
 **Layout schools** (details in `board-grammar.md`): A flow+link · B grid-matrix · C section-per-tab. The school is a field in `projects/<name>.md` and projects can mix them.
 
 ## 2 · pluginData stamps — written ONLY through `scaffold-kit.js` (`stampCase` / `stampBoard`)
-- cell key `"permBuild"`: `{ caseId, level:"S"|"C", tier:1|2|3, priority:"must"|"should"|"edge", status:"spec"|"designed", baseNodeId, configVer, date }` — `caseId` = the stable semantic id from `case-library.md` (stable across renumbering, not the Case# number)
+- cell key `"permBuild"`: `{ caseId, level:"S"|"C", tier:1|2|3, priority:"must"|"should"|"edge" (shown to the user as High / Medium / Low), status:"spec"|"designed", baseNodeId, configVer, date }` — `caseId` = the stable semantic id from `case-library.md` (stable across renumbering, not the Case# number)
 - board key `"permBuildBoard"`: `{ project, baseNodeId, configVer, date }` — lets AUDIT find boards even if renamed, and ties a board to its base
 - **Store note**: stamps follow the runtime — *plain* pluginData on the Bridge, *shared* pluginData (namespace `"permBuild"`) under use_figma, where plain throws. `scan-cases.js` / `verify-board.js` read both. A **plain-stamped board** (Bridge-built — every board before 2026-09-21) is invisible under use_figma → AUDIT it via the Bridge; a shared-stamped board reads on both
 - Keep the Case# ↔ caseId map for the whole run: `stampCase()` and G5 `knownCaseIds` need it (`knownCaseIds` = every L1 id + every `tmpl/*` id + the row ids this run used — `case-library.md` header)
