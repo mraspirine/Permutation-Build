@@ -5,6 +5,106 @@
 
 ---
 
+## 2026-10-22 — พูดกับคนรันด้วยภาษาคน: โชว์แค่ "เห็นอะไร · เสนออะไร · ต้องตัดสินใจอะไร"
+
+ที่มา: รัน Payment 29.1 Confirmation (2026-10-20) แล้วคนรันอ่านไม่ออก — node id · `pending G1` · T1/T3 · S/C · ✓✗⊘ · case id
+ปนอยู่ทุกบรรทัด และถาม 3 เรื่องในกล่องเดียว · เป้าหมาย: designer คนอื่นในทีมรันเองได้โดยไม่ต้องรู้จักข้างใน skill
+
+- `SKILL.md` §How to talk to the user (ใหม่): ไม่พิมพ์ node id · ชื่อด่าน · tier · level · case id · label style · ชื่อ script ·
+  เครื่องหมาย bucket ออกมาเลย (ยังอยู่ใน stamp / project file / JSON ของ script — ขอดูได้) · ความสำคัญเป็นไอคอน+คำเสมอ
+  (`🔴 ต้องมี · 🟡 ควรมี · 🔵 เผื่อไว้`) · ถามกล่องละ 1 เรื่อง ตัวเลือกแนะนำอยู่บน
+  · ไอคอน "เผื่อไว้" ใช้ 🔵 ไม่ใช่ ⚪ — ⚪ บนเครื่องผู้ใช้โชว์เป็นวงกลมโปร่งเหมือน radio button ไม่ใช่ไอคอน (เห็นตอนรันทดสอบ 22 ต.ค.)
+  เปลี่ยนใน `SKILL.md` + `case-library.md` §Priority ด้วย
+- Phase 1: ไม่ส่ง Profile แยกข้อความแล้ว → เป็นหัว 4 บรรทัดของข้อความ Phase 3 (จอนี้คือ / เจอบนจอ / ยังไม่รู้จัก / board เดิม) ·
+  ยกเว้นเจอ board ของจอนี้อยู่แล้ว → หยุดถาม AUDIT ก่อน
+- Phase 3 รูปใหม่: ตาราง 4 คอลัมน์เฉพาะเคสที่เสนอ · "ไม่เสนอเพราะ" ยุบ ✓/⊘ เป็นบรรทัดละเหตุผล (pack ไม่หาย — กฎ G2 ไม่เปลี่ยน) ·
+  "ต้องตอบก่อนสร้าง" เฉพาะ ⚠️ ที่เปลี่ยนว่าเคสมีไหม/อยู่ไหน — ⚠️ ที่เป็นค่าจาก brief ไม่ถาม ปล่อยติด caption · ที่วาง board เป็น
+  ประโยคเดียว ไม่มีพิกัด · ลำดับถาม: อ่านจอถูกไหม → เคสค้าง → ปุ่มไปไหน → วางที่ไหน (เฉพาะมีทางแยก) → สร้าง/เอาแค่ list/ปรับเอง
+- Phase 5 / AUDIT: สรุป 4 บรรทัด (สร้างแล้ว N + ตรวจผ่าน / ลิงก์ / เริ่มจาก Case# ไหน / ถ้าไม่เอาลบอะไร) · ตรวจไม่ผ่านบอกเป็นภาษาคน ·
+  AUDIT ใช้คำว่า ยังไม่มีบน board / จอต้นฉบับเปลี่ยน / มีบน board แต่ไม่อยู่ในรายการ (ไม่ลบ)
+- **รอบสอง (หลังรันทดสอบกับจอเดิม):** หัว 4 บรรทัดแบบ `label: ค่า` ยังอ่านไม่ออก เพราะมันเป็นรายการหลักฐาน (ชื่อ layer · จำนวน ·
+  ชื่อ board หน้าอื่น) ไม่ใช่ข้อสรุป → เปลี่ยนเป็น 3 ประโยค บรรทัดละ 1 ข้อสรุป + ผลต่อคนอ่าน (มองว่าจอนี้คือ… ถ้าไม่ใช่บอกได้ /
+  ยังไม่มี board · เคสกลางอยู่ board รวมแล้ว / ส่วนที่ยังแตกเคสให้ไม่ได้ → ถามข้อ 1) · หัวข้อย่อยเป็นประโยค (เคสที่ควรมี… · ที่ไม่ใส่ เพราะ… ·
+  ขอถาม N ข้อก่อนสร้าง board · board จะไปอยู่: …) · ตัดรายการ component ทั้งแถบ ชื่อ layer เลข 14 และชื่อหน้าอื่นออก (ขอดูได้)
+- รอบสาม: "ที่ไม่ใส่" กับ "ขอถาม" เป็นตาราง (`ไม่ใส่ | เพราะ` · `ข้อ | ถามว่า | ตอบแล้วเปลี่ยนอะไร`) — ทุกแถวมีช่องเหมือนกัน กวาดตาง่ายกว่า
+  bullet ที่มีลูกศรจมกลางบรรทัด · หัว 3 ประโยคกับตารางเคส 4 ช่องคงเดิม (user เลือก 22 ต.ค.)
+- รอบสี่: ใช้ภาษาจาก user-guide deck ของทีม (Figma Slides `DcZuIPb5M4BuCrJPyfdpSU`) ทุก report shape — `Skill` เป็นประธาน ไม่ใช้ "ผม" ·
+  Key Screen / Permutation Board / Connector Line / Case / Group / Archetype (ประเภทจอ) / Confirm / Verify / Report / Rollback /
+  Missing / Stale / Orphan · Priority ในตาราง = `🔴 Must · 🟡 Should · 🔵 Edge` คำไทยอธิบายครั้งเดียวในบรรทัดสรุป (ต้องมี / ควรมี /
+  เกิดได้ยาก — ไม่ใช้ "เผื่อไว้" เพราะ deck ไม่มีคำนี้) · ⚠ เป็น tag สั้นหน้าชื่อ Case (`⚠ ยืนยันค่า` · `⚠ Business Rule`) + นิยาม
+  "⚠ = ต้องยืนยันกับ BA ก่อน" · "ตัดออก: มีแล้ว / ใช้กับจอนี้ไม่ได้" ตาม funnel ใน deck · ชื่อ layer ใช้ได้เมื่อมีวงเล็บไทย (deck ก็ใช้)
+- การตัดเคส: ตัดคือตัด ไม่ถามว่า "จดเป็นกฎไหม" อีก — จดลง §Screen facts เฉพาะเมื่อ user บอกเอง ("จดไว้" / "จอนี้ไม่มีทางมี…") ·
+  แถวที่จดแล้วโผล่รอบหน้าใน "ที่ไม่ใส่" ว่า `คุณบอกไว้ <วันที่> ว่า…` (user ขอ 22 ต.ค. — ไม่อยากถูกเสนอให้จด) (รอบสี่: ย้ายไปตาราง ตัดออก เป็น `ใช้กับจอนี้ไม่ได้ — ผู้ใช้ Skill บอกไว้ <วันที่> ว่า…`)
+- กฎแข็งทั้งหมดไม่เปลี่ยน (G1 วัดก่อนสร้าง · caption verbatim · ไล่ทุกแถว · ไม่เขียนก่อนยืนยัน) — เปลี่ยนแค่วิธีพูด
+- **รอบห้า — จัดโครง SKILL.md ใหม่ให้เบาและทนต่อโมเดลเล็ก** (32,071 → ไม่เกิน 25,000 ตัวอักษร · 256 → 190 บรรทัด —
+  ขนาดปัจจุบันดูรอบล่าสุดด้านล่าง · นับตัวอักษรด้วย `LC_ALL=en_US.UTF-8 wc -m` เพราะ `wc -m` เฉยๆ ในเครื่องนี้นับเป็น byte)
+  - ย้ายไป `references/contract-and-runtime.md` (ไฟล์ใหม่): §THE CONTRACT (label node · Placeholder · stamp pluginData + Store note ·
+    Board container · Layout schools) · Label styles · §Runtime & write idiom · สูตร build ของ Phase 4 (factory ของ scaffold-kit ·
+    chunk · guard) — SKILL.md ชี้ให้อ่าน §4–5 ก่อน call แรกที่ใช้ Bridge หรือเขียนไฟล์ · ทั้งไฟล์ที่ Phase 4 ขั้น 4 · §2 ตอน AUDIT
+  - ย้ายไป `references/learn-audit.md` (ไฟล์ใหม่): ขั้นตอน MODE: LEARN + MODE: AUDIT ทั้งหมดและรูป Report ของ AUDIT — SKILL.md
+    เหลือหัวข้อสั้นที่สั่งให้อ่านไฟล์นี้ก่อน + บรรทัด import-test
+  - ตัวอย่างและกติกาข้อความ Phase 3 อยู่ใน SKILL.md (ไม่แยกไฟล์ เพราะ Phase 3 รันทุกครั้ง แยกแล้วต้องเปิดไฟล์เพิ่มทุกรอบ) ·
+    ตัวอย่างเป็นงาน Payment Confirmation ที่ตรงกับผลจริง: เสนอ 15 Cases (Must 4 · Should 7 · Edge 4) · Skeleton loading อยู่ใน
+    "ตัดออก" จาก §Screen facts · Confirm 4 ข้อ (หมวด component · MWA เป็น Case ใหม่ · ปุ่มไปจอไหน · ที่วาง) · ตาราง Case ย่อเหลือ
+    5 แถวพร้อมบอกว่าข้อความจริงต้องพิมพ์ครบทุกแถว · Report Phase 5 (14 Cases หลังตัด MWA) และ AUDIT ต่อจากตัวอย่างเดียวกัน
+  - §Principles กับตาราง References เดิมรวมเข้าไปในขั้นที่ใช้ · ตาราง References ใหม่ชี้ทุกไฟล์พร้อมจังหวะที่ต้องเปิด · คำตอบเรื่อง
+    หลาย Key Screen เป็นตาราง 3 แถว · กฎ "ห้ามสร้างจากความจำ / ค่า default / โปรเจคอื่น" อยู่ในแถว G1
+  - เพิ่ม: ประโยคไทยตายตัวทุกจุดที่ Skill ต้องคุยกับผู้ใช้ (ไม่มี Key Screen · ได้หลาย Key Screen · ไฟล์ดูอย่างเดียว · ไม่เจอ
+    Permutation Board · มี Permutation Board อยู่แล้ว · ไม่ตรงโปรเจคไหน → LEARN · Case ซ้ำกับ board ข้างเคียง · ที่ว่างไม่พอ ·
+    ต่อ Connector Line เองไม่ได้ → ขอ Cmd+D · โปรเจคไม่ใช้ Connector Line · จดไว้แล้ว) · ตารางกล่องคำถาม ①–⑤ พร้อมตัวเลือก
+    ที่แนะนำขึ้นก่อน `(แนะนำ)` · ไม่มีข้อค้าง → `Confirm ก่อนสร้าง Permutation Board — ไม่มีข้อค้าง` แล้วไปกล่อง ⑤ · AUDIT ที่นับได้ 0
+    คงบรรทัดไว้แต่ไม่ถาม · ตัด/เพิ่ม Case แล้วไล่เลขใหม่ · ตาราง Case พิมพ์ครบทุกแถว ไม่มี "…" · ประโยค `GUARD:` ตรงขั้นที่เคยพัง
+    (ถามหลายเรื่องในกล่องเดียว · layer ที่ซ่อนงอกเป็น Case · นับ Case ของจออื่น · แต่ง caption เอง · แถวหาย · เรียงเลขตาม Priority ·
+    ข้าม harvest) · หลังรันจด Tier-3 id ใหม่ + หมวด component ที่ผู้ใช้ตอบ ลง `projects/<name>.md` · ข้อความ "เทียบไม่ได้" ของ
+    sibling guard ไปอยู่ใน Report
+  - แก้ defect จาก audit 22 ต.ค.: "say so in the profile" → หัวข้อความ Phase 3 · Case ที่อิง business assumption เป็นคำถามก่อนสร้าง
+    (`⚠ ข้อ N` + แถวในตาราง Confirm) ไม่ใช่ ✗ ให้ผู้ใช้ตัดเอง · `guard skipped — siblings unstamped` → บรรทัดไทย
+    `Skill เทียบกับ Permutation Board ข้างเคียงไม่ได้ — ไม่มี stamp ให้เทียบ` · import-test ไม่พิมพ์ node id
+    (`Import-test ผ่าน 3/3 → บันทึก projects/<name>.md แล้ว`) · ประโยคซ้ำ 2 คู่ (แสดงตารางใหม่ก่อนกล่องถัดไป · ไม่พิมพ์จำนวน)
+    เหลือที่เดียว · ⚠ ในแชต / ⚠️ บน caption ใช้ตรงกันทั้งไฟล์ · หมายเหตุ "(Tuned 2026-10-22 after a live run …)" ย้ายออกจาก
+    SKILL.md มาไว้ที่นี่: ร่างแรกเขียนหลักฐานใต้ `label:` อ่านแล้วเป็น noise จึงเปลี่ยนเป็น 3 ประโยค แล้วปรับคำตาม deck (ดูรอบสองและรอบสี่)
+  - ไม่แตะ `scripts/` · `projects/` เพิ่มแค่บรรทัด Pointer (ชี้กลับไปกฎ "ตัดคือตัด" และกฎ Connector Line) · Phase 4 ขั้น 3 ยังเป็นเรื่องที่วาง board (`next.md` / `dgl.md` ที่ชี้ "Phase 4 step 3" ยังถูก) ·
+    `board-grammar.md` ชี้ Label styles ไปที่ `contract-and-runtime.md` §3 · กฎทั้ง 244 ข้อของ SKILL.md เดิมยังอยู่ครบ (ใน SKILL.md
+    หรือในไฟล์ที่ SKILL.md ชี้ไปตอนต้องใช้ — 2 ข้อที่หลุดระหว่างรอบหก–เจ็ดถูกกู้คืนในรอบแปด)
+- **รอบหก — ซ่อมหลังตรวจรอบห้า:** แถว `*` ใน §Screen facts ที่เหตุผลคือ "มี board รวมของ flow แล้ว" → นับเป็น มีแล้ว (เมื่อ Phase 1
+  เจอ board นั้นใน flow นี้จริง) ไม่ใช่ ใช้กับจอนี้ไม่ได้ · แถวที่ทีมจดเองพิมพ์ `ใช้กับจอนี้ไม่ได้ — <เหตุผล>` ไม่อ้างว่าผู้ใช้บอก ·
+  แถวของ component ที่ไม่อยู่บนจอ ข้ามไป · Phase 1 สแกน Section นอก (flow) ซ้ำเมื่อ Section ในไม่มี board ก่อนสรุปว่า "ไม่มีเลย" ·
+  traverse ด้วย node id ของ Key Screen (use_figma ไม่มี selection) · Phase 4 รัน write probe ถ้า Phase 0 ยังไม่ได้รัน (กล่อง ⑤ / AUDIT) ·
+  harvest board ที่ใกล้ "ช่องที่จะวาง board" ที่สุด และบันทึกเป็น grammar ไม่ใช่ geometry · G1 ถามผู้ใช้เมื่อไม่มีทั้ง board และ
+  §Board anatomy · กล่อง ① ถามเรื่องเดียว (หมวด component ที่ไม่รู้จัก — ไม่มีค่อยถาม "อ่านถูกไหม") · ไม่มี Connector Line ในไฟล์ →
+  ขอให้ลากด้วย Shift+C แล้ว Skill จัดปลาย ไม่จบด้วย VECTOR (`board-grammar.md` · README · pointer ใน `next.md` / `dgl.md`) ·
+  AUDIT ข้ามกล่อง Phase 1 ขั้น 5 · AUDIT สแกนด้วย Bridge (use_figma → scope เฉพาะ board) · opt-in Case เสนอเป็น 🟡/🔵 ไม่แยกกล่องถาม ·
+  ข้อความใน INSTANCE ใช้ `setInstanceTexts` ของ kit · pointer "A cut is just a cut" ใน `_template.md` / `clicx.md` / `ptp.md`
+- **รอบเจ็ด — ซ่อมหลังตรวจรอบหก** (SKILL.md 24,879 ตัวอักษร · 190 บรรทัด วัดด้วย `LC_ALL=en_US.UTF-8 wc -m`):
+  กฎข้อความใน INSTANCE กลับมาตามเดิม — ต้องตั้งผ่าน `figma_set_instance_properties` เพราะกำหนดตรง ๆ แล้วพังเงียบ; ข้อยกเว้นเดียวคือ caption
+  จาก library component ที่สร้างด้วย `setInstanceTexts` ของ kit ซึ่งต้องอ่านค่ากลับทุกข้อความ (`contract-and-runtime.md` §5 ข้อ 7 —
+  รอบหกเขียนกลับด้านไว้) · ลำดับจับคู่ component: แถวข้อยกเว้นของโปรเจค → §Never a pack → ที่เหลือของตารางโปรเจค (SKILL.md Phase 1 ·
+  `case-library.md`) · Phase 1 ขั้น 5 บอกข้อยกเว้นครบ 2 ข้อ (ไม่เจอ Permutation Board ใน flow เลย · มีของจอนี้อยู่แล้ว) · กล่อง ① ถามหมวด
+  เดียวรวมกันได้เฉพาะเมื่อ Skill เสนอหมวดเดียวกันทุกตัว ไม่งั้นกล่องละ Component · แถว §Screen facts ที่ผู้ใช้สั่งจดขึ้นต้นเหตุผลด้วย
+  `user said:` และ ตัดออก เลือกคำจาก marker นี้ (pointer ใน `_template.md`) · ⚠️ ใน caption (`ยืนยัน business rule` ฯลฯ) เป็นแค่ tag —
+  คำถามก่อนสร้างเฉพาะ Case ที่มีอยู่หรือไม่ขึ้นกับ assumption · Verify: `linkId` มาจาก Phase 4 ขั้น 5 · โปรเจคไม่มี link ให้
+  `stats.skipped` มีได้แค่ข้อ link · harvest แก้ `SCREEN_W` ได้สำหรับโปรเจค tablet/desktop · ตัวอย่าง Archetype ใช้ชื่อในตาราง
+  (`Transaction / payment`) · ลบกฎ "verbatim" ที่ซ้ำ 3 จุดและ "ไม่มีอะไรให้ harvest → ถาม" ที่ซ้ำในแถว G1 · ประโยคขอ Cmd+D / Shift+C
+  ย้ายไป `board-grammar.md` §Link rule ข้อ 5
+
+- **รอบแปด — ปิดงานหลัง critic + เทสต์ 4 โมเดล** (Opus 15/15 · Sonnet 15/15 · Haiku 14/15 · Fable 14.5/15 ในควิซกฎ 15 ข้อ · dry run จริงบนจอ
+  Payment Confirmation: Sonnet 20/20 · Fable 19.5 · Haiku 18 · Opus 17 จาก 20): กู้ 2 กฎที่อยู่ครึ่งเดียว (ชื่อ deck `DcZuIPb5M4BuCrJPyfdpSU`
+  กลับเข้าประโยค vocabulary · ที่มาของ "กว้าง N จอ" = ที่ว่างของ Section + §Board width ของ project file) · แถว G1 พูดตรงกับ Phase 4 ขั้น 1
+  (board ข้างเคียง → §Board anatomy → ถาม) · `DETAIL = false` ยกเว้น AUDIT ขั้น 2 · โปรเจคไม่มี Connector Line → บรรทัด Rollback ตัด
+  "กับ Connector Line ของมัน" · หัว ② บอกว่า Common Case ไปอยู่ใน ตัดออก · ตัวอย่างใส่วงเล็บไทยให้ Logo / Main Button และเส้นคั่นตาราง ·
+  กล่อง ① และ ⑤ ถามเสมอ · Phase 4 ขั้น 3 เริ่มจากที่กล่อง ④ เลือก · `Group` = ชื่อ+ลำดับจาก board ข้างเคียงใน flow นี้ ไม่ใช่ board หน้าอื่น ·
+  `case-library.md` §Enumeration guards (ใหม่): "เนื้อหาพอดีจอ" ไม่ใช่เหตุผลตัด Scrolled · ตัวอย่างบนจอ (biller/คูปอง) ไม่ใช่เหตุผลตัด ·
+  mint Tier-3 ทีละ 1 Case ต่อ 1 กฎ ไม่รวมเป็นเคสร่ม ไม่แต่งจาก archetype เฉย ๆ · ลำดับ Group เมื่อยังไม่มี board — 3 ใน 4 โมเดลพลาด
+  2 เรื่องนี้ · fintech modifier ใช้กับ Tier-3 ด้วย (Zero payable · Fee charged · Coupon expired at confirm = Must) ·
+  `archetype-cases.md` แกนที่ไม่เข้าข่าย: แกนระดับจอได้แถว ตัดออก แกนของ component ตาม Phase 2 ขั้น 2 · README: pipeline มี Detect ·
+  Rollback ลบ board กับ Connector Line · ตัดข้อความที่ซ้ำกับ references (เหตุผล verbatim · กฎ harvest ที่อยู่ใน board-grammar ·
+  commitUndo ที่อยู่ใน contract-and-runtime · แถว scripts) เพื่อให้พอที่ · ตรวจรอบสุดท้าย (Opus): กฎ 244/244 อยู่ครบ · audit 11/12 · แก้ 5 จุดท้าย (กล่อง ① และ ⑤ เมื่อไม่มีข้อค้าง ·
+  pointer Connector Line ใน clicx.md · rollback ใน board-grammar รวม Connector Line · DETAIL ยกเว้น AUDIT ใน contract-and-runtime ·
+  note ในวงเล็บไม่ใช่ caption ใน case-library · pointer มีแล้ว ใน next.md · ตัวอย่าง draft ของ LEARN) —
+  ขนาดสุดท้าย SKILL.md 24,989 ตัวอักษร · 193 บรรทัด (`LC_ALL=en_US.UTF-8 wc -m`)
+
+---
+
 ## 2026-10-06 — NEXT: บันทึกจากงานจริง 2 รอบ (27 และ 29 ก.ย.)
 
 - `next.md` §Board anatomy: มาตรฐานชื่อ layer ของทีมเมื่อสร้าง board ใหม่หรือแปลง board เก่า (group = ชื่อหมวด · row = `Row` ·

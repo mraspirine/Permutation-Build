@@ -68,6 +68,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
   > `figma.createConnector` is still blocked here, but that never mattered: this file already holds
   > FigJam nodes (CONNECTOR / SHAPE_WITH_TEXT) to clone from. **Do not fall back to `elbowLink`'s
   > VECTOR** unless the file has no connector at all — a vector looks right and silently never attaches.
+  > Pointer: SKILL.md Phase 4 step 5 + `board-grammar.md` §Link rule win — clone + re-point, else ask for Cmd+D (no connector in the file → the user draws one with Shift+C); never finish with an unattached VECTOR.
 - Flow connectors are a different thing: `Primary Line` · `#384250` · weight 4 · **dashed 8,8** — those link screens to logic boxes, not to boards
 - **Placement:** screens sit at `y≈1000–2800`; every permutation board sits at **`y = 3562`** and they are ordered left→right by flow letter (`C.01` … `H.02`). Gap between neighbouring boards ≈ **240**
 - **Board width** grows with its widest row (no wrapping) — check `siblingBoards` and keep it inside the free span
@@ -130,6 +131,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 
 ## Screen facts (business rules per screen — grown by Phase 3 trims)
 > Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**. Rows below come from the team's notes on the boards.
+> Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut.
 | Screen (name pattern) | Case (`caseId`) | Rule | Learned |
 |---|---|---|---|
 | `home` / `home / intelligent hub` | `screen/empty` | เข้าหน้า Home ได้แปลว่ามีบัญชี savings แล้ว → empty ทั้งจอเกิดไม่ได้ (empty รายส่วน เช่น widget ว่าง ยังมีได้) | 2026-08-11 |

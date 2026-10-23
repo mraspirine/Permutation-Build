@@ -120,6 +120,7 @@ FRAME 'Permutation:' / 'Permutation: <Name>'   [V · gap 0 · padding 0]  no fil
 
 ## Screen facts (business rules per screen — grown by Phase 3 trims)
 > Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**.
+> Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut.
 | Screen (name pattern) | Case (`caseId`) | Rule (why it can/can't happen) | Learned |
 |---|---|---|---|
 

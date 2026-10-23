@@ -1,15 +1,16 @@
 # case-library — the 2-level case base (Tier 1 / Tier 2)
 
-> Read in Phase 2 (Enumerate). Source: the team's **FigJam canonical library** (§Source at the bottom). Tier 3 (project-specific) lives in `projects/<name>.md`.
+> Read in Phase 1 (§Never a pack) and Phase 2 (Enumerate). Source: the team's **FigJam canonical library** (§Source at the bottom). Tier 3 (project-specific) lives in `projects/<name>.md`.
 >
 > **How to use:** whichever components Phase 1 found on the base → pull their packs from §L2 (plus chained packs). Whatever archetype it is → pull the screen-level states from §L1 and `archetype-cases.md`. Every case carries: `id` · level · tier · opt-in · caption.
 > **Row ids inside a pack are derived, never invented**: `<pack>/<row name in kebab-case>` — `textfield/focus`, `image/asset-load-fail`, `text/maximum-characters`. No abbreviations, no re-wording. Rows whose name is Thai or carries a slash have their id written out in **§Row ids that cannot be derived** below.
 > `knownCaseIds` for G5 = every L1 id + every `tmpl/*` id + the row ids this run actually used.
-> `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → offer it as 🟡/⚪ for the user to decide.
+> `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → propose it as 🟡 Should / 🔵 Edge (the user can trim it at Confirm; never its own question box).
 >
 > **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (e.g. "Session timeout" on one board and "Network reconnect" on its sibling — the boards stop being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
 >
 > **Backticks are file markup, not caption text** — a caption that quotes an id (`` `empty/section` ``) goes onto the canvas WITHOUT the backticks.
+> **A parenthetical note addressed to Skill is not caption text** — e.g. `(ONE case showing the three states)` on `button/interaction-states` in next.md: neither on the canvas nor in chat.
 > **Thai strings below are verbatim from the team's FigJam and boards** — they are the wording the team actually uses on boards, so they stay in Thai.
 
 ## FigJam scope tag → tier
@@ -107,9 +108,9 @@ Default (unselected) · Selected · UnSelected · Multiple Select · Selected Di
 | Image | asset load fail (หายไปทั้ง section / placeholder) | `image/asset-load-fail` |
 | Image | Ratio & Sizing | `image/ratio-sizing` |
 
-### Never a pack — in ANY project (check before the project's own map)
+### Never a pack — in ANY project (order: the project map's exception rows → this list → the rest of the project's map)
 `/status ?bar/i` · `/home ?indicator|iphone indicator/i` · `/^(nav|top) ?bar|^navbar|^header$/i` · `/^ic[_\/]|^icons?[\/_ ]|^icon$/i` · `/^(line|divider)$/i` · `/^background/i`
-> OS chrome, icons and decoration produce no cases in any design system, so they are never reported as "unmapped". A project file may still override one of them with an exception row placed ABOVE its NOT-a-pack rows (CLICX `gen_ic_eye` = the hide-balance trigger).
+> OS chrome, icons and decoration produce no cases in any design system, so they are never reported as "unmapped". A project file may still override one of them with an exception row placed ABOVE its NOT-a-pack rows (CLICX `gen_ic_eye` = the hide-balance trigger) — those exception rows are checked BEFORE this list, so they can fire.
 
 ### Additions 2026-08-11
 | id | tier | opt-in | caption (EN — TH) |
@@ -145,9 +146,15 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 
 ---
 
+## Enumeration guards (read in Phase 2 — lessons from the 2026-10-22 four-model test)
+- **"Content fits the screen" is not a reason.** `screen/scrolled` and the other opt-in Screen State rows stay ✗ when the screen's rows can grow (another proposed Case adds rows or fields — Multiple fields, MWA tiers, a long memo). Cut only with a measured reason (frame height ≤ the device viewport in every data state) or a §Screen facts row.
+- **The sample on the Key Screen is not a reason.** "This screen shows biller X / coupon Y / account Z" is one data state, never grounds to cut a pack row (3 of 4 models cut the MWA Case because the sample bill was electricity).
+- **Minting a Tier-3 Case** (a pack row without a stored id): one Case per pack rule the Key Screen can show, named from the pack row's own words (MWA `overdue > 1 month · VAT` → `MWA overdue + VAT`) — never an umbrella name, never merged rules. Mint only from a project pack row or an element visible on the Key Screen; an archetype dimension alone is not a Case. Every newly minted Case gets its own Confirm row, even when Skill leans toward cutting it.
+- **Group order for a Key Screen with no board yet**: the Group titles + order of the nearest sibling Permutation Board in THIS flow; none → the project file's categories in file order; never a board on another page.
+
 ## Priority (defaults when proposing the matrix)
-🔴 **Must** breaks the flow / user stuck / money at risk · 🟡 **Should** clearly worse but not blocking · ⚪ **Edge** rare
-**Fintech modifier:** cases about the money outcome (amount, fee, payable, balance, double submission) move up one level — not every row of a payment or confirmation screen; idempotency and mid-transaction timeout are always Must.
+🔴 **Must** breaks the flow / user stuck / money at risk · 🟡 **Should** clearly worse but not blocking · 🔵 **Edge** rare
+**Fintech modifier:** cases about the money outcome (amount, fee, payable, balance, double submission) move up one level — not every row of a payment or confirmation screen; idempotency and mid-transaction timeout are always Must. The modifier applies to Tier-3 rows too: a Case whose caption names the payable amount, fee or discount outcome (Zero payable · Fee charged · Coupon expired at confirm) is Must.
 **Case numbers follow the board's reading order, not priority** — number the confirmed cases group by group (top → bottom), then left → right inside a group: `1..N` across the board, or `1..k` inside each group where the project restarts per group. This is the default; a project that numbers differently says so in `projects/<name>.md`. (Top-Up 29.1 was numbered by priority and read `Case#1 · #2 · #10` in one row, 2026-08-18.)
 
 ## Chain links (finding A should also surface B)

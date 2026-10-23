@@ -40,4 +40,4 @@ Hybrid screens: pick the primary archetype by the screen's core task, then add o
 
 ## Enumeration rules
 - Axes 1–5 and 9 are mostly Tier 1/2 (they live in `case-library.md`) · axis 6 is Tier 3 · axes 7–8 depend on the project
-- **Walk every applicable axis** and sort into ✓ exists / ✗ missing / ⊘ N/A with a reason. An axis that does not apply (a static screen that fetches nothing → axis 2 is N/A) still has to be **mentioned with its reason** — never skipped silently.
+- **Walk every applicable axis** and sort into ✓ exists / ✗ missing / ⊘ N/A with a reason. An axis that does not apply (a static screen that fetches nothing → axis 2 is N/A) still has to be **mentioned with its reason** — never skipped silently: a screen-level (L1) axis that does not apply gets a ตัดออก row; a component-pack axis follows SKILL.md Phase 2 step 2 (component not on screen → pack not listed).
