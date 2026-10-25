@@ -16,7 +16,7 @@
   quiz 15/15/15/14 · blind judge เลือก B 4/4 — เกณฑ์หลักคือ Sonnet (Haiku ดูเป็นข้อมูลประกอบ)
 - designer อ่านข้อความ Phase 3 แล้วตอบคำถาม 7 ข้อ ได้ 4/7 (ทั้งข้อความของ Sonnet และ Opus) — ตกข้อ: นับ Group (MWA ถูกตั้งเป็น Group เอง) ·
   ไม่รู้ว่าทำไมถึง High · ความกว้าง board 5 vs 4 จอ · ไม่เห็นทางเลือก "เอาแค่ Case List" (อยู่ในกล่อง ⑤ ซึ่งไม่อยู่ในข้อความ) · ⚠ ยืนยันอะไร เมื่อไหร่
-  → แก้กฎใน case-library (ข้อถัดไป) ส่วนการเพิ่มบรรทัดอธิบายในข้อความรอผู้ใช้ตัดสิน
+  → แก้กฎใน case-library (ข้อถัดไป) · ผู้ใช้เลือก (25 ต.ค.) คงรูปแบบข้อความเดิม ไม่เพิ่มบรรทัดอธิบาย — ทีมรู้ความหมาย High/Medium/Low และ ⚠ จาก deck อยู่แล้ว
 - `references/case-library.md` §Enumeration guards: กฎ mint เขียนใหม่ไม่ให้สองประโยคอ่านขัดกัน (แถว MWA tier ของ board 14.1 = มีแล้ว ·
   แถว MWA overdue + VAT ของจอ confirm = mint 1 Case) · Case ที่ mint จากแถวรายละเอียดบนจอ (MWA, fee, memo, fields) อยู่ Group Bill Detail
   ไม่ตั้ง Group ใหม่ตามชื่อ pack · ลำดับใน Group ตามแถวบนจอ บน→ล่าง · §Priority: แถว Image และ Screen State แบบ opt-in (Scrolled, Large screen) = Low ·
