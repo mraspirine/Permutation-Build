@@ -112,7 +112,7 @@ Component ที่ Skill ยังไม่รู้จัก: Transaction (ก
 |---|---|---|---|
 | Case#1 | Coupon State | ⚠ แถวส่วนลด · No coupon — กรณีไม่ใช้คูปอง | 🔴 High |
 | Case#5 | Bill Detail | ⚠ ยืนยันค่า · Fee charged — กรณีมีค่าธรรมเนียม > 0 บาท | 🔴 High |
-| Case#8 | Bill Detail | ⚠ ข้อ 2 · MWA overdue + VAT — กรณีค้างชำระเกิน 1 เดือน มี VAT | 🟡 Low |
+| Case#8 | Bill Detail | ⚠ ข้อ 2 · MWA overdue + VAT — กรณีค้างชำระเกิน 1 เดือน มี VAT | 🟠 Medium |
 | Case#9 | Screen State | Full screen loading — กรณีโหลดทั้งจอ (spinner) | 🟠 Medium |
 | Case#15 | Button | Button interaction states — กรณีปุ่ม Default / Pressed / Disabled | 🟠 Medium |
 
@@ -167,7 +167,7 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 2. Screenshot the board (≤3 rounds) against the confirmed Cases — script = structure, screenshot = looks.
 3. Report — 4 lines (the Phase 3 example after the user cut Case#8):
 ```
-สร้าง Permutation Board แล้ว 14 Cases (High 4 · Medium 7 · Low 3) · Verify ผ่านครบทุกข้อ
+สร้าง Permutation Board แล้ว 14 Cases (High 4 · Medium 6 · Low 4) · Verify ผ่านครบทุกข้อ
 🔗 figma.com/design/…?node-id=…
 เริ่มออกแบบจาก Case#1 #3 #4 #5 ก่อน (High)
 Rollback: ลบ Permutation Board "Permutation_…" กับ Connector Line ของมัน — Key Screen ไม่ถูกแตะ

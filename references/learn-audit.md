@@ -28,7 +28,7 @@ AUDIT Permutation Board "Permutation_…" — Case ที่ควรมี 15 �
 Missing 1 — มีในตาราง แต่ไม่มีบน Permutation Board: MWA overdue + VAT → เพิ่มให้ไหม
 Stale 1 — Key Screen ถูกแก้หลังสร้าง: Case#5 Fee charged → อัปเดต Description ให้ไหม
 Orphan 1 — มีบน Permutation Board แต่ไม่อยู่ในตาราง: Case#15 Biometric expired → แจ้งไว้เฉย ๆ ไม่ลบ
-Designed: High 3/4 · Medium 1/7 · Low 0/3
+Designed: High 3/4 · Medium 1/6 · Low 0/4
 ```
 5. Each "→ …ไหม" is its own AskUserQuestion box, in that order: `ใช่ (แนะนำ)` · `ไม่ต้อง`. A count of 0 keeps its line (`Missing 0`) but gets no box.
 6. A yes → write through SKILL.md Phase 0 step 4 write probe, then Phase 4 (harvest, guard, kit), then Phase 5 Verify.

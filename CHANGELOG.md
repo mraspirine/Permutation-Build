@@ -107,6 +107,8 @@
 - **คำ Priority เป็น High / Medium / Low (2026-10-23):** ทุกข้อความถึงผู้ใช้ใช้ `🔴 High · 🟠 Medium · 🟡 Low` ไม่ต้องมีคำไทยกำกับ (user เลือก — เข้าใจทันทีแบบ Jira) ·
   stamp ยังเป็น must/should/edge (= High/Medium/Low) เพื่อให้ board เก่าและ AUDIT ทำงานต่อได้ · แก้ `SKILL.md` · `case-library.md` §Priority · `learn-audit.md` ตัวอย่าง AUDIT ·
   `contract-and-runtime.md` §2 จดการแปลงไว้
+- แก้เลขในตัวอย่าง (2026-10-25): Case#8 MWA overdue + VAT เป็น 🟠 Medium ตาม matrix ที่ user อนุมัติ (บรรทัดสรุป High 4 · Medium 7 · Low 4 นับ MWA เป็น Medium อยู่แล้ว) ·
+  Report หลังตัด Case#8 จึงเป็น High 4 · Medium 6 · Low 4 และตัวอย่าง AUDIT ใน learn-audit เป็น Medium 1/6 · Low 0/4 — เจอจากการเทสต์ A/B
 
 ---
 
