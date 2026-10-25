@@ -41,3 +41,10 @@ Hybrid screens: pick the primary archetype by the screen's core task, then add o
 ## Enumeration rules
 - Axes 1–5 and 9 are mostly Tier 1/2 (they live in `case-library.md`) · axis 6 is Tier 3 · axes 7–8 depend on the project
 - **Walk every applicable axis** and sort into ✓ exists / ✗ missing / ⊘ N/A with a reason. An axis that does not apply (a static screen that fetches nothing → axis 2 is N/A) still has to be **mentioned with its reason** — never skipped silently: a screen-level (L1) axis that does not apply gets a ตัดออก row; a component-pack axis follows SKILL.md Phase 2 step 2 (component not on screen → pack not listed).
+
+## Several Key Screens (SKILL.md Phase 0 step 2)
+Before enumerating anything ask `Skill ได้ Key Screen มา N จอ — จอพวกนี้เกี่ยวกันแบบไหน` — listing each screen blind gives near-identical Permutation Boards. Then act on the answer:
+- **States of one screen** → ONE Permutation Board on the Key Screen the user names as the default. Diff the screens first and add only the Cases their differences create.
+- **Related but separate screens** → one run per screen, each enumerated from that screen's own visible Components, not seeded from a sibling's Case List.
+- **Mockup / template** → ask which slots vary and which stay fixed before enumerating; no answer → the Case List for ONE screen, then stop.
+

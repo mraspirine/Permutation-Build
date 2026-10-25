@@ -69,9 +69,10 @@ cp -R figma-permutation-build ~/.claude/skills/
 
 ```
 figma-permutation-build/
-├── SKILL.md                    ตัวคุมเกม: ลำดับงาน 6 เฟส (0–5), ด่าน 6 ด่าน, กติกากลาง
+├── SKILL.md                    ตัวคุมเกม: ลำดับงาน 6 เฟส (0–5) แต่ละเฟสมี "Done when", ข้อความที่ส่งคนรัน, 10 บทเรียน
 ├── README.md                   เอกสารฉบับนี้
 ├── CHANGELOG.md                บันทึกการเปลี่ยนแปลงที่มีผลต่อพฤติกรรม
+├── versions/                   ฉบับ A (ก่อน 25 ต.ค. 2026) เก็บไว้ให้ทีมเทียบ + A-vs-B.md — Claude ไม่อ่านโฟลเดอร์นี้
 ├── references/                 ความรู้กลาง ใช้ได้ทุกโปรเจค
 │   ├── case-library.md         คลังเคส — ระดับจอ + ราย component
 │   ├── archetype-cases.md      ประเภทจอ 6 แบบ + 9 แกนที่ต้องไล่ให้ครบ

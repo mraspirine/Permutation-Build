@@ -149,12 +149,14 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 ## Enumeration guards (read in Phase 2 — lessons from the 2026-10-22 four-model test)
 - **"Content fits the screen" is not a reason.** `screen/scrolled` and the other opt-in Screen State rows stay ✗ when the screen's rows can grow (another proposed Case adds rows or fields — Multiple fields, MWA tiers, a long memo). Cut only with a measured reason (frame height ≤ the device viewport in every data state) or a §Screen facts row.
 - **The sample on the Key Screen is not a reason.** "This screen shows biller X / coupon Y / account Z" is one data state, never grounds to cut a pack row (3 of 4 models cut the MWA Case because the sample bill was electricity).
-- **Minting a Tier-3 Case** (a pack row without a stored id): a pack already built on a sibling Permutation Board in THIS flow (e.g. MWA tiers on 1.14.1) is มีแล้ว — its rows are never re-minted or copied. Mint one Case only for what THIS Key Screen shows that the sibling board does not, named from the pack row's own words (the confirmation screen's `MWA overdue + VAT` rows): one situation = one Case, never an umbrella name, never one Case per sub-rule. Mint only from a project pack row or an element visible on the Key Screen; an archetype dimension alone is not a Case. Every newly minted Case gets its own Confirm row, even when Skill leans toward cutting it.
+- **Minting a Tier-3 Case** (a pack row without a stored id): rows a sibling Permutation Board in THIS flow already built (the MWA tier rows on 1.14.1) are มีแล้ว — never re-minted or copied. What THIS Key Screen shows that the sibling board does not (the confirmation screen's one `MWA overdue + VAT` row) is still minted, as exactly one new Case: one situation = one Case, named from the pack row's own words, never an umbrella name, never one Case per sub-rule. Mint only from a project pack row or an element visible on the Key Screen; an archetype dimension alone is not a Case. Every newly minted Case gets its own Confirm row, even when Skill leans toward cutting it.
 - **Group order for a Key Screen with no board yet**: the Group titles + order of the nearest sibling Permutation Board in THIS flow; none → the project file's categories in file order; never a board on another page.
+- **Group of a minted detail row**: a minted Case that is a detail row on the Key Screen (MWA overdue + VAT, fee, memo, fields) goes in `Bill Detail` (the project's detail Group) — never a new Group named after the pack or the biller; take a sibling board's Group title only when the Case is the same kind as that Group. Inside a Group, order the Cases as the Key Screen's rows run, top → bottom (fee, memo, then pack-derived rows such as Multiple fields, MWA).
 
 ## Priority (defaults when proposing the matrix)
 🔴 **High** breaks the flow / user stuck / money at risk · 🟠 **Medium** clearly worse but not blocking · 🟡 **Low** rare (stamps keep `must` / `should` / `edge`)
 **Fintech modifier:** cases about the money outcome (amount, fee, payable, balance, double submission) move up one level — not every row of a payment or confirmation screen; idempotency and mid-transaction timeout are always High. The modifier applies to Tier-3 rows too: a Case whose caption names the payable amount, fee or discount outcome (Zero payable · Fee charged · Coupon expired at confirm) is High.
+**Defaults by kind:** Image pack rows (asset load fail, Ratio & Sizing) and opt-in Screen State rows (Scrolled, Large screen) are Low · a value-⚠ detail row that is not a money outcome (No memo, Multiple fields) is Medium.
 **Case numbers follow the board's reading order, not priority** — number the confirmed cases group by group (top → bottom), then left → right inside a group: `1..N` across the board, or `1..k` inside each group where the project restarts per group. This is the default; a project that numbers differently says so in `projects/<name>.md`. (Top-Up 29.1 was numbered by priority and read `Case#1 · #2 · #10` in one row, 2026-08-18.)
 
 ## Chain links (finding A should also surface B)
@@ -164,3 +166,11 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 
 ## Source
 FigJam library `pFnfToBs4ecxvqrTWxqhaM#129:5011` (two groups: Screen, Component · verified 2026-07-24) · Tier 2 templates are distilled from the team's existing boards. **If the FigJam changes, re-sync these tables and update the date.**
+
+## Buckets (SKILL.md Phase 2 — every Case lands in exactly one)
+- **§Screen facts first** — rows for this Key Screen are pre-sorted ⊘ with their stored reason, and `*` rows join them when their condition holds in this flow; a row whose Component is not on the Key Screen is skipped. A `*` row covered by the flow's shared Permutation Board is ✓ instead, once Phase 1 found that board in this flow (SKILL.md Phase 2 step 1).
+- **✓ มีแล้ว** — a Permutation Board already holds it (this Key Screen's own, or the flow's shared one), or it is `screen/default` and the Key Screen is that state.
+- **✗ proposed** — goes to the Case table with a Priority (§Priority). A Case resting on a business assumption ("this list is never empty") is ✗ plus a Confirm question, not ⊘.
+- **⊘ ใช้กับจอนี้ไม่ได้** — needs a reason you can point at: visible on the Key Screen (no list, no money input) or a §Screen facts row. §Enumeration guards lists what is not a reason.
+- Business values (fees, limits) come from the brief; otherwise the caption carries `⚠️ ยืนยันค่า` in place of a number.
+

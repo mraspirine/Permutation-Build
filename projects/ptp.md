@@ -6,6 +6,7 @@
 ## About / recognition
 - Product: Paotang (PTP) — Thai wallet / super-app (iOS-first)
 - Detect: flow screens are **INSTANCES placed directly in the SECTION** (not frames), named **`PTP/<Module>/<Screen>_<MonYYYY>`** (e.g. `PTP/Setting/PTPPlus-Home_May2025`), main component is a remote library component · product font **Kanit** · variables named `Color/Fill/Greyscale/*`, `Primary/Blue Normal ⭐️` · boards named `Permutation: Pg_<Name>`
+- Detect also: flow screens named **`<MonYYYY>/PTP revamp/…`** · boards named `Permutation: Pg_<Name>` or free names found by their attached connector
 - **Default screen size:** 390 × 844 (scroll screens run taller — 894 seen)
 - Font in the product: Kanit. Board captions use **IBM Plex Sans Thai** (titles) / **IBM Plex Sans** (descriptions) — those belong to the board, not the screens
 

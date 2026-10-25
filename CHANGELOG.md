@@ -5,6 +5,27 @@
 
 ---
 
+## 2026-10-25 — ฉบับภาษาคน (B) เป็น SKILL.md ตัวจริง · ฉบับ A เก็บไว้ใน versions/
+
+ที่มา: ทดลองเขียน SKILL.md ใหม่ทั้งไฟล์แบบที่คนเขียน skill เก่งๆ ทำ — checklist 6 Phase ทุก Phase มี "Done when" · กฎเขียนเป็นสิ่งที่ต้องทำ + เหตุผล
+(never 49 → 5 · GUARD 11 → 0) · "Ten things that went wrong before" · 16,6xx ตัวอักษร / 172 บรรทัด (A = 24,913 / 193) · กฎ 244 ข้อยังครบ —
+21 ข้อย้ายไปท้าย references (archetype-cases §Several Key Screens · case-library §Buckets · board-grammar §Scaffold stops) · ptp.md §About ได้บรรทัดสัญญาณชื่อไฟล์
+ข้อความที่ส่งผู้ใช้ (หัว 3 ประโยค · ตาราง Case · ตัดออก · Confirm · Report 4 บรรทัด) เหมือน A ทุกตัวอักษร
+
+- ผลเทสต์ (จอ Payment 29.1 แบบ read-only): dry run Sonnet 19.5/20 · Opus 19/20 (A: 20 / 17) · Figma call Sonnet 15 · Opus 11 (A: 14 / 11) ·
+  quiz 15/15/15/14 · blind judge เลือก B 4/4 — เกณฑ์หลักคือ Sonnet (Haiku ดูเป็นข้อมูลประกอบ)
+- designer อ่านข้อความ Phase 3 แล้วตอบคำถาม 7 ข้อ ได้ 4/7 (ทั้งข้อความของ Sonnet และ Opus) — ตกข้อ: นับ Group (MWA ถูกตั้งเป็น Group เอง) ·
+  ไม่รู้ว่าทำไมถึง High · ความกว้าง board 5 vs 4 จอ · ไม่เห็นทางเลือก "เอาแค่ Case List" (อยู่ในกล่อง ⑤ ซึ่งไม่อยู่ในข้อความ) · ⚠ ยืนยันอะไร เมื่อไหร่
+  → แก้กฎใน case-library (ข้อถัดไป) ส่วนการเพิ่มบรรทัดอธิบายในข้อความรอผู้ใช้ตัดสิน
+- `references/case-library.md` §Enumeration guards: กฎ mint เขียนใหม่ไม่ให้สองประโยคอ่านขัดกัน (แถว MWA tier ของ board 14.1 = มีแล้ว ·
+  แถว MWA overdue + VAT ของจอ confirm = mint 1 Case) · Case ที่ mint จากแถวรายละเอียดบนจอ (MWA, fee, memo, fields) อยู่ Group Bill Detail
+  ไม่ตั้ง Group ใหม่ตามชื่อ pack · ลำดับใน Group ตามแถวบนจอ บน→ล่าง · §Priority: แถว Image และ Screen State แบบ opt-in (Scrolled, Large screen) = Low ·
+  แถวรายละเอียดที่มี ⚠ ค่า แต่ไม่ใช่เรื่องเงิน (No memo, Multiple fields) = Medium
+- `SKILL.md` §Messages Placement: "กว้าง N จอ" = จำนวนคอลัมน์ของ board จาก Board width ของโปรเจค ไม่ใช่ที่ว่างของ Section (ที่ว่างแค่บอกว่าพอไหม) —
+  แก้ใน versions/SKILL-A ด้วย การแสดงผลของ A กับ B ต้องเหมือนกันเสมอ
+- `versions/`: SKILL-A-2026-10-22.md (ฉบับก่อน ครบทุกตัวอักษร) · A-vs-B.md (เทียบทีละไฟล์) · README.md วิธีสลับ (`cp versions/SKILL-A-2026-10-22.md SKILL.md`)
+  Claude อ่านเฉพาะ SKILL.md ที่ root · README.md เพิ่มบรรทัด versions/ · Version ใน §About → 2026-10-25
+
 ## 2026-10-22 — พูดกับคนรันด้วยภาษาคน: โชว์แค่ "เห็นอะไร · เสนออะไร · ต้องตัดสินใจอะไร"
 
 ที่มา: รัน Payment 29.1 Confirmation (2026-10-20) แล้วคนรันอ่านไม่ออก — node id · `pending G1` · T1/T3 · S/C · ✓✗⊘ · case id
