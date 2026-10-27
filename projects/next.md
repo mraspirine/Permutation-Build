@@ -86,6 +86,7 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | `/search ?bar\|search/i` | `textfield/*` (search field — no validation pack, no mandatory/optional) · confirmed 2026-08-11 |
 | `/switch\|segment\|tab ?bar/i` | navigation — tab change (axis 9), not a component pack · confirmed 2026-08-11 |
 | `/^list$\|list ?item\|row/i` | list rows → `empty/section` · `text/*` (long name) · `image/*` (row logo) · `tmpl/entitlement` (row disabled) · confirmed 2026-08-11 |
+| `/^transaction$/i` (from→to card), `/text ?information/i` (label–value row) | `text/*` · confirmed 2026-10-27 (Payment 29.1 Confirmation) |
 
 ## Anchors (READ-ONLY — for harvesting and comparison)
 - File `lN13minj5i19c2fEyBSF3q`: **Apply LOC** `0:1` · **Coupon** `16:20211` · Universal Payment section `Revamp Payment` `129:187281`
@@ -127,9 +128,10 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | `fee/charged` | Fee charged — กรณีมีค่าธรรมเนียม > 0 บาท ⚠️ ยืนยันค่า | Payment 29.1 Confirmation (minted 2026-09-29) |
 | `memo/empty` | No memo — กรณีไม่กรอกบันทึกช่วยจำ ⚠️ ยืนยัน: ซ่อนแถวหรือไม่ | Payment 29.1 Confirmation (minted 2026-09-29) |
 | `bill-payment-input/multiple-fields` | Multiple fields — กรณี biller มีหลาย reference ⚠️ ยืนยันจำนวน field | Payment 29.1 Confirmation (minted 2026-09-29) |
+| `mwa-tiers/overdue-vat` | MWA overdue + VAT — กรณีค้างชำระเกิน 1 เดือน มี VAT | Payment 29.1 Confirmation (minted 2026-10-27) |
 
 > Payment 29.1 Confirmation also reuses `coupon/expired-at-confirm` · `coupon/zero-payable` · `coupon/none` · `coupon/percent` verbatim (2026-09-29).
-> **Unmapped on Payment 29.1 (2026-09-29):** `Transaction` (container) · `Text Information` (label–value row) — decide their category (likely `text/*`) and add to §Component → category.
+> `Transaction` · `Text Information` (unmapped 2026-09-29) → `text/*`, answered 2026-10-27 — now in §Component → category.
 
 ## Screen facts (persisted ⊘ — pre-bucket these before enumerating; do not re-propose)
 > Pointer: SKILL.md Phase 2 step 1 wins — a `*` row covered by the flow's shared board counts as มีแล้ว, not ⊘.
