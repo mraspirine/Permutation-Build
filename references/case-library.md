@@ -156,7 +156,7 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 ## Priority (defaults when proposing the matrix)
 🔴 **High** breaks the flow / user stuck / money at risk · 🟠 **Medium** clearly worse but not blocking · 🟡 **Low** rare (stamps keep `must` / `should` / `edge`)
 **Fintech modifier:** cases about the money outcome (amount, fee, payable, balance, double submission) move up one level — not every row of a payment or confirmation screen; idempotency and mid-transaction timeout are always High. The modifier applies to Tier-3 rows too: a Case whose caption names the payable amount, fee or discount outcome (Zero payable · Fee charged · Coupon expired at confirm) is High.
-**Defaults by kind:** Image pack rows (asset load fail, Ratio & Sizing) and opt-in Screen State rows (Scrolled, Large screen) are Low · a value-⚠ detail row that is not a money outcome (No memo, Multiple fields) is Medium.
+**Defaults by kind:** Image pack rows (asset load fail, Ratio & Sizing) and opt-in Screen State rows (Scrolled, Large screen) are Low · a value-⚠️ detail row that is not a money outcome (No memo, Multiple fields) is Medium.
 **Case numbers follow the board's reading order, not priority** — number the confirmed cases group by group (top → bottom), then left → right inside a group: `1..N` across the board, or `1..k` inside each group where the project restarts per group. This is the default; a project that numbers differently says so in `projects/<name>.md`. (Top-Up 29.1 was numbered by priority and read `Case#1 · #2 · #10` in one row, 2026-08-18.)
 
 ## Chain links (finding A should also surface B)
