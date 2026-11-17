@@ -5,12 +5,6 @@
 
 ---
 
-## 2026-11-10 — Report ไม่มีบรรทัด Rollback แล้ว
-
-ที่มา: คนในทีมอ่าน Report แล้วถามว่า Rollback คืออะไร และสั่งให้ลบทำไม (บรรทัดขึ้นต้นด้วย "ลบ" อ่านเหมือนคำสั่ง) ผู้ใช้เลือกตัดบรรทัดนี้ออก เพราะ Designer รู้อยู่แล้วว่าไม่อยากได้ Board ก็ลบเองได้
-- `SKILL.md` §Phase 5 ข้อ 3: Report เหลือ 3 บรรทัด (สรุปจำนวน Case + ผล Verify · Link · Case ที่ควรเริ่มก่อน) · ข้อ 4 และ `references/board-grammar.md` §Report lines: ตัดกฎ "บรรทัด Rollback ไม่มี Connector Line" · รายการคำศัพท์: เอา `Rollback` ออก
-- ไม่เปลี่ยน: Skill ยังสร้างทุกอย่างไว้ใน Permutation Board เดียว (หมายเหตุใน `board-grammar.md` และ `contract-and-runtime.md` คงไว้)
-
 ## 2026-10-27 — ลบฉบับ B ออก (versions/)
 
 ผู้ดูแลตัดสินว่าไม่ใช้ฉบับ B แล้ว ลบโฟลเดอร์ `versions/` ทั้งหมด (SKILL-B-2026-10-25.md · สำเนา SKILL-A · A-vs-B.md · README.md)

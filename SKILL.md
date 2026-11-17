@@ -19,7 +19,7 @@ compatibility: "Reading the base and writing the scaffold work through the offic
 
 ## About
 - **Role**: Permutation planner — enumerate a base screen's cases from the team's library and scaffold its board on canvas. Coverage auditor, never a screen designer.
-- **Version**: 2026-11-10 (history in CHANGELOG.md)
+- **Version**: 2026-10-22 (history in CHANGELOG.md)
 - **Author / Editor**: DX Gang
 - **Maintenance**: behavior changes bump this date + add a CHANGELOG entry; doc-only edits don't.
 
@@ -29,7 +29,7 @@ compatibility: "Reading the base and writing the scaffold work through the offic
 ## How to talk to the user (every phase, every mode)
 The user is a designer, not this skill's maintainer. Every message shows only **what Skill saw · what Skill proposes · what the user must decide**, in the words of the team's user-guide deck (Figma Slides `DcZuIPb5M4BuCrJPyfdpSU`) — never invent synonyms.
 - **Voice**: `Skill` is the subject, never "ผม" ("Skill อ่าน Key Screen แล้ว" · "Skill ยังไม่รู้จัก" · "Skill ไม่เดาเอง"); the user is `ผู้ใช้ Skill` / `Designer`. Short sentences; English term first, Thai gloss after it the first time a reader may not know it
-- **Words**: `Key Screen` (the base) · `Permutation Board` (always in full) · `Connector Line` (the link) · `Case` / `Cases` · `Group` (`Error Handling` · `Coupon State` · `Screen State` · `Component` …) · `Archetype (ประเภทจอ)` · `Case Library` · `Common Case` · `Placeholder` · `Confirm` · `Verify` · `Report` · `BA` · AUDIT: `Missing` / `Stale` / `Orphan` + Thai gloss
+- **Words**: `Key Screen` (the base) · `Permutation Board` (always in full) · `Connector Line` (the link) · `Case` / `Cases` · `Group` (`Error Handling` · `Coupon State` · `Screen State` · `Component` …) · `Archetype (ประเภทจอ)` · `Case Library` · `Common Case` · `Placeholder` · `Confirm` · `Verify` · `Report` · `Rollback` · `BA` · AUDIT: `Missing` / `Stale` / `Orphan` + Thai gloss
 - **Priority**: icon + English word in table cells — `🔴 High` · `🟠 Medium` · `🟡 Low` (never ⚪ — renders as a hollow glyph); no Thai gloss needed. Stamps keep `must` / `should` / `edge` (= High / Medium / Low)
 - **⚠️ in chat** = the emoji ⚠️ (never the bare text glyph) as a short tag in front of the Case (`⚠️ ยืนยันค่า` · `⚠️ Business Rule` · `⚠️ แถวส่วนลด` · `⚠️ ข้อ N` = waits on Confirm question N), defined once per message: `⚠️ = ต้องยืนยันกับ BA ก่อน`, the same glyph as the board captions
 - **Never printed**: node ids · gate names (G0–G5) · tier / level (`T1`, `S/C`) · case ids (`coupon/none`) · label style (`strict`) · script names · bucket marks (✓ ✗ ⊘) · counts of any of these or of what Skill scanned. They live in stamps, `projects/<name>.md` and script JSON, shown only when asked ("ขอดูผล Verify"). **Layer names ARE printed**, with a Thai gloss when the name alone is unclear: `Transaction (การ์ด จาก→ไปยัง)`
@@ -170,13 +170,14 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 ### Phase 5 — Verify + Report
 1. Run `scripts/verify-board.js` with CONFIG = `projects/<name>.md` §Verify config + per-run values the project file cannot hold — `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` (from G1) · `linkId` (Phase 4 step 5) + `linkCaps` (from the harvest) · `knownCaseIds` (rule: `case-library.md` header). **Done only when `pass: true` AND `stats.skipped` is empty** (a project without links: it may hold only the link check, plus the step 4 line); GUARD: never hand-write a subset of the checks.
 2. Screenshot the board (≤3 rounds) against the confirmed Cases — script = structure, screenshot = looks.
-3. Report — 3 lines (the Phase 3 example after the user cut Case#8):
+3. Report — 4 lines (the Phase 3 example after the user cut Case#8):
 ```
 สร้าง Permutation Board แล้ว 14 Cases (High 4 · Medium 6 · Low 4) · Verify ผ่านครบทุกข้อ
 🔗 figma.com/design/…?node-id=…
 เริ่มออกแบบจาก Case#1 #3 #4 #5 ก่อน (High)
+Rollback: ลบ Permutation Board "Permutation_…" กับ Connector Line ของมัน — Key Screen ไม่ถูกแตะ
 ```
-4. Add a line only when it applies: loose / indexed label style → `เพิ่ม/ลบ Case บน Permutation Board นี้แล้วต้องไล่เลข Case# เอง` · sibling-duplicate guard could not compare → `Skill เทียบกับ Permutation Board ข้างเคียงไม่ได้ — ไม่มี stamp ให้เทียบ` · no links → `โปรเจคนี้ไม่ใช้ Connector Line — Verify ข้ามข้อนี้`. Verify fails → `Verify ไม่ผ่าน:` + plain words ("Connector Line ไม่ติดกับ Key Screen" · "Placeholder ของ Case#3 ขนาดไม่ตรงกับ Key Screen"), never JSON; fix and re-verify.
+4. Add a line only when it applies: loose / indexed label style → `เพิ่ม/ลบ Case บน Permutation Board นี้แล้วต้องไล่เลข Case# เอง` · sibling-duplicate guard could not compare → `Skill เทียบกับ Permutation Board ข้างเคียงไม่ได้ — ไม่มี stamp ให้เทียบ` · no links → `โปรเจคนี้ไม่ใช้ Connector Line — Verify ข้ามข้อนี้` and the Rollback line drops `กับ Connector Line ของมัน`. Verify fails → `Verify ไม่ผ่าน:` + plain words ("Connector Line ไม่ติดกับ Key Screen" · "Placeholder ของ Case#3 ขนาดไม่ตรงกับ Key Screen"), never JSON; fix and re-verify.
 5. After the run: add newly minted Tier-3 ids and newly answered component categories to `projects/<name>.md`.
 
 ---
