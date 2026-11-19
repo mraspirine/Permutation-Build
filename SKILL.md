@@ -31,7 +31,7 @@ The user is a designer, not this skill's maintainer. Every message shows only **
 - **Voice**: `Skill` is the subject, never "ผม" ("Skill อ่าน Key Screen แล้ว" · "Skill ยังไม่รู้จัก" · "Skill ไม่เดาเอง"); the user is `ผู้ใช้ Skill` / `Designer`. Short sentences; English term first, Thai gloss after it the first time a reader may not know it
 - **Words**: `Key Screen` (the base) · `Permutation Board` (always in full) · `Connector Line` (the link) · `Case` / `Cases` · `Group` (`Error Handling` · `Coupon State` · `Screen State` · `Component` …) · `Archetype (ประเภทจอ)` · `Case Library` · `Common Case` · `Placeholder` · `Confirm` · `Verify` · `Report` · `BA` · AUDIT: `Missing` / `Stale` / `Orphan` + Thai gloss
 - **Priority**: icon + English word in table cells — `🔴 High` · `🟠 Medium` · `🟡 Low` (never ⚪ — renders as a hollow glyph); no Thai gloss needed. Stamps keep `must` / `should` / `edge` (= High / Medium / Low)
-- **Markers in chat** = the emoji (never the bare text glyph) as a short tag in front of the Case; define each one used once per message: `⚠️ = ต้องยืนยันกับ BA ก่อน` (`⚠️ ยืนยันค่า` · `⚠️ Business Rule` · `⚠️ แถวส่วนลด` · `⚠️ ข้อ N` = waits on Confirm question N) · `🔍 = สิ่งที่ต้องตรวจ` · `🔗 = ปลายทางเมื่อกดปุ่ม` · `🚫 = ไม่นับรวมใน Case`. On the board a marker only opens a warning clause (`⚠️ ยืนยันค่า`); the rest of a caption is plain text in the project file's grammar
+- **⚠️ in chat** = the emoji ⚠️ (never the bare text glyph) as a short tag in front of the Case in the Case table (`⚠️ ยืนยันค่า` · `⚠️ Business Rule` · `⚠️ แถวส่วนลด` · `⚠️ ข้อ N` = waits on Confirm question N), defined once per message: `⚠️ = ต้องยืนยันกับ BA ก่อน`. On the board only ⚠️, opening a warning clause (`⚠️ ยืนยันค่า`); the rest of a caption is plain text in the project file's grammar
 - **Never printed**: node ids · gate names (G0–G5) · tier / level (`T1`, `S/C`) · case ids (`coupon/none`) · label style (`strict`) · script names · bucket marks (✓ ✗ ⊘) · counts of any of these or of what Skill scanned. They live in stamps, `projects/<name>.md` and script JSON, shown only when asked ("ขอดูผล Verify"). **Layer names ARE printed**, with a Thai gloss when the name alone is unclear: `Transaction (การ์ด จาก→ไปยัง)`
 - **Questions**: one decision per AskUserQuestion box, recommended option first marked `(แนะนำ)`, in the Phase 3 order. GUARD: never 2–3 questions in one box. An answer that changes the table → show the new table briefly before the next box
 
@@ -63,6 +63,7 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 | **DGL Revamp** | screens named `[MMM][YY].[EPIC].[N].[N]_DGL Revamp_NX_…` · legacy 375-wide · `Krungthai Fast` — **runs in the NEXT app but is NOT NEXT** | `projects/dgl.md` |
 | **CLICX** (PB) | collections `color` `spacing` `radius` `size-generic` · screens named `X.NN-NN.A \| name` | `projects/clicx.md` |
 | **PTP** (Paotang) | flow screens are INSTANCES named `PTP/<Module>/<Screen>_<MonYYYY>` or `<MonYYYY>/PTP revamp/…` · product font Kanit · boards `Permutation: Pg_<Name>` or free names found by their connector | `projects/ptp.md` |
+| **TungNgern** (ถุงเงิน) | file `TN - Core App` · flow screens are FRAMES named `NTN - …`, 360 wide · Kanit (PTP's Kanit screens are `PTP/…` INSTANCES) | `projects/tungngern.md` |
 
 ---
 
@@ -182,7 +183,7 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 ---
 
 ## MODE: LEARN · MODE: AUDIT — read `references/learn-audit.md` in full first
-- **LEARN** — teach Skill a new project or refresh its layout (offered in Phase 0); nothing is saved before the user confirms. Last line, no node ids: `Import-test ผ่าน 3/3 → บันทึก projects/<name>.md แล้ว`.
+- **LEARN** — teach Skill a new project or refresh its layout (offered in Phase 0); nothing is saved before the user confirms.
 - **AUDIT** — re-scan one Permutation Board against today's Cases + fill progress (Phase 1 step 5, or on request). Read-only until the user says yes; Orphans are reported, never deleted; each "→ …ไหม" in its 5-line Report is its own box.
 
 ## References (open at the moment named)

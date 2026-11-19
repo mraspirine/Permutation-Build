@@ -22,7 +22,7 @@
 | Label `Case#N` (+ case name) | | | |
 | Description | | | |
 
-- Caption: how many text nodes, in what order, does `Case#N` contain a space, which language sits where: <...>
+- Caption: how many text nodes, in what order, does `Case#N` contain a space, which language sits where: <...> · description: plain / bullet list · any marker the team writes
 - Screen slot sizes: normal `<W×H>` · small `<W>` · large `<W>`
 - Internal layer names: <...>
 - **Link:** kind <CONNECTOR / VECTOR / none> · color · weight · line type · endpoints (which node, which magnet)

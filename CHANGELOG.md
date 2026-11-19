@@ -5,11 +5,20 @@
 
 ---
 
-## 2026-11-19 — CLICX: caption ไม่ใช้ emoji · ⚠️ 🔍 🔗 🚫 ใช้ในแชท
+## 2026-11-19 — CLICX: caption ไม่ใช้ emoji · บน board มีแค่ ⚠️ หน้าวรรคเตือน
 
-ที่มา: ผู้ใช้บอก "ปกติใน clicx จะไม่ใช้ icon แบบนี้" (ตัวอย่าง `B.03-01.B`) — สัญลักษณ์มีไว้บอกผู้ใช้ในแชท บน board ขึ้นต้นได้แค่วรรคที่เตือน
-- `SKILL.md` §How to talk: legend 4 สัญลักษณ์ · §Phase 3 Confirm table: CTA target ตาม grammar ของโปรเจค
-- `projects/clicx.md` §Naming: note ไทยล้วน หลายบรรทัดเป็น bullet list · ⚠️ เฉพาะ bullet ยืนยันกับ BA
+ที่มา: ผู้ใช้บอก "ปกติใน clicx จะไม่ใช้ icon แบบนี้" (ตัวอย่าง `B.03-01.B`) และ "ถ้าเขียนลงเคสจะเป็นวรรคที่เตือน user เท่านั้น" · ผู้ใช้เลือกใช้แค่ ⚠️ (ไม่ใช้ 🔍 🔗 🚫)
+- `SKILL.md` §How to talk: ⚠️ เป็นป้ายในตาราง Case · บน board มีแค่ ⚠️ ขึ้นต้นวรรคเตือน ที่เหลือเป็นข้อความธรรมดาตามไฟล์โปรเจค · §Phase 3 Confirm table: CTA target ตาม grammar ของโปรเจค · ตัดข้อความที่ซ้ำกับ `learn-audit.md` และตาราง References ให้ไม่เกิน 25,000 ตัวอักษร
+- `projects/clicx.md` §Naming: note ไทยล้วน หลายบรรทัดเป็น bullet list · ⚠️ เฉพาะ bullet ยืนยันกับ BA · ไม่รู้ปลายทางปุ่ม → `⚠️ ยืนยัน target` · board ข้างเคียงที่มี 🔍 🔗 🚫 ไม่ใช่แบบของทีม
+- แทนที่ข้อ "caption ใช้ emoji marker" ของ 2026-07-31 · `projects/clicx.md` เพิ่มรูปแบบ board หน้า `AI Test case` (เส้น `Primary Line` สีส้มคนละเส้นกับเส้น flow) · ถามก่อนขยาย Section · คำตอบ Component 3 ตัว (`button` เฉพาะ flow B.01)
+- `projects/_template.md`: เพิ่มช่องจดรูปแบบ description ตอน LEARN
+
+## 2026-11-19 — โปรเจคใหม่ TungNgern (ถุงเงิน)
+
+ที่มา: คนในทีมรัน LEARN กับไฟล์ `TN - Core App` แล้วส่งไฟล์โปรเจคมาให้รวม
+- `projects/tungngern.md` (ใหม่): Permutation Board วางอิสระ ไม่มี auto-layout · หัว Group เป็น component `Section` · หมายเหตุใต้ Case เป็น component `Permutation Sub Title` · label `Case N: <ชื่อ>` (loose) เลขเริ่มใหม่ทุก Group · จอเป็น FRAME กว้าง 360 · เส้นชื่อ `Connector line` สีส้ม เส้นประ
+- `SKILL.md` Project index: เพิ่มแถว TungNgern แยกจาก PTP ที่ใช้ Kanit เหมือนกัน · README: โปรเจคที่สอนไว้เป็น 5 ตัว
+- ยังไม่แก้: scripts หา Permutation Board ของ TungNgern ส่วนใหญ่ไม่เจอ (ชื่ออิสระ และเส้นไม่ได้ชื่อ Permutation) · วิธีอ้อมอยู่ใน `tungngern.md` §Naming
 
 ## 2026-11-10 — Report ไม่มีบรรทัด Rollback แล้ว
 
