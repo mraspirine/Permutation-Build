@@ -22,12 +22,12 @@
 | Label `Case#N` (+ case name) | | | |
 | Description | | | |
 
-- Caption: how many text nodes, in what order, does `Case#N` contain a space, which language sits where: <...>
+- Caption: how many text nodes, in what order, does `Case#N` contain a space, which language sits where: <...> · description: plain / bullet list · any marker the team writes
 - Screen slot sizes: normal `<W×H>` · small `<W>` · large `<W>`
 - Internal layer names: <...>
 - **Link:** kind <CONNECTOR / VECTOR / none> · color · weight · line type · endpoints (which node, which magnet)
 - **Placement:** flow band vs permutation band · parent = <SECTION / PAGE> · what orders the boards
-- **Board width:** the formula for choosing a column count that avoids overlapping neighbours
+- **Board width:** the formula for choosing a column count that avoids overlapping neighbours · the minimum width (one column), which `board-grammar.md` §Scaffold stops reads
 
 ## Layout (school and conventions)
 - **School:** <A / B / C / mixed — which is primary, what is mixed in>
@@ -54,8 +54,8 @@
 |---|---|---|
 | <pack> | <n> | <...> |
 
-## Screen facts (business rules per screen — grown by Phase 3 trims)
-> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason** before anything is proposed. Phase 3 appends a row whenever the user trims a case as "impossible for this screen" (not "skip this time").
+## Screen facts (business rules per screen — grown only when the user says จดไว้)
+> Phase 2 reads this FIRST and pre-buckets each row per SKILL.md Phase 2 step 1 (⊘ with the stored reason; a `*` row covered by the flow's shared board → ✓ มีแล้ว) before anything is proposed.
 > Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut. Pointer: such a row's reason starts `user said:` (SKILL.md Phase 3 ตัดออก picks its wording from that marker).
 | Screen (name pattern) | Case (`caseId`) | Rule (why it can/can't happen) | Learned |
 |---|---|---|---|

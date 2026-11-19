@@ -41,7 +41,6 @@ FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F
 - Internal layer names: `Case` at every level; the row frame is `Permutations`; the title node is `Permutation Title`
 - **Link:** CONNECTOR `Permutation` · `#FAB900` · weight 5 · `ELBOWED` · magnet TOP on the board ·
   parent = SECTION. Flow links are `#4858E4` (`Diamond to Screen`, `Logic to Logic`) — do not confuse the two.
-  The plugin API cannot create connectors in a design file → draw a VECTOR and tell the user
   Pointer: SKILL.md Phase 4 step 5 + `board-grammar.md` §Link rule win — clone + re-point, else ask for Cmd+D (no connector in the file → the user draws one with Shift+C); never finish with an unattached VECTOR.
 - **Placement:** flow band `y≈977` · permutation band **`y≈12074`** (Accept Offer sub-flow sits at `y≈5073`) ·
   boards ordered by x following the screen order in the flow, ~178px apart
@@ -119,6 +118,12 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64]  fill #EAF0
 | Face Scan `33.3–36.1` | unable to load SDK · application switch · unable to load data — **separate module screens** |
 - Edit screens across this flow consistently carry `Small screen` · `Back button` · `Unable to load data`
 - Ids minted on Information `16.1` (2026-11-10): `dgl-info/<kebab case name>` (e.g. `dgl-info/select-business-type`, `dgl-info/with-children`) · `dgl/back-button`
+
+## Screen facts (business rules per screen — grown only when the user says จดไว้)
+> Phase 2 reads this FIRST and pre-buckets each row per SKILL.md Phase 2 step 1 (that step wins).
+> Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut. Such a row's reason starts `user said:`.
+| Screen (name pattern) | Case (`caseId`) | Rule (why it can/can't happen) | Learned |
+|---|---|---|---|
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 > Per run, add: `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` · `linkId` (+ `linkCaps` from the harvest) · `knownCaseIds`. G5 lists whatever is left empty in `stats.skipped`.

@@ -105,7 +105,7 @@ FRAME '<free name containing "Permutation">'   layoutMode NONE (free positioning
 | View All Transaction | 2+ | ร้านเป๋าตุง Migrate (รับเงินจาก QR เป๋าตุง) · โครงการ Digital Wallet · filter เฉพาะรายการที่คุณเป็นคนรับเงิน |
 | Transaction Complete | 3 | Default / Actual Screen · Digital Wallet · ไม่มี / มีชื่อย่อร้านค้า |
 
-## Screen facts (business rules per screen — grown by Phase 3 trims)
+## Screen facts (business rules per screen — grown only when the user says จดไว้)
 > Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**.
 > Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut. Pointer: such a row's reason starts `user said:`.
 > Pointer: SKILL.md Phase 2 step 1 wins — a `*` row covered by the shared Common Case page counts as มีแล้ว, not ⊘.

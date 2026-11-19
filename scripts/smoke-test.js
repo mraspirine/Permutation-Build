@@ -1,5 +1,5 @@
 // smoke-test.js — run this once on a new machine (or when a build misbehaves) BEFORE the first real build.
-// Paste VERBATIM into use_figma or figma_execute, in any file you may edit. It proves the three things every
+// Paste VERBATIM (up to the `node self-check` line) into use_figma or figma_execute, in any file you may edit. It proves the three things every
 // build depends on, then cleans up: it creates ONE throwaway frame far off-canvas and removes it again.
 //   1. the runtime can write        2. stamps land in a store the readers can read        3. the file guard works
 // Set FILE to the file NAME (figma_execute / Desktop Bridge) or the file KEY (use_figma — root.name is "Document" there).

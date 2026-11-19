@@ -7,7 +7,9 @@
 > `knownCaseIds` for G5 = every L1 id + every `tmpl/*` id + the row ids this run actually used.
 > `opt-in` means the case does not apply to every screen (the FigJam sticky marks it `(specific)` / `(Optional)`) → propose it as 🟠 Medium / 🟡 Low (the user can trim it at Confirm; never its own question box).
 >
-> **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (e.g. "Session timeout" on one board and "Network reconnect" on its sibling — the boards stop being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
+> **Why captions stay verbatim** (the rule is SKILL.md Phase 2 step 3): one situation worded two ways ("Session timeout" on one board, "Network reconnect" on its sibling) makes the boards impossible to compare.
+>
+> **A row with no Thai text keeps its name alone** (Text Field `Focus` · `Typing` · Image `Ratio & Sizing`): the Case table shows `Focus`, the Permutation Board caption carries only the name (+ the project's CTA line) — never write a Thai gloss for it yourself (user, 2026-11-19).
 >
 > **Backticks are file markup, not caption text** — a caption that quotes an id (`` `empty/section` ``) goes onto the canvas WITHOUT the backticks.
 > **A parenthetical note addressed to Skill is not caption text** — e.g. `(ONE case showing the three states)` on `button/interaction-states` in next.md: neither on the canvas nor in chat.
@@ -108,9 +110,11 @@ Default (unselected) · Selected · UnSelected · Multiple Select · Selected Di
 | Image | asset load fail (หายไปทั้ง section / placeholder) | `image/asset-load-fail` |
 | Image | Ratio & Sizing | `image/ratio-sizing` |
 
-### Never a pack — in ANY project (order: the project map's exception rows → this list → the rest of the project's map)
+### Never a pack — in ANY project (checked in the order SKILL.md Phase 1 step 2 gives)
 `/status ?bar/i` · `/home ?indicator|iphone indicator/i` · `/^(nav|top) ?bar|^navbar|^header$/i` · `/^ic[_\/]|^icons?[\/_ ]|^icon$/i` · `/^(line|divider)$/i` · `/^background/i`
-> OS chrome, icons and decoration produce no cases in any design system, so they are never reported as "unmapped". A project file may still override one of them with an exception row placed ABOVE its NOT-a-pack rows (CLICX `gen_ic_eye` = the hide-balance trigger) — those exception rows are checked BEFORE this list, so they can fire.
+> OS chrome, icons and decoration produce no cases in any design system, so they are never reported as "unmapped". A project file may still override one of them with an exception row in its component → category table, which SKILL.md Phase 1 step 2 checks before this list (CLICX `gen_ic_eye` = the hide-balance trigger).
+> **The screen's own wrapper is not a component**: an INSTANCE that holds the whole Key Screen (its one visible child, at the screen's size — CLICX `edit phone number`, `home master screen`) is the screen itself → map its children. Instances nested inside a mapped component (the icon inside a Text Field) belong to that component's pack — never mapped on their own.
+> These layers, and a project row that says `no pack`, pull nothing: they appear in neither the Case table nor ตัดออก (a header row may still say `ปุ่มไม่แตก Case`).
 
 ### Additions 2026-08-11
 | id | tier | opt-in | caption (EN — TH) |
@@ -150,14 +154,15 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 - **"Content fits the screen" is not a reason.** `screen/scrolled` and the other opt-in Screen State rows stay ✗ when the screen's rows can grow (another proposed Case adds rows or fields — Multiple fields, MWA tiers, a long memo). Cut only with a measured reason (frame height ≤ the device viewport in every data state) or a §Screen facts row.
 - **The sample on the Key Screen is not a reason.** "This screen shows biller X / coupon Y / account Z" is one data state, never grounds to cut a pack row (3 of 4 models cut the MWA Case because the sample bill was electricity).
 - **Minting a Tier-3 Case** (a pack row without a stored id): rows a sibling Permutation Board in THIS flow already built (the MWA tier rows on 1.14.1) are มีแล้ว — never re-minted or copied. What THIS Key Screen shows that the sibling board does not (the confirmation screen's one `MWA overdue + VAT` row) is still minted, as exactly one new Case: one situation = one Case, named from the pack row's own words, never an umbrella name, never one Case per sub-rule. Mint only from a project pack row or an element visible on the Key Screen; an archetype dimension alone is not a Case. Every newly minted Case gets its own Confirm row, even when Skill leans toward cutting it.
-- **Group order for a Key Screen with no board yet**: the Group titles + order of the nearest sibling Permutation Board in THIS flow; none → the project file's categories in file order; never a board on another page.
+- **Space is not a reason.** A Case is never cut or merged so the Permutation Board fits: too little room changes only where it goes (a placement Confirm row; SKILL.md Phase 4 step 3 stops and asks).
+- **A separate screen in the flow is not a reason.** A loading / error screen elsewhere in the flow (CLICX `B.03-01.A | loading state`, `C.01-01.A | API error`) does not make this Key Screen's Loading / Error Cases มีแล้ว — only a Permutation Board does (this base's own, or the flow's shared one). The Cases stay (user, 2026-11-19); a project file may say otherwise.
 - **Group of a minted detail row**: a minted Case that is a detail row on the Key Screen (MWA overdue + VAT, fee, memo, fields) goes in `Bill Detail` (the project's detail Group) — never a new Group named after the pack or the biller; take a sibling board's Group title only when the Case is the same kind as that Group. Inside a Group, order the Cases as the Key Screen's rows run, top → bottom (fee, memo, then pack-derived rows such as Multiple fields, MWA).
 
 ## Priority (defaults when proposing the matrix)
 🔴 **High** breaks the flow / user stuck / money at risk · 🟠 **Medium** clearly worse but not blocking · 🟡 **Low** rare (stamps keep `must` / `should` / `edge`)
 **Fintech modifier:** cases about the money outcome (amount, fee, payable, balance, double submission) move up one level — not every row of a payment or confirmation screen; idempotency and mid-transaction timeout are always High. The modifier applies to Tier-3 rows too: a Case whose caption names the payable amount, fee or discount outcome (Zero payable · Fee charged · Coupon expired at confirm) is High.
 **Defaults by kind:** Image pack rows (asset load fail, Ratio & Sizing) and opt-in Screen State rows (Scrolled, Large screen) are Low · a value-⚠️ detail row that is not a money outcome (No memo, Multiple fields) is Medium.
-**Case numbers follow the board's reading order, not priority** — number the confirmed cases group by group (top → bottom), then left → right inside a group: `1..N` across the board, or `1..k` inside each group where the project restarts per group. This is the default; a project that numbers differently says so in `projects/<name>.md`. (Top-Up 29.1 was numbered by priority and read `Case#1 · #2 · #10` in one row, 2026-08-18.)
+**Case numbers**: the rule is SKILL.md Phase 2 step 6; a project that numbers differently says so in `projects/<name>.md`. Why: Top-Up 29.1 was numbered by priority and read `Case#1 · #2 · #10` in one row (2026-08-18).
 
 ## Chain links (finding A should also surface B)
 - Date Picker → Date Calendar + Date Roller
@@ -167,10 +172,6 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 ## Source
 FigJam library `pFnfToBs4ecxvqrTWxqhaM#129:5011` (two groups: Screen, Component · verified 2026-07-24) · Tier 2 templates are distilled from the team's existing boards. **If the FigJam changes, re-sync these tables and update the date.**
 
-## Buckets (SKILL.md Phase 2 — every Case lands in exactly one)
-- **§Screen facts first** — rows for this Key Screen are pre-sorted ⊘ with their stored reason, and `*` rows join them when their condition holds in this flow; a row whose Component is not on the Key Screen is skipped. A `*` row covered by the flow's shared Permutation Board is ✓ instead, once Phase 1 found that board in this flow (SKILL.md Phase 2 step 1).
-- **✓ มีแล้ว** — a Permutation Board already holds it (this Key Screen's own, or the flow's shared one), or it is `screen/default` and the Key Screen is that state.
-- **✗ proposed** — goes to the Case table with a Priority (§Priority). A Case resting on a business assumption ("this list is never empty") is ✗ plus a Confirm question, not ⊘.
-- **⊘ ใช้กับจอนี้ไม่ได้** — needs a reason you can point at: visible on the Key Screen (no list, no money input) or a §Screen facts row. §Enumeration guards lists what is not a reason.
-- Business values (fees, limits) come from the brief; otherwise the caption carries `⚠️ ยืนยันค่า` in place of a number.
+## Buckets
+The bucket rules (✓ มีแล้ว · ✗ proposed · ⊘ ใช้กับจอนี้ไม่ได้, §Screen facts first) are SKILL.md Phase 2 steps 1 and 4; §Enumeration guards above lists what is not a reason to cut.
 

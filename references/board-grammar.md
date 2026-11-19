@@ -1,6 +1,6 @@
-# board-grammar — how permutation boards are laid out (Phase 4)
+# board-grammar — how permutation boards are laid out (Phase 4, Report lines for Phase 5)
 
-> **This file is the cross-project grammar and deliberately contains no numbers from any project** — every project lays boards out differently.
+> **This file is the cross-project grammar; project numbers belong in `projects/<name>.md`** — every project lays boards out differently, and a project named here is only an example.
 > The real values (spacing · fonts · colors · structure) live only in **`projects/<name>.md` §Board anatomy**.
 > No data for that project yet → **run `scripts/harvest-board.js` on a board the team already made**, then record it in the project file (LEARN).
 
@@ -8,11 +8,11 @@
 
 ## Hard rule: harvest before scaffold
 > **The sibling board nearest the new board's slot is the ground truth** — same SECTION first, else the same FLOW (the outer section); harvest it on every build (one call). Projects run several dialects per flow or page, so the neighbour outranks the project file; the project file supplies the defaults only when the flow has no board at all.
-**Never build a board from memory, from defaults, or from another project.** On every build:
-1. Find a board the team made in that file (`scan-cases.js` locates containers)
+**Never build a board from memory, from generic defaults, or from another project.** On every build:
+1. Find the board to harvest (`scan-cases.js` locates containers): the nearest sibling in the SECTION → else in the same FLOW. The flow has none → the project file's §Board anatomy defaults; if they were never verified in this file, harvest any team board in the file first
 2. **Run `scripts/harvest-board.js` verbatim** against it (replace `BOARD_HINT`; widen `SCREEN_W` for a tablet / desktop project). **Never hand-write a shortened version** — a shortened one drops sections (the links, typically) and then reports "no connector" for a project that clearly has one. The script exists precisely so nothing gets skipped.
 3. Compare with `projects/<name>.md` — if it differs or is missing, update the project file first (as grammar — words + ratios — never per-screen geometry), then build
-4. **No existing board at all (greenfield)** → use the project file's defaults; if there are none → **ask the user**, do not guess
+4. **No board in the flow and no project-file defaults** → **ask the user**, do not guess
 
 ## What the harvest must capture (miss one and the board won't match the team's)
 | # | Item | What you need |
@@ -40,16 +40,16 @@ board                          ← name per project convention; fill/padding fro
             ├── caption block       ← 1–3 text nodes, per the harvest
             │   └── label `Case#N` + (case name) + (description)
             └── screen slot         ← phase 1 = placeholder · phase 2 = the real screen
-    setPluginData("permBuild", {...}) on the case column
+    stampCase(...) on the case column (scaffold-kit.js; contract-and-runtime.md §2)
 ```
 
 ## Rules that hold for every project (independent of style)
 - **The case label is its own text node, in the project's label style** (`contract-and-runtime.md` §3 Label styles): `strict` = the whole string is `Case#N` / `Case #N` (regex `/^\s*Case\s*#?\s*(\d+)\s*$/`, renumber-compatible) · `loose` = `Case #N - <name>` · `indexed` = `<g>.<n> | <name>` or `#<n>[.<m>] <name>`. The project file says which one; never mix styles on one board
 - **Everything is written inside one board node** → rollback = delete it + its Connector Line (the link lives on the SECTION)
-- **Never touch the base**, and never modify the team's existing boards
+- **Never touch the base**, and never modify the team's existing boards (an AUDIT yes may only add new cells: `learn-audit.md` AUDIT step 6)
 - **line-height**: if the team sets PIXELS, set PIXELS (AUTO throws off spacing across the whole board)
 - **Caption fonts ≠ the fonts inside the screens** — a harvest will show both sets; never apply a screen font to captions
-- **Size the board so it cannot overlap its neighbours**: read `siblingBoards` from the harvest, then pick a column count where `n×cellW + (n-1)×gap + padding×2` fits the available gap
+- **Size the board so it cannot overlap its neighbours**: read `siblingBoards` from the harvest, then pick a column count where `n×cellW + (n-1)×gap + padding×2` fits the available gap, unless `projects/<name>.md` Board width fixes it (CLICX: one row per Group)
 - **Placeholder (phase 1)**: sized like that project's real screen slot, centered label `◻︎ Case Spec — awaiting design`. **Never use the words "Pending Design"** — on some boards that is a genuine status for a case the team hasn't designed yet
 
 ## The 3 layout schools (used to classify how a project lays boards out)
@@ -74,7 +74,7 @@ The screen→board link keeps getting drawn as "a colored line, close enough" �
 Anchor/route/caps are harvest item **8** — if the project file does not record them yet, harvest before drawing.
 
 ## Scaffold stops (SKILL.md Phase 4 steps 2–3 ask the question; these are the tests, then the Report lines)
-- **Sibling duplicate** — the confirmed set is ≥90% identical to a sibling Permutation Board whose Key Screen is another screen. Compare by caseId; unstamped siblings carry none, so compare by Case name. No way to compare → the Report always adds `Skill เทียบกับ Permutation Board ข้างเคียงไม่ได้ — ไม่มี stamp ให้เทียบ`.
-- **No room** — unless box ④ chose another place, the Permutation Board and its Connector Line go in the Key Screen's direct parent SECTION, at a column count that fits the free span (harvest `siblingBoards` + section size). No free span where the project's ordering puts it, or a slot narrower than the project's minimum width (`projects/<name>.md` Board width) → ask. Do not squeeze it, resize the team's section or relocate it silently.
+- **Sibling duplicate** — the confirmed set is ≥90% identical to a sibling Permutation Board whose Key Screen is another screen. Compare by caseId; unstamped siblings carry none, so compare by Case name. Read each sibling's Cases with `scan-cases.js` `DETAIL = true`, `SCOPE_ID` = that board (Phase 1 ran with `DETAIL = false`, counts only). No way to compare → the Report always adds `Skill เทียบกับ Permutation Board ข้างเคียงไม่ได้ — ไม่มี stamp ให้เทียบ`.
+- **No room** — the board needs the column count `projects/<name>.md` Board width gives (fitted to the free span where the project allows that; harvest `siblingBoards` + section size). No free span where the project's ordering puts it, or a slot narrower than the project's minimum width → the SKILL.md Phase 4 step 3 stop.
 - **Report lines** (SKILL.md Phase 5) — a loose or indexed label style → `เพิ่ม/ลบ Case บน Permutation Board นี้แล้วต้องไล่เลข Case# เอง` · a project without links → `โปรเจคนี้ไม่ใช้ Connector Line — Verify ข้ามข้อนี้` · Verify fails → `Verify ไม่ผ่าน:` + plain words such as "Connector Line ไม่ติดกับ Key Screen" or "Placeholder ของ Case#3 ขนาดไม่ตรงกับ Key Screen" instead of the JSON; fix and re-verify.
 

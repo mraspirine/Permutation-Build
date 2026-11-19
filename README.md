@@ -30,6 +30,7 @@ cp -R figma-permutation-build ~/.claude/skills/
 | **Figma MCP** (ตัว official) | อ่านจอ + เขียน board |
 | **figma-console Desktop Bridge** | ใช้ตอนไปอ่าน board ใหญ่ๆ ที่มีอยู่แล้ว (MCP ตัว official อ่านแล้วล้น) และ board ที่เคยสร้างผ่าน Bridge |
 | Node.js *(ไม่บังคับ)* | ไว้รัน self-check ของสคริปต์ เช่น `node scripts/scan-cases.js` |
+| **โมเดล Sonnet ขึ้นไป** | ใช้ Sonnet, Opus หรือ Fable ไม่แนะนำ Haiku: ผลทดสอบ 2026-11-19 บน CLICX + NEXT Sonnet ได้ 9, Opus 9.5 แต่ Haiku ได้ 6.5 เพราะยังใส่แถวหลักฐานในตารางหัวข้อความ และพิมพ์ข้อความต่อท้ายหลังจุดที่ต้องหยุด แม้กฎจะเขียนไว้แล้ว |
 
 ## เช็คว่าเครื่องพร้อม (ทำครั้งเดียวตอนติดตั้ง)
 
