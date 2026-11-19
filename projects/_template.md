@@ -27,7 +27,7 @@
 - Internal layer names: <...>
 - **Link:** kind <CONNECTOR / VECTOR / none> · color · weight · line type · endpoints (which node, which magnet)
 - **Placement:** flow band vs permutation band · parent = <SECTION / PAGE> · what orders the boards
-- **Board width:** the formula for choosing a column count that avoids overlapping neighbours
+- **Board width:** the formula for choosing a column count that avoids overlapping neighbours · the minimum width (one column), which `board-grammar.md` §Scaffold stops reads
 
 ## Layout (school and conventions)
 - **School:** <A / B / C / mixed — which is primary, what is mixed in>

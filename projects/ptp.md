@@ -120,7 +120,7 @@ FRAME 'Permutation:' / 'Permutation: <Name>'   [V · gap 0 · padding 0]  no fil
 | Success CTA variants | 2 | Button `เสร็จสิ้น` · Button `ถัดไป` |
 
 ## Screen facts (business rules per screen — grown only when the user says จดไว้)
-> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**.
+> Phase 2 reads this FIRST and pre-buckets each row per SKILL.md Phase 2 step 1 (that step wins).
 > Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut.
 | Screen (name pattern) | Case (`caseId`) | Rule (why it can/can't happen) | Learned |
 |---|---|---|---|

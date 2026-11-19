@@ -96,9 +96,9 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 ## Component → category (Phase 1, L2 detection)
 | If instance.name matches | → category |
 |---|---|
-| `/^(gen\|cus)_ic_/i` | **icon asset — NOT a pack. Check this row FIRST** (otherwise `gen_ic_my-asset` false-matches the account-card row below) |
+| `/gen_ic_eye/i` | **exception row** (checked first) — hide-balance toggle, an exception to the icon row below: this icon IS the Balance-display trigger. ⚠️ the eye can sit NESTED inside `total balance` and not appear as its own top-level instance (confirmed on `A.01-01.A` 2026-08-11) — if a balance amount is visible, check for the eye inside it before bucketing hide-balance ⊘ |
+| `/^(gen\|cus)_ic_/i` | **icon asset — NOT a pack**; checked before the account-card row below (otherwise `gen_ic_my-asset` false-matches it) |
 | `/asset\b/i`, `/acc detail/i`, `/acc type/i`, `/savings account/i` | account card / list item (data states: long name, max amount, zero/negative) — pulls Tier-3 **Account list** + **Balance display** packs |
-| `/gen_ic_eye/i` | hide-balance toggle — exception to the icon row: this icon IS the Balance-display trigger. ⚠️ the eye can sit NESTED inside `total balance` and not appear as its own top-level instance (confirmed on `A.01-01.A` 2026-08-11) — if a balance amount is visible, check for the eye inside it before bucketing hide-balance ⊘ |
 | `/tooltip/i`, `/ic_circle-information/i` | info tooltip |
 | `/text group \d+:\d+/i` | label/value pair (max characters, max lines) |
 | `/top bar/i`, `/status bar/i` | OS chrome — not a case pack |
@@ -127,7 +127,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | Copy | strings are bound to **Frontitude keys** (e.g. `system.error.notification.loading`) |
 
 ## Screen facts (business rules per screen — grown only when the user says จดไว้)
-> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**. Rows below come from the team's notes on the boards.
+> Phase 2 reads this FIRST and pre-buckets each row per SKILL.md Phase 2 step 1 (that step wins). Rows below come from the team's notes on the boards.
 > Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut.
 | Screen (name pattern) | Case (`caseId`) | Rule | Learned |
 |---|---|---|---|

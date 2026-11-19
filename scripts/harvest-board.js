@@ -1,6 +1,6 @@
 // harvest-board.js — read the layout style of a permutation board the team already made and return
-// the values that belong in projects/<name>.md (used by LEARN, and before the first Scaffold in any
-// new file or project).
+// the values that belong in projects/<name>.md (used by LEARN, and on every build: gate G1, SKILL.md
+// Phase 4 step 1).
 //
 // Usage: replace BOARD_HINT with part of an example board's name (or a node id), then paste into
 // figma_execute / use_figma. Returns JSON — copy the values into projects/<name>.md.

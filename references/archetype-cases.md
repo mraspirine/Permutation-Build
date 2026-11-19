@@ -1,6 +1,6 @@
 # archetype-cases — archetype → signature cases + permutation axes
 
-> Read in Phase 1–2. Use it to classify the base, then pull the cases that come with that screen type — on top of the component packs in `case-library.md`.
+> Read at Phase 0 step 2 (§Several Key Screens) and in Phase 1–2. Use it to classify the base, then pull the cases that come with that screen type — on top of the component packs in `case-library.md`.
 > **An archetype is a floor, not a ceiling** — real screens usually have more. Reason forward from what is actually on the screen instead of just ticking the list.
 
 ## Guessing the archetype from what is on the base (then confirm with the user)
@@ -43,7 +43,7 @@ Hybrid screens: pick the primary archetype by the screen's core task, then add o
 - **Walk every applicable axis** and sort into ✓ exists / ✗ missing / ⊘ N/A with a reason. An axis that does not apply (a static screen that fetches nothing → axis 2 is N/A) still has to be **mentioned with its reason** — never skipped silently: a screen-level (L1) axis that does not apply gets a ตัดออก row; a component-pack axis follows SKILL.md Phase 2 step 2 (component not on screen → pack not listed).
 
 ## Several Key Screens (SKILL.md Phase 0 step 2)
-Before enumerating anything ask `Skill ได้ Key Screen มา N จอ — จอพวกนี้เกี่ยวกันแบบไหน` — listing each screen blind gives near-identical Permutation Boards. Then act on the answer:
+SKILL.md Phase 0 step 2 asks how the screens relate before enumerating; act on the answer:
 - **States of one screen** → ONE Permutation Board on the Key Screen the user names as the default. Diff the screens first and add only the Cases their differences create.
 - **Related but separate screens** → one run per screen, each enumerated from that screen's own visible Components, not seeded from a sibling's Case List.
 - **Mockup / template** → ask which slots vary and which stay fixed before enumerating; no answer → the Case List for ONE screen, then stop.
@@ -52,7 +52,7 @@ Before enumerating anything ask `Skill ได้ Key Screen มา N จอ — 
 A **sibling copy** is another screen in the same flow built from the same main component as the Key Screen, or with the same visible layer tree (CLICX: frames `B.01-01.A | current phone number` and `B.02-01.A | edit phone number` each wrap one instance of `edit phone number`). It matters only when the sibling owns a Permutation Board (stamp or link) and the Key Screen owns none:
 1. **Diff the two screens first**: visible layers, texts, component overrides. Each difference can create a Case — except one in a layer that pulls no pack (chrome, a project row that says `no pack`) or a different sample value.
 2. **Ask before the Phase 3 message**, one box: `Key Screen นี้สร้างจาก Component เดียวกับจอ "<sibling>" ที่มี Permutation Board แล้ว — นับเป็นจอเดียวกันไหม` · `จอเดียวกัน — เสนอเฉพาะ Case ที่ต่างกัน (แนะนำ)` · `จอแยกกัน — แตก Case ใหม่ทั้งชุด`.
-3. **จอเดียวกัน** → header row `จอนี้สร้างจาก Component เดียวกับ "<sibling>" | เสนอเฉพาะ Case ที่ต่างกัน`; the Case table holds only the Cases the diff creates; every Case on the sibling's board goes to ตัดออก in ONE row (Case names joined by ` · `, read with scan-cases `DETAIL = true` and `SCOPE_ID` = that board) with `มีแล้ว — อยู่ใน Permutation Board ของจอ "<sibling>"`. Library rows that board does not hold are its own gaps: one more row `ใช้กับจอนี้ไม่ได้ — ไม่อยู่ใน Permutation Board ของจอ "<sibling>" (AUDIT จอนั้นได้)`. **The diff creates none** → in place of the Case table write `ไม่มี Case ใหม่ — Case ของจอนี้อยู่ใน Permutation Board ของจอ "<sibling>" ครบแล้ว`; the opening line, header table and ตัดออก stay, there is no Placement line; ask no more boxes and stop. Nothing is written.
+3. **จอเดียวกัน** → header row `จอนี้สร้างจาก Component เดียวกับ "<sibling>" | เสนอเฉพาะ Case ที่ต่างกัน`; the Case table holds only the Cases the diff creates; every Case on the sibling's board goes to ตัดออก in ONE row (Case names joined by ` · `, read with scan-cases `DETAIL = true` and `SCOPE_ID` = that board) with `มีแล้ว — อยู่ใน Permutation Board ของจอ "<sibling>"`. Library rows that board does not hold, and that this screen has no ⊘ reason for, are that board's gaps: one more row `ใช้กับจอนี้ไม่ได้ — ไม่อยู่ใน Permutation Board ของจอ "<sibling>" (AUDIT จอนั้นได้)`. **The diff creates none** → in place of the Case table write `ไม่มี Case ใหม่ — Case ของจอนี้อยู่ใน Permutation Board ของจอ "<sibling>" ครบแล้ว`; the opening line, header table and ตัดออก stay, there is no Placement line; ask no more boxes and stop. Nothing is written.
 4. **จอแยกกัน** → a normal run from the Key Screen's own components, never seeded from the sibling's Case List; SKILL.md Phase 4 step 2's sibling-duplicate guard still applies.
 5. **Non-interactive run** → print the message as step 3 shows it (the Case table, or the `ไม่มี Case ใหม่` sentence in its place), plus Confirm row `Key Screen นี้เป็นจอเดียวกับ "<sibling>" ไหม` · `ถ้าไม่ใช่ → Skill แตก Case ใหม่ทั้งชุด`, then stop.
 

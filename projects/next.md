@@ -142,7 +142,7 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64 all round]  
 | `1.13.1 Select Top-Up` | `screen/empty` | the biller list is server master data and always has rows — "no rows" only happens as a fetch failure → `screen/error-full` | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `screen/loading-spinner` | list screens in this flow load with a skeleton, never a full-screen spinner | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `screen/loading-lazy` · `screen/block-retry` | the biller list is fetched once in full, no pagination | 2026-08-11 |
-| `1.13.1 Select Top-Up` | `textfield/disabled` · `textfield/mandatory` · `textfield/error-*` | the search bar is a filter, not a form field — no validation, never disabled | 2026-08-11 |
+| `1.13.1 Select Top-Up` | `textfield/disabled` · `textfield/mandatory-optional` · `textfield/error-*` | the search bar is a filter, not a form field — no validation, never disabled | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `datepicker/*` · `datecalendar/*` · `dateroller/*` · `selection-radio/*` · `selection-checkbox/*` · `toast/*` · `nav/badge` | those components are not on this screen | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `tmpl/threshold` · `tmpl/insufficient` · `tmpl/validation-inline` · `tmpl/dropdown-dismiss` · `tmpl/sof-eligibility` | no money input on this screen — they belong to `1.14.1 Input Information Top-Up` | 2026-08-11 |
 | `1.13.1 Select Top-Up` | `tmpl/ekyc` · `tmpl/consent` · `tmpl/retry-lockout` | separate modules with their own bases (Fraud Engine 1.34–1.56 · Session PIN 1.8/1.10/1.11) | 2026-08-11 |
