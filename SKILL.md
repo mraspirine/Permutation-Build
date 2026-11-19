@@ -48,7 +48,7 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 ```
 | Gate | Must hold before moving on (checked in this order: G0 → G2 → G3 → G1 → G4 → G5) |
 |---|---|
-| **G0** | project resolved · before Phase 4 only: write probe OK (Phase 0 step 4) — Phases 1–3 are read-only; AUDIT is read-only until the user says yes |
+| **G0** | project resolved (no match → Case List only until LEARN) · write probe OK before Phase 4 (Phase 0 step 4); AUDIT writes only after the user says yes |
 | **G1** | board style harvested per Phase 4 step 1 — never from memory or another project |
 | **G2** | every row bucketed ✓ / ✗ / ⊘-with-reason before Phase 3 |
 | **G3** | user confirmed matrix + placement (Phase 3 boxes) |
@@ -75,16 +75,16 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 3. **Read `references/contract-and-runtime.md` §4–5 before the first Figma call** (20 KB response limit, trimmed JSON, Bridge for big boards); on every call paste the read scripts **verbatim** up to the `node self-check` line (the kit whole), edit only CONFIG.
 4. **Heading for Scaffold** (the user already asked for a board) — probe write access in the right file first: `if(figma.root.name!==F&&figma.fileKey!==F)throw 'wrong file';const n=figma.createRectangle();n.remove();` (F = file name on the Bridge, fileKey under use_figma — the kit's `guard()`). `wrong file` → re-target and probe again; any other throw = view-only → stop: `ไฟล์นี้ Skill แก้ไม่ได้ (สิทธิ์ดูอย่างเดียว) — ขอสิทธิ์แก้ไข หรือเอาแค่ Case List`.
 5. **Detect the project** in Project-index order (variables via `get_variable_defs` / `boundVariables`) against each `projects/<name>.md` §About; the user names it → skip. **Exact match only** — unsure → say so in a header row, never guess; no match → generic Tier 1/2 + offer LEARN (header row). **The board follows the FLOW, not the screen's own DS**: a partner screen (other font / colors, no `❖ NEXT`) gets the flow's board style; variables disagree with the naming → go with the flow, say so in the Phase 3 header, G1 confirms.
-6. Read `projects/<name>.md` **in full**; other files when the References table says.
+6. Read `projects/<name>.md` **in full**; other files when a step says.
 
 ### Phase 1 — Profile (nothing sent yet)
 1. Traverse the **Key Screen's own subtree only** (by its node id; use_figma has no selection) — never the whole page (node cap / slow) — **skipping every `visible === false` subtree** (GUARD: hidden layers grew phantom Cases). Collect archetype signals (`references/archetype-cases.md`), component instances, lists / images, bound variable modes.
 2. **Map components to categories**, in this order: the exception rows (rows that override a Never-a-pack match, e.g. CLICX `gen_ic_eye`) of the `component → category` table of **the screen's OWN design system** → `references/case-library.md` §Never a pack → the rest of that table, top-down. **No match → unmapped; never guess** → header row `… | ถามในข้อ 1` + box ①.
 3. **Existing cases**: run `scripts/scan-cases.js` with `SCOPE_ID` = the base's direct parent SECTION (nested: the INNER one), `DETAIL = false`; it reports each board's `linkedFrom` and `groups`.
-   - GUARD: **a board belongs to THIS base only if its stamp `baseNodeId` or its `linkedFrom` is the base — never by name**; never count another screen's Cases as this screen's. `linkedFrom` empty → follow the project file's link by hand (CLICX: the `#F79009` line); under use_figma re-scan on the Bridge (it can't read Bridge stamps).
+   - GUARD: **a board belongs to THIS base only if its stamp `baseNodeId` or its `linkedFrom` is the base or a layer inside it — never by name**; never count another screen's Cases as this screen's. `linkedFrom` empty → follow the project file's link by hand (CLICX: the `#F79009` line); under use_figma re-scan on the Bridge (it can't read Bridge stamps).
    - Check sibling copies of the same screen (one owns a board → `archetype-cases.md` §Sibling copy) and the flow's shared boards outside the section (a `Common Handling` board decides several "มีแล้ว"): the inner SECTION has no board → run scan-cases again with `SCOPE_ID` = the outer flow SECTION (none → the page) before concluding "none at all".
    - Boards exist, none for this base → the header says so and names the flow's shared Permutation Board. **None at all → ask `Skill ไม่เจอ Permutation Board ใน flow นี้เลย — ทีมเก็บ Case ไว้ที่ไหน`; never assume none.**
-4. **Screenshot the base once** — where it and the layer tree disagree about what is visible, the screenshot wins (it backs the ⊘ reasons of Phase 2 step 4).
+4. **Screenshot the base once** (no tool can → say so in a header row, use the layer tree) — where it and the layer tree disagree about what is visible, the screenshot wins (it backs the ⊘ reasons of Phase 2 step 4).
 5. **Hold the profile for the Phase 3 header** — no message of its own. Exceptions: none in the flow at all → the step 3 question · a Permutation Board for THIS base exists → stop with one box: `Key Screen นี้มี Permutation Board อยู่แล้ว — ทำอะไรต่อ` · `AUDIT Permutation Board ที่มีอยู่ (แนะนำ)` · `สร้างใหม่ (states ของจอเดียวกัน)` (→ go on to Phase 2; that board's Cases are มีแล้ว, the new board takes the project's next name, CLICX `.C`) · a sibling copy owns one → the §Sibling copy box.
 
 ### Phase 2 — Enumerate (internal, nothing printed)
@@ -140,7 +140,7 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 - **Case table** = every ✗ row, numbered per Phase 2 step 6; `Group` = the Group titles + order of the nearest sibling Permutation Board in THIS flow (scan-cases `groups`; else the project file's categories in file order), never a board on another page; ⚠️ tags as in §How to talk. GUARD: print every ✗ row — never "…" or "and N more".
 - **ตัดออก** = every ✓ and ⊘ row, one table row per reason, each reason starting `มีแล้ว` or `ใช้กับจอนี้ไม่ได้`; Cases by their library EN name. GUARD: **a pulled pack never disappears** — this is the coverage check; the user can still object. A §Screen facts row whose reason starts `user said:` reads `ใช้กับจอนี้ไม่ได้ — ผู้ใช้ Skill บอกไว้ <วันที่> ว่า…`; any other ⊘ row `ใช้กับจอนี้ไม่ได้ — <reason in Thai>`.
 - **Confirm table** = only ⚠️ that change *whether a Case exists or where it goes*: unmapped Component category · business-assumption Case · newly minted Tier-3 id · CTA target if Phase 1 found CTA buttons (answer → each Case's Description in the project's grammar · one-line captions folded in · unknown → `⚠️ ยืนยัน target` on the caption) · placement with a real choice. **Value ⚠️ (fee amount, field count, hide-or-not) are never asked** — they stay on the caption (Phase 2 step 4); confirming with BA is the Designer's job. None → `Confirm ก่อนสร้าง Permutation Board — ไม่มีข้อค้าง`, only boxes ① and ⑤.
-- **Placement** = one sentence: Section by name, position vs the Key Screen, columns — never coordinates or ids (`กว้าง N จอ` = columns per `projects/<name>.md` Board width — NEXT fits the free span, CLICX = the longest Group; Phase 4 step 3 re-checks). A shared band elsewhere in the project's ordering, or no free span → a Confirm row with the trade-off in plain words.
+- **Placement** = one sentence: Section by name, position vs the Key Screen, columns — never coordinates (`กว้าง N จอ` = columns per `projects/<name>.md` Board width — NEXT fits the free span, CLICX = the longest Group; Phase 4 step 3 re-checks). A shared band elsewhere in the project's ordering, or no free span (test: `board-grammar.md` §Scaffold stops) → a Confirm row with the trade-off in plain words.
 
 **Then the boxes, in this order** (① and ⑤ always, unless §Sibling copy stopped the run; skip ②–④ when they do not apply; ①–④ reuse the Confirm-table wording):
 | Box | Asks | Options — recommended first |
@@ -151,22 +151,22 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 | ④ | placement — only with a real choice | each place + its trade-off, Skill's pick `(แนะนำ)` |
 | ⑤ | `พร้อมสร้าง Permutation Board ไหม` | `สร้าง Permutation Board เลย (แนะนำ)` · `เอาแค่ Case List` · `ขอปรับเอง` |
 
-**Nothing is written to Figma before box ⑤ says build.** `ขอปรับเอง` → apply the user's trims / adds / reorders → renumber in board reading order → show the table again → ask ⑤ again. `เอาแค่ Case List` → stop (Phase 5 step 5 still applies to box-① answers).
+**Nothing is written to Figma before box ⑤ says build.** Any change — a box ② cut, or `ขอปรับเอง` (apply the user's trims / adds / reorders, then ask ⑤ again) → renumber in board reading order → show the table again. `เอาแค่ Case List` → stop (Phase 5 step 5 still applies to box-① answers).
 - **A cut is just a cut**: drop it for this run. Never offer to record it, never ask which kind of cut. Only when the user says so ("จดไว้" · "จอนี้ไม่มีทางมี…" · "เป็นกฎของจอ") append screen · caseId · `user said: <reason>` · date to `projects/<name>.md` §Screen facts, then confirm in one line: `จดไว้แล้ว — รอบหน้า Skill จะไม่เสนอ <Case> บนจอนี้`.
-- **Non-interactive run** (no way to ask): print the message, Confirm table included, and **STOP** — never scaffold on assumptions.
+- **Non-interactive run** (no way to ask): print the message (Confirm table included), or the box you reached, and **STOP** — never scaffold on assumptions.
 
 ### Phase 4 — Scaffold
 1. **Pass G0, then harvest (G1), every build** (GUARD: guessed styles got pilots rejected twice):
    - No write probe in Phase 0 → run Phase 0 step 4 now.
    - Run `scripts/harvest-board.js` once (CONFIG: `BOARD_HINT`, + `SCREEN_W` for a non-phone project) on the board `references/board-grammar.md` §Hard rule picks.
-   - Harvest differs from the project file → follow it, record the variant per `references/board-grammar.md` §Hard rule step 3 (what to capture: §What the harvest must capture). Record the base's node count (G5 `expectedBaseNodes`).
+   - Harvest differs from the project file → follow it, record the variant per `references/board-grammar.md` §Hard rule step 3 (what to capture: §What the harvest must capture). Record the base's node count, root + every descendant as `verify-board.js` counts it (not `findAll().length`) → G5 `expectedBaseNodes`.
 2. **Compare the confirmed set with sibling boards** (sibling-duplicate test: `board-grammar.md` §Scaffold stops); it fires → **stop and ask** `Case ชุดนี้เกือบเหมือน Permutation Board ของจอ "…" — ยังสร้างต่อไหม`; cannot compare → never pass silently.
 3. **Place the board** where box ④ chose, else in the base's **direct parent SECTION** (its Connector Line too). GUARD: **no room (test: `board-grammar.md` §Scaffold stops) → STOP and ask** `ใน Section "…" ที่ว่างไม่พอสำหรับ Permutation Board กว้าง N จอ — วางที่ไหนดี` — never squeeze, resize the team's section, or relocate silently.
 4. **Read `references/contract-and-runtime.md` in full, then build per its §6**. Never touch the base or the team's boards.
 5. **Connector Line** (if the project links): clone a healthy team CONNECTOR, re-point it — `references/board-grammar.md` §Link rule. Both runtimes refuse, or no connector in the file → ask the user with the exact Thai line in §Link rule step 5. Its id → G5 `linkId` (unattached, capless or mis-anchored fails).
 
 ### Phase 5 — Verify + Report
-1. Run `scripts/verify-board.js` with CONFIG = `projects/<name>.md` §Verify config + per-run values the project file cannot hold — `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` (from G1) · `linkId` (Phase 4 step 5) + `linkCaps` (from the harvest) · `knownCaseIds` (rule: `case-library.md` header). **Done only when `pass: true` AND `stats.skipped` is empty** (a project without links: it may hold only the link check, plus the step 4 line); GUARD: never hand-write a subset of the checks.
+1. Run `scripts/verify-board.js` with CONFIG = `projects/<name>.md` §Verify config + per-run values the project file cannot hold — `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` (from G1) · `linkId` (Phase 4 step 5) + `linkCaps` (harvest `incomingLinks[].caps`, else the project file's) · `knownCaseIds` (rule: `case-library.md` header). **Done only when `pass: true` AND `stats.skipped` is empty** (a project without links: it may hold only the link check, plus the step 4 line); GUARD: never hand-write a subset of the checks.
 2. **Screenshot the board** and compare it with the confirmed Cases (script = structure, screenshot = looks); a mismatch → fix, re-run Verify, screenshot again, at most 3 rounds, then report what still looks wrong.
 3. Report — 3 lines (the Phase 3 example after the user cut Case#8):
 ```
@@ -175,7 +175,7 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 เริ่มออกแบบจาก Case#1 #3 #4 #5 ก่อน (High)
 ```
 4. Add only the lines that apply, worded as in `board-grammar.md` §Scaffold stops: label style · sibling comparison · no links · Verify fails.
-5. After the run: add newly minted Tier-3 ids and newly answered component categories to `projects/<name>.md`.
+5. After the run: add newly minted Tier-3 ids and newly answered component categories to `projects/<name>.md` (no project file yet → offer LEARN to keep them, with any จดไว้ rows).
 
 ---
 
@@ -183,13 +183,13 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 - **LEARN** — teach Skill a new project or refresh its layout (offered in Phase 0); nothing is saved before the user confirms.
 - **AUDIT** — re-scan one Permutation Board against today's Cases + fill progress (Phase 1 step 5, or on request).
 
-## References (open at the moment named)
-| File | When |
+## References (what each file holds; the steps above say when to open it)
+| File | Holds |
 |---|---|
-| `projects/<name>.md` | Phase 0 in full · §Screen facts Phase 2 · §Verify config Phase 5 |
-| `references/archetype-cases.md` | Phase 0 step 2 (§Several Key Screens) · Phase 1–2 — archetypes, §Sibling copy, signature cases, 9 axes |
-| `references/case-library.md` | Phase 1–2 — §Never a pack, Tier 1/2 captions, row ids, chains, §Enumeration guards, §Priority, `knownCaseIds` |
-| `references/board-grammar.md` | Phase 4–5 + LEARN — harvest checklist, cross-project rules, §Link rule, §Scaffold stops |
-| `references/contract-and-runtime.md` | §4–5 before the first Figma call · in full at Phase 4 step 4 · §2 in AUDIT |
-| `references/learn-audit.md` | LEARN or AUDIT starts — steps, AUDIT Report shape and boxes |
-| `scripts/*.js` | at the steps above · `smoke-test` first run on a new machine (proves write, stamp, guard; one throwaway frame) |
+| `projects/<name>.md` | §About · §Board anatomy · Board width · component → category · Tier-3 packs · §Screen facts · §Verify config |
+| `references/archetype-cases.md` | archetypes, signature cases, the 9 axes, §Several Key Screens, §Sibling copy |
+| `references/case-library.md` | Tier 1/2 captions, row ids, chains, §Never a pack, §Enumeration guards, §Priority, `knownCaseIds` |
+| `references/board-grammar.md` | §Hard rule (harvest), §What the harvest must capture, cross-project rules, §Link rule, §Scaffold stops |
+| `references/contract-and-runtime.md` | board contract, stamps (§2), runtimes and call rules (§4–5), build recipe (§6) |
+| `references/learn-audit.md` | LEARN and AUDIT steps, AUDIT Report shape and boxes |
+| `scripts/*.js` | the scripts the steps name; `smoke-test.js` proves write, stamp and guard on a new setup (README) |

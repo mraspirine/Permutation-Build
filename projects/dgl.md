@@ -41,7 +41,6 @@ FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F
 - Internal layer names: `Case` at every level; the row frame is `Permutations`; the title node is `Permutation Title`
 - **Link:** CONNECTOR `Permutation` · `#FAB900` · weight 5 · `ELBOWED` · magnet TOP on the board ·
   parent = SECTION. Flow links are `#4858E4` (`Diamond to Screen`, `Logic to Logic`) — do not confuse the two.
-  The plugin API cannot create connectors in a design file → draw a VECTOR and tell the user
   Pointer: SKILL.md Phase 4 step 5 + `board-grammar.md` §Link rule win — clone + re-point, else ask for Cmd+D (no connector in the file → the user draws one with Shift+C); never finish with an unattached VECTOR.
 - **Placement:** flow band `y≈977` · permutation band **`y≈12074`** (Accept Offer sub-flow sits at `y≈5073`) ·
   boards ordered by x following the screen order in the flow, ~178px apart

@@ -24,7 +24,7 @@
 - cell key `"permBuild"`: `{ caseId, level:"S"|"C", tier:1|2|3, priority:"must"|"should"|"edge" (shown to the user as High / Medium / Low), status:"spec"|"designed", baseNodeId, configVer, date }` — `caseId` = the stable semantic id from `case-library.md` (stable across renumbering, not the Case# number)
 - board key `"permBuildBoard"`: `{ project, baseNodeId, configVer, date }` — lets AUDIT find boards even if renamed, and ties a board to its base
 - **Store note**: stamps follow the runtime — *plain* pluginData on the Bridge, *shared* pluginData (namespace `"permBuild"`) under use_figma, where plain throws. `scan-cases.js` / `verify-board.js` read both. A **plain-stamped board** (Bridge-built — every board before 2026-09-21) is invisible under use_figma → AUDIT it via the Bridge; a shared-stamped board reads on both
-- The Case# ↔ caseId map (SKILL.md Phase 2 step 6) feeds `stampCase()` and G5 `knownCaseIds` (`knownCaseIds` = every L1 id + every `tmpl/*` id + the row ids this run used — `case-library.md` header)
+- The Case# ↔ caseId map (SKILL.md Phase 2 step 6) feeds `stampCase()` and G5 `knownCaseIds` (`knownCaseIds`: `case-library.md` header)
 
 ## 3 · Label styles (per project, in `projects/<name>.md` §Verify config)
 - `strict` = the label node is exactly `Case#N` → **renumber-compatible**: any renumbering tool or script that matches the strict-label regex can rewrite the numbers safely (NEXT)
@@ -55,6 +55,6 @@
 - **Paste `scripts/scaffold-kit.js` as the prelude** of every build call and build only with its factories — frames: `alFrame` → append → `finalizeFixed` / `growWithContent` · `placeholder` · `stampCase` / `stampBoard` · library-component captions: `freshInstance` + `setInstanceTexts` + `equalizeRow` · GRID groups: `gridPlan` → `gridFrame` + `placeInGrid` · `elbowLink`. They encode the ordering that otherwise silently collapses frames
 - **One board container**, `stampBoard`-ed — everything goes inside it
 - **Per case**: label node (project's label style, §3) + caption nodes (verbatim; the Phase 3 CTA-target answer folded into the Description) + `placeholder()` + `stampCase()`
-- **Link** (if the project uses one): SKILL.md Phase 4 step 5; anchor, route, caps and the per-runtime clone ladder are in `board-grammar.md` §Link rule the gate
+- **Link** (if the project uses one): SKILL.md Phase 4 step 5; anchor, route, caps and the per-runtime clone ladder are in `board-grammar.md` §Link rule
 - **Chunks of ~10 cells per call**; every call starts with `guard(<file name>)` on the Bridge · `guard(<fileKey>)` under use_figma
 - Read the board's width back after the first group

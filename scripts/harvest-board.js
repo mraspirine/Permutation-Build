@@ -20,6 +20,15 @@ function solid(node, key) {
 function sizingOf(n) { try { return n.layoutSizingHorizontal || null; } catch (e) { return null; } }
 // VECTOR/LINE throw on connector* props; CONNECTOR throws on layout* props. Read defensively.
 function prop(n, k) { try { return n[k]; } catch (e) { return null; } }
+// One line's style. `caps` = [start, end] stroke caps of a CONNECTOR — paste as verify-board CONFIG.linkCaps.
+function linkRecord(n) {
+  const cs = prop(n, "connectorStart"), ce = prop(n, "connectorEnd");
+  return { kind: n.type, name: n.name, stroke: solid(n, "strokes"),
+    weight: n.strokeWeight, dash: (n.dashPattern || []).join(","),
+    lineType: prop(n, "connectorLineType"),
+    startMagnet: cs && cs.magnet, endMagnet: ce && ce.magnet,
+    caps: n.type === "CONNECTOR" ? [prop(n, "connectorStartStrokeCap"), prop(n, "connectorEndStrokeCap")] : null };
+}
 function lh(t) {
   return t.lineHeight && t.lineHeight.unit === "PIXELS" ? Math.round(t.lineHeight.value) : t.lineHeight ? t.lineHeight.unit : null;
 }
@@ -125,11 +134,7 @@ async function harvest() {
       (n.type === "VECTOR" && (n.width > 100 || n.height > 100));
     if (lineish) {
       const cs = prop(n, "connectorStart"), ce = prop(n, "connectorEnd");
-      const rec = { kind: n.type, name: n.name, stroke: solid(n, "strokes"),
-        weight: n.strokeWeight, dash: (n.dashPattern || []).join(","),
-        lineType: prop(n, "connectorLineType"),
-        startMagnet: cs && cs.magnet,
-        endMagnet: ce && ce.magnet };
+      const rec = linkRecord(n);
       const s = cs && cs.endpointNodeId;
       const e = ce && ce.endpointNodeId;
       if (e && inBoard.has(e)) { rec.startNodeId = s; links.push(rec); }
@@ -182,4 +187,9 @@ A(STRICT_CASE_RE.test("Case#3") && !STRICT_CASE_RE.test("Case #1 - Account sorti
 A(CASE_RE.test("1.1 | Default") && !CASE_RE.test("1 | CASA") && styleOf(["1.1 | Default", "2.3 | Empty State"]) === "indexed", "indexed labels (PTP)");
 A(styleOf(["Case#1", "Case#2"]) === "strict" && styleOf(["Case #1 - Name"]) === "loose" && styleOf([]) === null, "label style summary");
 A(CASE_RE.test("#2.1 Savings account limit unreached") && styleOf(["#1 A", "#2.1 B"]) === "indexed" && !CASE_RE.test("# tag"), "hash-indexed labels (PTP dialect B)");
+const link = linkRecord({ type: "CONNECTOR", name: "Primary Line", strokes: [{ type: "SOLID", color: { r: 0.97, g: 0.56, b: 0.04 } }], strokeWeight: 4,
+  dashPattern: [], connectorLineType: "ELBOWED", connectorStart: { magnet: "BOTTOM" }, connectorEnd: { magnet: "TOP" },
+  connectorStartStrokeCap: "TRIANGLE_FILLED", connectorEndStrokeCap: "ARROW_LINES" });
+A(JSON.stringify(link.caps) === '["TRIANGLE_FILLED","ARROW_LINES"]' && link.startMagnet === "BOTTOM" && link.weight === 4, "a connector's record carries its caps (verify-board linkCaps), got " + JSON.stringify(link));
+A(linkRecord({ type: "VECTOR", name: "line", strokes: [] }).caps === null, "a vector line has no connector caps");
 console.log("harvest-board self-check OK");

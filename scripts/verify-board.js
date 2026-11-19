@@ -12,7 +12,7 @@ const CONFIG = {
   baseNodeId: "",                  // the base screen ("" = skip base-intact check)
   linkId: "",                      // the screen→board link ("" = skip). Must be an attached CONNECTOR with both caps
   linkMagnets: ["BOTTOM", "TOP"],  // [start, end] the project's links use · null = do not check magnets
-  linkCaps: null,                  // e.g. ["TRIANGLE_FILLED", "ARROW_LINES"] from the harvest · null = only reject a missing cap
+  linkCaps: null,                  // e.g. ["TRIANGLE_FILLED", "ARROW_LINES"] = harvest incomingLinks[].caps · null with a linkId = listed in stats.skipped
   componentCrops: false,           // true = a DESIGNED level-"C" cell may hold a component crop of any size (CLICX, PTP)
   expectedBaseNodes: 0,            // node count measured BEFORE scaffolding (0 = skip)
   titlesFullWidth: false,          // true = every group header must span its group's full width
@@ -54,6 +54,7 @@ function labelKey(text) {
 function skippedChecks(cfg) {
   const s = [];
   if (!cfg.linkId) s.push("link (linkId empty)");
+  else if (!cfg.linkCaps) s.push("link caps (linkCaps empty — take them from the harvest's incomingLinks[].caps)");
   if (!cfg.baseNodeId || !cfg.expectedBaseNodes) s.push("base intact (baseNodeId / expectedBaseNodes empty)");
   if (!cfg.knownCaseIds || !cfg.knownCaseIds.length) s.push("standard-case ids (knownCaseIds empty)");
   if (!cfg.expectedCases) s.push("case count (expectedCases empty)");
@@ -278,7 +279,8 @@ A(outsideParent({ x: 152, y: 3810, width: 1650, height: 3556 }, { type: "SECTION
 A(linkFailures(Object.assign({}, okLink, { connectorStart: { endpointNodeId: "base", magnet: "AUTO" } }), ctx).some(f => /magnet/.test(f)), "an AUTO start magnet is reported, not skipped");
 A(linkFailures(Object.assign({}, okLink, { connectorStart: { endpointNodeId: "base", magnet: "AUTO" } }), Object.assign({}, ctx, { magnets: null })).length === 0, "magnets: null switches the magnet rule off");
 A(skippedChecks({ linkId: "", baseNodeId: "", expectedBaseNodes: 0, knownCaseIds: [], expectedCases: 0 }).length === 4, "every check that an empty CONFIG switches off is listed");
-A(skippedChecks({ linkId: "1:2", baseNodeId: "1:3", expectedBaseNodes: 9, knownCaseIds: ["a"], expectedCases: 3 }).length === 0, "a full CONFIG skips nothing");
+A(skippedChecks({ linkId: "1:2", linkCaps: ["TRIANGLE_FILLED", "ARROW_LINES"], baseNodeId: "1:3", expectedBaseNodes: 9, knownCaseIds: ["a"], expectedCases: 3 }).length === 0, "a full CONFIG skips nothing");
+A(skippedChecks({ linkId: "1:2", linkCaps: null, baseNodeId: "1:3", expectedBaseNodes: 9, knownCaseIds: ["a"], expectedCases: 3 }).length === 1, "a link without linkCaps is listed as skipped");
 A(sizeExempt({ level: "C" }, false, { componentCrops: true }) && !sizeExempt({ level: "C" }, false, { componentCrops: false }) && !sizeExempt({ level: "C" }, true, { componentCrops: true }) && !sizeExempt({ level: "S" }, false, { componentCrops: true }),
   "only a designed level-C cell is size-exempt, and only in a project that says its component cases are crops");
 A(linkFailures(okLink, Object.assign({}, ctx, { caps: ["TRIANGLE_FILLED", "ARROW_LINES"] })).length === 0 && linkFailures(okLink, Object.assign({}, ctx, { caps: ["ARROW_LINES", "ARROW_LINES"] })).some(f => /caps/.test(f)), "wrong-but-present caps are caught when the project pins them");
