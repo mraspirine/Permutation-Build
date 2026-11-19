@@ -12,6 +12,11 @@
 - Font: **Krungthai Fast** (Bold / Regular) — both in the screens and in the board captions
 
 ## Board anatomy
+> DGL boards come in **three styles, one per Figma file**. The harvest of the nearest team board still wins (SKILL.md Phase 4 step 1); these sections are the fallback:
+> - `[Test Case] UI State & Edge Case Generator` → this section (the base style)
+> - `[DGL] Digital Nano Loan` (`Pc1sMKuz2Jg7JmGFAX11iu`) → §Board anatomy — `[DGL] Digital Nano Loan`
+> - `[DGL] LOC Apply` (`OlS6voKPbxDON6e7Ks0nQw`) → §Board anatomy — `[DGL] LOC Apply`
+
 ```
 FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F5   parent = the flow's SECTION
 └── FRAME 'Case'                        [V · gap 24]                    ← one group per case category
@@ -42,6 +47,36 @@ FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F
   boards ordered by x following the screen order in the flow, ~178px apart
 - **Board width:** `n×375 + (n-1)×64 + 128` → 3 cols = 1381 · 4 cols = 1820 · **minimum = 1 column = 503** — a narrower slot is "no free span" (Phase 4 step 3). Pick the count that fits the free span
 
+## Board anatomy — `[DGL] Digital Nano Loan` file variant — **harvested 2026-10-22** (file `[DGL] Digital Nano Loan` `Pc1sMKuz2Jg7JmGFAX11iu`, board `92:104019` Edit Address)
+> Same DGL project, **second Figma file** with a slightly different board style from the one above. In this file use THESE values.
+
+```
+FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64]  fill #EAF0F5   parent = the flow's SECTION
+└── FRAME 'Case'                         [V · gap 24]               ← one group per category (some boards skip the group: title + row directly under board)
+    ├── TEXT 'Permutation Title'          '<Category> Permutations'  width 646 fixed
+    └── FRAME 'Permutations'             [H · gap 64 · crossGap 64 · WRAP]
+        └── FRAME 'Case'                 [V · gap 32]               ← case column
+            ├── FRAME 'Case'             [V · gap 24]               ← caption block
+            │   ├── TEXT 'Case Title'        'Case#N - <EN name>'  (ONE node → loose label)  width 375
+            │   └── TEXT 'Case Description'  '<Thai "กรณี…">'  FILL
+            └── <screen 375 × variable height>
+```
+| Role | Font | Size / line-height | Color |
+|---|---|---|---|
+| Group title | Krungthai Fast **Bold** | 32 / 47px | `#00A6E6` |
+| `Case#N - name` | Krungthai Fast **Bold** | 24 / 35px | `#8A9FAB` |
+| Thai description | Krungthai Fast Regular (Bold runs for emphasis) | 16 / 24px | `#000000` |
+- **Label style = loose** here (`Case#N - Name`) → NOT renumber-cases compatible; verify with `labelStyle: "loose"`, slot `375x812`
+- Link: CONNECTOR `Permutation` · `#FAB900` · weight 5 · ELBOWED · end magnet TOP (same as the base style). Flow links: `Diamond to Screen - Yes/No`, `Logic to Logic` `#4858E4` w5
+- Placement on Requirement page: boards in a band below the flow inside the SECTION (`y≈12074` relative)
+- Detect: variable collections `Colors` · `spacing` · `Typography` (NOT `❖ NEXT`) + screen names `MAY25.01.*_DGL Revamp_NX_*` + section names ending `[NEXT]`
+
+## Board anatomy — `[DGL] LOC Apply` file variant (`OlS6voKPbxDON6e7Ks0nQw`) — harvested 2026-11-10 from board `15002:75268` (16.1)
+- Same fonts / colors / gaps as the base style, but: group frame `Cases` (not `Case`) · row `Case Permutations` · group title **FILL** (not 646 fixed) ·
+  caption block `Case` [V 24] **HUG** (not 238 fixed) · `Case Title` FIXED 375 + `Case Description` FILL · slots mostly `375×812`
+- Link: CONNECTOR `Permutation` `#FAB900` w5 ELBOWED · start on the screen's footer INSTANCE `With Padding` magnet BOTTOM → board TOP ·
+  caps `TRIANGLE_FILLED` → `ARROW_LINES` · Bridge refuses connector clone here, `use_figma` clone works (2026-11-10)
+
 ## Layout (school and conventions)
 - **School A** (flow + permutation band + link)
 - Captions bilingual: EN case name + Thai `กรณี…` condition, and the Thai description spells out button behaviour
@@ -65,6 +100,10 @@ FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F
 | `/single form/i` + `System/Line/Chevron-down` child | dropdown → `tmpl/dropdown-dismiss` (+ action sheet) |
 | `/with padding/i` (footer) + `Single` | primary CTA — interaction states, not a separate pack |
 | `/NX/i` (header) with `Arrow-narrow-left` / `X-close` | navigation → `Back button` case (check the screenshot: X may be hidden) |
+| `Upload Document` (DGL, exact name) | no Tier-1 pack yet → derive cases from its variant axes `State` (Default/Selected/Complete/Error/Warning/Over size) × `Doc type` (Require/Bank Statement/Optional) + `Remark`/`Expand` · added 2026-10-22 |
+| `Side by Side Form` (exact) | year box → `textfield/*` + month box → dropdown · user answered 2026-11-10 |
+| `Radio/Form` (exact) | `selection-radio/*` · user answered 2026-11-10 |
+| `Label` (exact, info/remark text block) | `text/*` · user answered 2026-11-10 |
 | `/home indicator/i` | ⊘ ignore |
 
 ## Tier-3 packs (DGL LOC Apply — harvested from the flow's own boards)
@@ -79,6 +118,7 @@ FRAME 'Permutation_<full screen name>'  [V · gap 64 · padding 64]  fill #EAF0F
 | Consent `30.2` / `31.2` | default · radio selected · Model + NCB consent error |
 | Face Scan `33.3–36.1` | unable to load SDK · application switch · unable to load data — **separate module screens** |
 - Edit screens across this flow consistently carry `Small screen` · `Back button` · `Unable to load data`
+- Ids minted on Information `16.1` (2026-11-10): `dgl-info/<kebab case name>` (e.g. `dgl-info/select-business-type`, `dgl-info/with-children`) · `dgl/back-button`
 
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 > Per run, add: `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` · `linkId` (+ `linkCaps` from the harvest) · `knownCaseIds`. G5 lists whatever is left empty in `stats.skipped`.
