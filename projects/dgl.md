@@ -120,6 +120,12 @@ FRAME 'Permutation_<full screen name>'   [V · gap 64 · padding 64]  fill #EAF0
 - Edit screens across this flow consistently carry `Small screen` · `Back button` · `Unable to load data`
 - Ids minted on Information `16.1` (2026-11-10): `dgl-info/<kebab case name>` (e.g. `dgl-info/select-business-type`, `dgl-info/with-children`) · `dgl/back-button`
 
+## Screen facts (business rules per screen — grown by Phase 3 trims)
+> Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**.
+> Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut. Such a row's reason starts `user said:`.
+| Screen (name pattern) | Case (`caseId`) | Rule (why it can/can't happen) | Learned |
+|---|---|---|---|
+
 ## Verify config (paste into `scripts/verify-board.js` CONFIG)
 > Per run, add: `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` · `linkId` (+ `linkCaps` from the harvest) · `knownCaseIds`. G5 lists whatever is left empty in `stats.skipped`.
 ```js

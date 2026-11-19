@@ -12,6 +12,7 @@
 - `projects/clicx.md` §Naming: note ไทยล้วน หลายบรรทัดเป็น bullet list · ⚠️ เฉพาะ bullet ยืนยันกับ BA · ไม่รู้ปลายทางปุ่ม → `⚠️ ยืนยัน target` · board ข้างเคียงที่มี 🔍 🔗 🚫 ไม่ใช่แบบของทีม
 - แทนที่ข้อ "caption ใช้ emoji marker" ของ 2026-07-31 · `projects/clicx.md` เพิ่มรูปแบบ board หน้า `AI Test case` (เส้น `Primary Line` สีส้มคนละเส้นกับเส้น flow) · ถามก่อนขยาย Section · คำตอบ Component 3 ตัว (`button` เฉพาะ flow B.01)
 - `projects/_template.md`: เพิ่มช่องจดรูปแบบ description ตอน LEARN
+- audit รอบ 3: `SKILL.md` ตัดกฎป้าย ⚠️ ที่ซ้ำใน Confirm table · Phase 4 ข้อ 1 ชี้ไปที่ §What the harvest must capture (เดิมชี้ "must-yield list" ที่ไม่มีอยู่) · `projects/dgl.md` เพิ่มหัวข้อ §Screen facts (ว่าง) ให้ Phase 2 และ "จดไว้" มีที่อ่าน/จด
 
 ## 2026-11-19 — โปรเจคใหม่ TungNgern (ถุงเงิน)
 
