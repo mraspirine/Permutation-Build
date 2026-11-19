@@ -42,13 +42,13 @@ The user is a designer, not this skill's maintainer. Every message shows only **
 
 ## Pipeline — each phase has a GATE; never pass a failing gate
 ```
-Base → [0]Detect → [1]Profile → [2]Enumerate → [3]Confirm ◄ stop here = case list, nothing written
+Base → [0]Detect → [1]Profile → [2]Enumerate → [3]Confirm ◄ stop here = case list
                                                    → [4]Scaffold → [5]Verify → board on canvas
 LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan + fill progress
 ```
 | Gate | Must hold before moving on |
 |---|---|
-| **G0** | project resolved · before Phase 4 only: write probe OK (Phase 0 step 4) — Phases 1–3 and AUDIT are read-only |
+| **G0** | project resolved · before Phase 4 only: write probe OK (Phase 0 step 4) — Phases 1–3 are read-only, AUDIT until the user says yes |
 | **G1** | board style harvested per Phase 4 step 1 — never from memory or another project |
 | **G2** | every row bucketed ✓ / ✗ / ⊘-with-reason before Phase 3 |
 | **G3** | user confirmed matrix + placement (Phase 3 boxes) |
@@ -72,28 +72,28 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 ### Phase 0 — Preflight + detect
 1. **Required input: ONE Key Screen** (selection or node id). None → ask `Skill ต้องใช้ Key Screen 1 จอ — เลือกจอใน Figma แล้วส่งลิงก์มาได้เลย`; never walk the page to find one.
 2. **More than one Key Screen → STOP and ask before enumerating** `Skill ได้ Key Screen มา N จอ — จอพวกนี้เกี่ยวกันแบบไหน` (blind runs yield near-identical boards), then act on the answer per `references/archetype-cases.md` §Several Key Screens.
-3. **Every Figma call**: paste scripts **verbatim** up to the `node self-check` line, edit only CONFIG · before the first Figma call read `references/contract-and-runtime.md` §4–5 (20 KB response limit, trimmed JSON, Bridge for big boards).
-4. **Heading for Scaffold** (the user already asked for a board) — probe write access first: `const n=figma.createRectangle();n.remove();`. A throw = view-only → stop: `ไฟล์นี้ Skill แก้ไม่ได้ (สิทธิ์ดูอย่างเดียว) — ขอสิทธิ์แก้ไข หรือเอาแค่ Case List`.
+3. **Read `references/contract-and-runtime.md` §4–5 before the first Figma call** (20 KB response limit, trimmed JSON, Bridge for big boards); on every call paste scripts **verbatim** up to the `node self-check` line, edit only CONFIG.
+4. **Heading for Scaffold** (the user already asked for a board) — probe write access in the right file first: `if(figma.root.name!==F&&figma.fileKey!==F)throw 'wrong file';const n=figma.createRectangle();n.remove();` (F = file name on the Bridge, fileKey under use_figma — the kit's `guard()`). `wrong file` → re-target and probe again; any other throw = view-only → stop: `ไฟล์นี้ Skill แก้ไม่ได้ (สิทธิ์ดูอย่างเดียว) — ขอสิทธิ์แก้ไข หรือเอาแค่ Case List`.
 5. **Detect the project** in Project-index order (variables via `get_variable_defs` / `boundVariables`) against each `projects/<name>.md` §About; the user names it → skip. **Exact match only** — unsure → say so in a header row, never guess; no match → generic Tier 1/2 + offer LEARN (header row). **The board follows the FLOW, not the screen's own DS**: a partner screen (other font / colors, no `❖ NEXT`) gets the flow's board style; variables disagree with the naming → go with the flow, say so in the Phase 3 header, G1 confirms.
 6. Read `projects/<name>.md` **in full**; other files when the References table says.
 
 ### Phase 1 — Profile (nothing sent yet)
 1. Traverse the **Key Screen's own subtree only** (by its node id; use_figma has no selection) — never the whole page (node cap / slow) — **skipping every `visible === false` subtree** (GUARD: hidden layers grew phantom Cases). Collect archetype signals (`references/archetype-cases.md`), component instances, lists / images, bound variable modes.
-2. **Components → categories**, in this order: the exception rows of the `component → category` table of **the screen's OWN design system** → `references/case-library.md` §Never a pack (chrome, icons, dividers: no Cases, never "unmapped") → the rest of that table, top-down. **No match → unmapped; never guess** → header row `… | ถามในข้อ 1` + box ①.
+2. **Map components to categories**, in this order: the exception rows of the `component → category` table of **the screen's OWN design system** → `references/case-library.md` §Never a pack (chrome, icons, dividers: no Cases, never "unmapped") → the rest of that table, top-down. **No match → unmapped; never guess** → header row `… | ถามในข้อ 1` + box ①.
 3. **Existing cases**: run `scripts/scan-cases.js` with `SCOPE_ID` = the base's direct parent SECTION (nested: the INNER one), `DETAIL = false` — finds boards by name, stamp or attached `Permutation` connector; reports `linkedFrom` and `groups`.
    - GUARD: **a board belongs to THIS base only if its stamp `baseNodeId` or its `linkedFrom` is the base — never by name**; never count another screen's Cases as this screen's. `linkedFrom` empty → follow the project file's link by hand (CLICX `Primary Line` #F79009); under use_figma re-scan on the Bridge (it can't read Bridge stamps).
    - Check sibling copies of the same screen (one owns a board → `archetype-cases.md` §Sibling copy) and the flow's shared boards outside the section (a `Common Handling` board decides several "มีแล้ว"): the inner SECTION has no board → run scan-cases again with `SCOPE_ID` = the outer flow SECTION (none → the page) before concluding "none at all".
    - Boards exist, none for this base → the header says so and names the flow's shared Permutation Board. **None at all → ask `Skill ไม่เจอ Permutation Board ใน flow นี้เลย — ทีมเก็บ Case ไว้ที่ไหน`; never assume none.**
 4. Take one screenshot of the base — the visual arbiter.
-5. **No profile message** — it becomes the Phase 3 header. Exceptions: none in the flow at all → the step 3 question · a Permutation Board for THIS base exists → stop with one box: `Key Screen นี้มี Permutation Board อยู่แล้ว — ทำอะไรต่อ` · `AUDIT Permutation Board ที่มีอยู่ (แนะนำ)` · `สร้างใหม่ (states ของจอเดียวกัน)` · a sibling copy owns one → the §Sibling copy box.
+5. **Hold the profile for the Phase 3 header** — no message of its own. Exceptions: none in the flow at all → the step 3 question · a Permutation Board for THIS base exists → stop with one box: `Key Screen นี้มี Permutation Board อยู่แล้ว — ทำอะไรต่อ` · `AUDIT Permutation Board ที่มีอยู่ (แนะนำ)` · `สร้างใหม่ (states ของจอเดียวกัน)` · a sibling copy owns one → the §Sibling copy box.
 
 ### Phase 2 — Enumerate (internal, nothing printed)
 1. **First, read `projects/<name>.md` §Screen facts** and pre-bucket its rows for this screen (and `*` rows whose condition holds in THIS flow): a `*` row whose reason is "covered by the flow's shared board" → ✓ มีแล้ว, once Phase 1 found that board in THIS flow · a row whose component is not on screen → skip (step 2 leaves it out) · every other row → **⊘ with the stored reason**.
 2. Pull from `case-library.md` + `archetype-cases.md`: **L1** archetype states + FigJam Screen group + the 9 axes · **L2** the **whole pack** of each component found + chained packs (Date Picker → Calendar / Roller) · **Tier 2** templates the flow uses (parameterized) · **Tier 3** from the project file. **Multiply** only along axes the project file declares (device / language / branch / partner / stage), never the full cartesian. A pack whose component is not on screen is neither pulled nor listed.
-3. GUARD: **captions verbatim** — a library or Tier-3 Case keeps its `id` and caption character for character; never re-word, translate, shorten or merge. Components by the team's names (component → category map), never your own. Row ids derived per the library, never invented. New situation → mint a Tier-3 id per `case-library.md` §Enumeration guards → pre-build question; recurring → propose a library addition.
+3. **Copy captions verbatim** (GUARD) — a library or Tier-3 Case keeps its `id` and caption character for character; never re-word, translate, shorten or merge. Components by the team's names (component → category map), never your own. Row ids derived per the library, never invented. New situation → mint a Tier-3 id per `case-library.md` §Enumeration guards → pre-build question; recurring → propose a library addition.
 4. **Walk every row into exactly one bucket** (GUARD: an unbucketed row is a dropped Case — never skip silently): ✓ exists (this base's board, the flow's shared board, or `screen/default` when the base is that state) · ✗ missing + priority · ⊘ N/A + a reason you can point at (visible on screen — no list, no money input — or a §Screen facts row; `case-library.md` §Enumeration guards). A **business-assumption** Case ("this list is never empty") is ✗ + a pre-build question (`⚠️ ข้อ N`), never ⊘. **Business values** (fees, limits) come from the brief, else `⚠️ ยืนยันค่า` on the caption — never invent numbers.
-5. **Priority** per `case-library.md` §Priority (defaults by kind, fintech modifier, stamp values).
-6. **Number ✗ rows in board reading order** — group by group, top→bottom, then left→right; GUARD: never by priority. Keep the Case# ↔ caseId map for the run (stamps + G5).
+5. **Assign Priority** per `case-library.md` §Priority (defaults by kind, fintech modifier, stamp values).
+6. **Number ✗ rows in board reading order** — group by group, top→bottom, then left→right (`1..k` per Group where the project restarts, e.g. CLICX); GUARD: never by priority. Keep the Case# ↔ caseId map for the run (stamps + G5).
 
 ### Phase 3 — Confirm ◄ stopping point
 **ONE message in exactly this shape.** The example is a real run (Payment Confirmation, NEXT), its Case table cut to 5 of 15 rows here. **Never copy its Cases**: every row comes from your Phase 2 lists, Case names + Thai descriptions verbatim as they will land on the Permutation Board (a row with no Thai → its name alone) (only a ⚠️ note shrinks to a tag; a parenthetical note meant for Skill is dropped).
@@ -151,14 +151,17 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 | ④ | placement — only with a real choice | each place + its trade-off, Skill's pick `(แนะนำ)` |
 | ⑤ | `พร้อมสร้าง Permutation Board ไหม` | `สร้าง Permutation Board เลย (แนะนำ)` · `เอาแค่ Case List` · `ขอปรับเอง` |
 
-**The user trims / adds / reorders, then confirms — nothing is written before that.** Renumber in board reading order after any change. `เอาแค่ Case List` → stop (Phase 5 step 5 still applies to box-① answers).
+**The user trims / adds / reorders, then confirms — nothing is written to Figma before that.** Renumber in board reading order after any change. `เอาแค่ Case List` → stop (Phase 5 step 5 still applies to box-① answers).
 - **A cut is just a cut**: drop it for this run. Never offer to record it, never ask which kind of cut. Only when the user says so ("จดไว้" · "จอนี้ไม่มีทางมี…" · "เป็นกฎของจอ") append screen · caseId · `user said: <reason>` · date to `projects/<name>.md` §Screen facts, then confirm in one line: `จดไว้แล้ว — รอบหน้า Skill จะไม่เสนอ <Case> บนจอนี้`.
 - **Non-interactive run** (no way to ask): print the message, Confirm table included, and **STOP** — never scaffold on assumptions.
 
 ### Phase 4 — Scaffold
-1. **G0 first**: no write probe in Phase 0 → run Phase 0 step 4 now. **Then harvest (G1), every build** (GUARD: guessed styles got pilots rejected twice): run `scripts/harvest-board.js` (CONFIG: `BOARD_HINT`, + `SCREEN_W` for a non-phone project), one call, on the sibling board nearest the new board's slot in the base's SECTION → else in the same FLOW → else `projects/<name>.md` §Board anatomy (harvest any team board in the file if never verified here) → else **ask**. Never a hand-shortened harvest. It differs from the project file → follow it, record the variant per `references/board-grammar.md` steps 1–3 (what to capture: its §What the harvest must capture). Record the base's node count (G5 `expectedBaseNodes`).
+1. **Pass G0, then harvest (G1), every build** (GUARD: guessed styles got pilots rejected twice):
+   - No write probe in Phase 0 → run Phase 0 step 4 now.
+   - Run `scripts/harvest-board.js` (CONFIG: `BOARD_HINT`, + `SCREEN_W` for a non-phone project), one call, on the sibling board nearest the new board's slot in the base's SECTION → else in the same FLOW → else `projects/<name>.md` §Board anatomy (harvest any team board in the file if never verified here) → else **ask**. Never a hand-shortened harvest.
+   - Harvest differs from the project file → follow it, record the variant per `references/board-grammar.md` steps 1–3 (what to capture: its §What the harvest must capture). Record the base's node count (G5 `expectedBaseNodes`).
 2. **Sibling-duplicate guard** (test: `board-grammar.md` §Scaffold stops) fires → **stop and ask** `Case ชุดนี้เกือบเหมือน Permutation Board ของจอ "…" — ยังสร้างต่อไหม`; cannot compare → never pass silently.
-3. **Placement** where box ④ chose, else in the base's **direct parent SECTION** (its Connector Line too). GUARD: **no room (test: `board-grammar.md` §Scaffold stops) → STOP and ask** `ใน Section "…" ที่ว่างไม่พอสำหรับ Permutation Board กว้าง N จอ — วางที่ไหนดี` — never squeeze, resize the team's section, or relocate silently.
+3. **Place the board** where box ④ chose, else in the base's **direct parent SECTION** (its Connector Line too). GUARD: **no room (test: `board-grammar.md` §Scaffold stops) → STOP and ask** `ใน Section "…" ที่ว่างไม่พอสำหรับ Permutation Board กว้าง N จอ — วางที่ไหนดี` — never squeeze, resize the team's section, or relocate silently.
 4. **Read `references/contract-and-runtime.md` in full, then build per its §6** (`scripts/scaffold-kit.js` prelude, ~10 cells per call, each opening with `guard(...)`). Never touch the base or the team's boards.
 5. **Connector Line** (if the project links): clone a healthy team CONNECTOR, re-point it — `references/board-grammar.md` §Link rule. Both runtimes refuse, or no connector in the file → ask the user with the exact Thai line in §Link rule step 5. Its id → G5 `linkId` (unattached, capless or mis-anchored fails).
 
@@ -178,7 +181,7 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 
 ## MODE: LEARN · MODE: AUDIT — read `references/learn-audit.md` in full first
 - **LEARN** — teach Skill a new project or refresh its layout (offered in Phase 0); nothing is saved before the user confirms.
-- **AUDIT** — re-scan one Permutation Board against today's Cases + fill progress (Phase 1 step 5, or on request). Read-only until the user says yes; Orphans are reported, never deleted; each "→ …ไหม" in its 5-line Report is its own box.
+- **AUDIT** — re-scan one Permutation Board against today's Cases + fill progress (Phase 1 step 5, or on request). Orphans are reported, never deleted; each "→ …ไหม" in its 5-line Report is its own box.
 
 ## References (open at the moment named)
 | File | When |

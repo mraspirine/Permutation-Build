@@ -10,9 +10,9 @@
    Sample of that summary (Thai, 3–4 lines, no node ids):
    `Skill เรียนรู้โปรเจค "<ชื่อ>" จาก Permutation Board "<ชื่อ board>" แล้ว`
    `Layout: flow + Connector Line · Case label "Case#N" ไม่มีเว้นวรรค · Group: Error Handling · Screen State · Component`
-   `Case เฉพาะโปรเจค 8 ชุด (เช่น Coupon matrix · Verify PIN) · ช่องจอ 390×844`
+   `Case เฉพาะโปรเจค เช่น Coupon matrix · Verify PIN · ช่องจอ 390×844`
    `บันทึกลง projects/<ชื่อ>.md ไหม`
-5. Import-test: open 2–3 anchor nodes and confirm they resolve **before saving**, then save with the date. Report in one line, no node ids: `Import-test ผ่าน 3/3 → บันทึก projects/<name>.md แล้ว`.
+5. Import-test: open 2–3 anchor nodes and confirm they resolve **before saving**, then save with the date. Report in one line, no node ids: `Import-test ผ่าน → บันทึก projects/<name>.md แล้ว`.
 
 ## AUDIT — idempotent re-run + fill progress (read-only until the user says yes)
 1. No board given → ask `Skill ต้องใช้ Permutation Board 1 อัน — ส่งลิงก์มาได้เลย`. Resolve the board's base (board stamp `baseNodeId`, else `linkedFrom`, else follow the project's own link by hand — SKILL.md Phase 1 step 3); still none → ask `Permutation Board นี้เป็นของ Key Screen ไหน — ส่งลิงก์จอมาได้เลย`, never guess by name. Then run SKILL.md Phase 0–2 on it (skip the Phase 1 step 5 box — AUDIT is already chosen) → the current matrix.
