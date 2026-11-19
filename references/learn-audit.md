@@ -4,7 +4,7 @@
 
 ## LEARN — teach Skill a new project / refresh its layout
 1. The user points at an existing permutation board for that project (URL / node id) + its FigJam if any. None given → ask `Skill ต้องใช้ Permutation Board ของโปรเจคนี้ 1 อัน — ส่งลิงก์มาได้เลย`; never walk the file to find one. The board turns out to belong to a project Skill already knows → say so and offer to refresh that project file instead.
-2. Read the board (a large one → Bridge, `contract-and-runtime.md` §4) → run `scripts/harvest-board.js` verbatim → capture **school + grammar**, described in words and ratios — store grammar, never per-screen geometry (geometry is measured live, or taken from the project file's defaults) — plus one exemplar's default cell/gap dimensions. What a harvest must capture: `board-grammar.md` §What the harvest must capture.
+2. Read the board (a large one → Bridge, `contract-and-runtime.md` §4) → run `scripts/harvest-board.js` verbatim with `BOARD_HINT` = that board (+ `SCREEN_W` for a non-phone project) → capture **school + grammar**, described in words and ratios — store grammar, never per-screen geometry (geometry is measured live, or taken from the project file's defaults) — plus one exemplar's default cell/gap dimensions. What a harvest must capture: `board-grammar.md` §What the harvest must capture.
 3. Harvest **Tier-3 packs** from the captions on the board (grouped by screen / component / module), verbatim.
 4. Draft `projects/<name>.md` from `projects/_template.md` → show the user in plain Thai what Skill learned (layout, รูปแบบเลข Case (เช่น "Case#1 ไม่มีเว้นวรรค") — never the style name, Groups, Case packs) → **the user confirms**.
    Sample of that summary (Thai, 3–4 lines, no node ids):
@@ -16,7 +16,7 @@
 
 ## AUDIT — idempotent re-run + fill progress (read-only until the user says yes)
 1. No board given → ask `Skill ต้องใช้ Permutation Board 1 อัน — ส่งลิงก์มาได้เลย`. Resolve the board's base (board stamp `baseNodeId`, else `linkedFrom`, else follow the project's own link by hand — SKILL.md Phase 1 step 3); still none → ask `Permutation Board นี้เป็นของ Key Screen ไหน — ส่งลิงก์จอมาได้เลย`, never guess by name. Then run SKILL.md Phase 0–2 on it (skip the Phase 1 step 5 box — AUDIT is already chosen) → the current matrix.
-2. Run `scripts/scan-cases.js` on the board with `DETAIL = true` via the Bridge (AUDIT needs the cells; a plain-stamped board → Bridge only, `contract-and-runtime.md` §2 Store note); under use_figma scope `SCOPE_ID` to the one board and fall back to the Bridge if the response is cut → each cell's `caseId` · `status` · `designed`.
+2. Run `scripts/scan-cases.js` with `SCOPE_ID` = the board and `DETAIL = true` via the Bridge (AUDIT needs the cells; a plain-stamped board → Bridge only, `contract-and-runtime.md` §2 Store note); under use_figma fall back to the Bridge if the response is cut → each cell's `caseId` · `status` · `designed`.
 3. Diff matrix vs board by `caseId` (unstamped board → by Case name, and say so in one line):
    - **Missing** — in the matrix, absent on the board → offer to add the cell
    - **Stale** — the base changed after the build (compare `baseNodeId` + date) → offer to refresh the caption

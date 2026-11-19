@@ -157,7 +157,7 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 ### Phase 4 — Scaffold
 1. **Pass G0, then harvest (G1), every build** (GUARD: guessed styles got pilots rejected twice):
    - No write probe in Phase 0 → run Phase 0 step 4 now.
-   - Run `scripts/harvest-board.js` once (CONFIG: `BOARD_HINT`, + `SCREEN_W` for a non-phone project) on the board `references/board-grammar.md` §Hard rule picks.
+   - Run `scripts/harvest-board.js` once (set `BOARD_HINT`, + `SCREEN_W` for a non-phone project) on the board `references/board-grammar.md` §Hard rule picks.
    - Harvest differs from the project file → follow it, record the variant per `references/board-grammar.md` §Hard rule step 3 (what to capture: §What the harvest must capture).
    - Count the base's nodes as `verify-board.js` does → G5 `expectedBaseNodes`: `let c=0;(function w(n){c++;if('children' in n)n.children.forEach(w)})(base)`.
 2. **Compare the confirmed set with sibling boards** (sibling-duplicate test: `board-grammar.md` §Scaffold stops); it fires → **stop and ask** `Case ชุดนี้เกือบเหมือน Permutation Board ของจอ "…" — ยังสร้างต่อไหม`; cannot compare → never pass silently.
