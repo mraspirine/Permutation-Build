@@ -70,11 +70,11 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 ## MODE: BUILD (default)
 
 ### Phase 0 — Preflight + detect
-1. **Take ONE Key Screen** (selection or node id) — the one required input. None → ask `Skill ต้องใช้ Key Screen 1 จอ — เลือกจอใน Figma แล้วส่งลิงก์มาได้เลย`; never walk the page to find one.
+1. **Take ONE Key Screen** (link or node id; a selection only on the Bridge) — the one required input. None → ask `Skill ต้องใช้ Key Screen 1 จอ — เลือกจอใน Figma แล้วส่งลิงก์มาได้เลย`; never walk the page to find one.
 2. **More than one Key Screen → STOP and ask before enumerating** `Skill ได้ Key Screen มา N จอ — จอพวกนี้เกี่ยวกันแบบไหน` (blind runs yield near-identical boards), then act on the answer per `references/archetype-cases.md` §Several Key Screens.
 3. **Read `references/contract-and-runtime.md` §4–5 before the first Figma call** (20 KB response limit, trimmed JSON, Bridge for big boards); on every call paste the read scripts **verbatim** up to the `node self-check` line (the kit whole), edit only CONFIG.
 4. **Heading for Scaffold** (the user already asked for a board) — probe write access in the right file first: `if(figma.root.name!==F&&figma.fileKey!==F)throw 'wrong file';const n=figma.createRectangle();n.remove();` (F = file name on the Bridge, fileKey under use_figma — the kit's `guard()`). `wrong file` → re-target and probe again; any other throw = view-only → stop: `ไฟล์นี้ Skill แก้ไม่ได้ (สิทธิ์ดูอย่างเดียว) — ขอสิทธิ์แก้ไข หรือเอาแค่ Case List`.
-5. **Detect the project** in Project-index order (variables via `get_variable_defs` / `boundVariables`) against each `projects/<name>.md` §About; the user names it → skip. **Exact match only** — unsure → say so in a header row, never guess; no match → generic Tier 1/2 + offer LEARN (header row). **The board follows the FLOW, not the screen's own DS**: a partner screen (other font / colors, no `❖ NEXT`) gets the flow's board style; variables disagree with the naming → go with the flow, say so in the Phase 3 header, G1 confirms.
+5. **Detect the project** in Project-index order (variables via `get_variable_defs` / `boundVariables`) against each `projects/<name>.md` §About; the user names it → skip. **Exact match only**; unsure counts as no match → generic Tier 1/2 + offer LEARN (header row), never guess. **The board follows the FLOW, not the screen's own DS**: a partner screen (other font / colors, no `❖ NEXT`) gets the flow's board style; variables disagree with the naming → go with the flow, say so in the Phase 3 header, G1 confirms.
 6. Read `projects/<name>.md` **in full**; other files when a step says.
 
 ### Phase 1 — Profile (nothing sent yet)
@@ -149,7 +149,7 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 | ② | each pending Case, one box each | `ใส่ (แนะนำ)` · `ตัดออก` |
 | ③ | CTA target | the likely next screen `(แนะนำ)` · other screens in the flow · `ยังไม่รู้ — ติด ⚠️ ยืนยัน target ไว้` |
 | ④ | placement — only with a real choice | each place + its trade-off, Skill's pick `(แนะนำ)` |
-| ⑤ | `พร้อมสร้าง Permutation Board ไหม` | `สร้าง Permutation Board เลย (แนะนำ)` · `เอาแค่ Case List` · `ขอปรับเอง` |
+| ⑤ | `พร้อมสร้าง Permutation Board ไหม` | `สร้าง Permutation Board เลย (แนะนำ)` · `เอาแค่ Case List` · `ขอปรับเอง` — no project matched: `เอาแค่ Case List (แนะนำ)` · `สอน Skill รู้จักโปรเจคนี้ (LEARN)` |
 
 **Nothing is written to Figma before box ⑤ says build.** Any change — a box ② cut, or `ขอปรับเอง` (apply the user's trims / adds / reorders, then ask ⑤ again) → renumber in board reading order → show the table again. `เอาแค่ Case List` → stop (Phase 5 step 5 still applies to box-① answers).
 - **A cut is just a cut**: drop it for this run. Never offer to record it, never ask which kind of cut. Only when the user says so ("จดไว้" · "จอนี้ไม่มีทางมี…" · "เป็นกฎของจอ") append screen · caseId · `user said: <reason>` · date to `projects/<name>.md` §Screen facts, then confirm in one line: `จดไว้แล้ว — รอบหน้า Skill จะไม่เสนอ <Case> บนจอนี้`.
@@ -166,7 +166,7 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 5. **Connector Line** (if the project links): clone a healthy team CONNECTOR, re-point it — `references/board-grammar.md` §Link rule. Both runtimes refuse, or no connector in the file → ask the user with the exact Thai line in §Link rule step 5. Its id → G5 `linkId` (unattached, capless or mis-anchored fails).
 
 ### Phase 5 — Verify + Report
-1. Run `scripts/verify-board.js` with CONFIG = `projects/<name>.md` §Verify config + per-run values the project file cannot hold — `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` (from G1) · `linkId` (Phase 4 step 5) + `linkCaps` (harvest `incomingLinks[].caps`, else the project file's) · `knownCaseIds` (rule: `case-library.md` header). **Done only when `pass: true` AND `stats.skipped` is empty** (a project without links: it may hold only the link check, plus the step 4 line); GUARD: never hand-write a subset of the checks.
+1. Run `scripts/verify-board.js` with CONFIG = `projects/<name>.md` §Verify config + per-run values the project file cannot hold — `boardId` · `expectedCases` · `baseNodeId` + `expectedBaseNodes` (from G1) · `linkId` (Phase 4 step 5) + `linkCaps` (harvest `incomingLinks[].caps`, else the project file's) · `knownCaseIds` (rule: `case-library.md` header). **Done only when `pass: true` AND `stats.skipped` is empty** (a project without links: it may hold only the link check, plus the step 4 line); still failing after 3 fix rounds → report it with step 4's Verify line, never as done. GUARD: never hand-write a subset of the checks.
 2. **Screenshot the board** and compare it with the confirmed Cases (script = structure, screenshot = looks); a mismatch → fix, re-run Verify, screenshot again, at most 3 rounds, then report what still looks wrong.
 3. Report — 3 lines (the Phase 3 example after the user cut Case#8):
 ```

@@ -1,6 +1,6 @@
 # board-grammar — how permutation boards are laid out (Phase 4, Report lines for Phase 5)
 
-> **This file is the cross-project grammar and deliberately contains no numbers from any project** — every project lays boards out differently.
+> **This file is the cross-project grammar; project numbers belong in `projects/<name>.md`** — every project lays boards out differently, and a project named here is only an example.
 > The real values (spacing · fonts · colors · structure) live only in **`projects/<name>.md` §Board anatomy**.
 > No data for that project yet → **run `scripts/harvest-board.js` on a board the team already made**, then record it in the project file (LEARN).
 
@@ -40,7 +40,7 @@ board                          ← name per project convention; fill/padding fro
             ├── caption block       ← 1–3 text nodes, per the harvest
             │   └── label `Case#N` + (case name) + (description)
             └── screen slot         ← phase 1 = placeholder · phase 2 = the real screen
-    setPluginData("permBuild", {...}) on the case column
+    stampCase(...) on the case column (scaffold-kit.js; contract-and-runtime.md §2)
 ```
 
 ## Rules that hold for every project (independent of style)
