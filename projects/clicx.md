@@ -89,12 +89,9 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 - Screens: `<FLOW>.<SS>-<SS>.A | <name>` — **`.A` = the real screen**
 - Boards: **`<FLOW>.<SS>-<SS>.B`** (a second board for the same screen becomes `.C`)
 - Case label: **`Case #N - <case name>`** (space after Case, hyphen, English name)
-- **Note body = plain Thai, NO emoji markers** (corrected by the user 2026-11-19 — "ปกติใน clicx จะไม่ใช้ icon แบบนี้"; example board `B.03-01.B`, node `732:10457`).
-  The markers ⚠️ 🔍 🔗 🚫 are for Skill's CHAT messages to the user (flag what needs care / what a Case covers). On the board a marker goes ONLY in front of a paragraph that warns the reader — e.g. the BA bullet `⚠️ ต้องยืนยันกับ BA ว่า…`; description and CTA-target bullets stay plain — user, 2026-11-19.
-  One line → plain text. Two or more lines (description · BA check · CTA target) → a Figma **bullet list**
-  (`setRangeListOptions` UNORDERED, indentation 1), no blank line between them. Team wording:
-  CTA target `เมื่อกดปุ่ม “<ปุ่ม>” จะพาไปยังหน้า <จอ>` · BA check `⚠️ ต้องยืนยันกับ BA ว่า…` (a warning paragraph — the only kind that carries a marker; values still never invented).
-  Trailing-newline padding (row equalizing) must be list type NONE, set from `body.length + 1` — setting it from `body.length` strips the last bullet.
+- **Note body = plain Thai** (user, 2026-11-19: "ปกติใน clicx จะไม่ใช้ icon แบบนี้"; example board `B.03-01.B`, node `732:10457`). The one marker allowed is ⚠️ opening a warning bullet (the BA check — SKILL.md §How to talk); description and CTA-target bullets never carry one.
+  One line → plain text. Two or more → a Figma **bullet list** (`setRangeListOptions` UNORDERED, indentation 1), no blank line between, in this order: description · `⚠️ ต้องยืนยันกับ BA ว่า…` (values never invented) · `เมื่อกดปุ่ม “<ปุ่ม>” จะพาไปยังหน้า <จอ>`.
+  After `equalizeRow` pads a bulleted note, set list type NONE on the padding only: `setRangeListOptions(body.length + 1, characters.length, {type: "NONE"})`, skipped when `characters.length <= body.length + 1` (starting at `body.length` strips the last bullet).
 - ⚠️ **This label does NOT satisfy the strict-label regex** (`/^\s*Case\s*#?\s*(\d+)\s*$/` requires the whole string to be just `Case #N`). CLICX boards are therefore not renumber-compatible by design — follow the CLICX convention and tell the user that renumbering must be done by hand here.
 
 ## Component → category (Phase 1, L2 detection)
@@ -110,7 +107,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | `/point note/i` | annotation, not a component under test |
 | `/^phone number$/i` | **Text Field + Text Field (Add-on)** — user answered 2026-11-19 (`B.01-01.A \| current phone number`) |
 | `/^img-/i` | **Image** — illustration asset; user answered 2026-11-19 |
-| `/sticky button/i`, `/^button$/i` | no pack — user answered 2026-11-19: Disabled / Enabled already live on separate `.A` screens of the flow |
+| `/sticky button/i`, `/^button$/i` | no pack **in flow `B.01` only** — its Disabled / Enabled live on separate `.A` screens (user, 2026-11-19); any other flow → unmapped, ask |
 > No match = flag as "unmapped", never guess.
 
 ## Anchors (READ-ONLY)
