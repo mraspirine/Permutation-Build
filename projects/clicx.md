@@ -75,6 +75,9 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 - **Minimum board width is 1200**: the `type=section title` block has `minWidth 1000` (+ 2×100 padding), so a one-column board is still 1200 wide — never plan a slot narrower than that (measured 2026-09-21)
 - **Page variant — the team's original CLICX page** (section `Product highlight - Entry point from Home`, harvested 2026-09-21 from `B.01-01.B`): the group frame is named `permutation container` [V · gap 80], its inner `container` is [V · gap 80] and each row `container` is [H · gap 100]; boards sit at `y = 3270`; the screen→board connector is named `Diamond to Screen - Yes`, weight 5 (same `#F79009`, caps and BOTTOM→TOP anchors). Match the neighbours on the page you build on
 
+- **Page variant — page `AI Test case`** (harvested 2026-11-19 from `B.03-01.B`): group frame `Type` [V · gap 40] → row `container` [H · gap 64] → `Case` [V · gap 40] → caption frame `Title` [V · gap 24] + slot `screen` 375×812; board fill there is raw `#EAEEF4` (unbound — still bind `color/bg_permu` on new boards); screen→board connector is named `Primary Line` (`#F79009`, w4, ELBOWED, caps `TRIANGLE_FILLED`→`ARROW_LINES`, BOTTOM→TOP). Bridge refused `clone()` on CONNECTOR here; `use_figma` cloned it fine
+- **Section height**: a 5-group board (~6,500 tall) does not fit the flow section's default height — the user OK'd extending the section downward (2026-11-19); ask, never extend silently
+
 ## Layout (school and conventions)
 - **School A/C hybrid**: a permutation band below the flow, each board split into `permutation` sections by category
 - Canvas: light · captions **bilingual** (English case name + Thai explanation)
@@ -86,18 +89,12 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 - Screens: `<FLOW>.<SS>-<SS>.A | <name>` — **`.A` = the real screen**
 - Boards: **`<FLOW>.<SS>-<SS>.B`** (a second board for the same screen becomes `.C`)
 - Case label: **`Case #N - <case name>`** (space after Case, hyphen, English name)
-- **Note body = description, BLANK LINE, then emoji-marked instruction lines**.
-  Anything that is not the case description itself gets an emoji marker on its own line instead of
-  being buried in prose, and the marker block is separated from the description by an **empty line**
-  (`\n\n`, not `\n`) — it makes the "what do I actually have to check" lines scannable:
-  | marker | means |
-  |---|---|
-  | 🔍 | สิ่งที่ต้องตรวจ / inspect |
-  | ⚠️ | ต้องยืนยันค่ากับ BA (business value not in the brief) |
-  | 🔗 | ปลายทาง / navigation target |
-  | 🚫 | สิ่งที่ไม่นับรวม (excluded from the case) |
-  Thai has no word spaces — put real spaces at natural break points, otherwise one long run pushes
-  past the 375px note width and **orphans the emoji alone on its line**.
+- **Note body = plain Thai, NO emoji markers** (corrected by the user 2026-11-19 — "ปกติใน clicx จะไม่ใช้ icon แบบนี้"; example board `B.03-01.B`, node `732:10457`).
+  The markers ⚠️ 🔍 🔗 🚫 are for Skill's CHAT messages to the user (flag what needs care / what a Case covers). On the board a marker goes ONLY in front of a paragraph that warns the reader — e.g. the BA bullet `⚠️ ต้องยืนยันกับ BA ว่า…`; description and CTA-target bullets stay plain — user, 2026-11-19.
+  One line → plain text. Two or more lines (description · BA check · CTA target) → a Figma **bullet list**
+  (`setRangeListOptions` UNORDERED, indentation 1), no blank line between them. Team wording:
+  CTA target `เมื่อกดปุ่ม “<ปุ่ม>” จะพาไปยังหน้า <จอ>` · BA check `⚠️ ต้องยืนยันกับ BA ว่า…` (a warning paragraph — the only kind that carries a marker; values still never invented).
+  Trailing-newline padding (row equalizing) must be list type NONE, set from `body.length + 1` — setting it from `body.length` strips the last bullet.
 - ⚠️ **This label does NOT satisfy the strict-label regex** (`/^\s*Case\s*#?\s*(\d+)\s*$/` requires the whole string to be just `Case #N`). CLICX boards are therefore not renumber-compatible by design — follow the CLICX convention and tell the user that renumbering must be done by hand here.
 
 ## Component → category (Phase 1, L2 detection)
@@ -111,6 +108,9 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | `/top bar/i`, `/status bar/i` | OS chrome — not a case pack |
 | `/ screen$/i` (`home master screen`, `my asset screen`) | the screen itself — NOT a pack; map its children instead |
 | `/point note/i` | annotation, not a component under test |
+| `/^phone number$/i` | **Text Field + Text Field (Add-on)** — user answered 2026-11-19 (`B.01-01.A \| current phone number`) |
+| `/^img-/i` | **Image** — illustration asset; user answered 2026-11-19 |
+| `/sticky button/i`, `/^button$/i` | no pack — user answered 2026-11-19: Disabled / Enabled already live on separate `.A` screens of the flow |
 > No match = flag as "unmapped", never guess.
 
 ## Anchors (READ-ONLY)
