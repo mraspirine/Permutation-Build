@@ -9,6 +9,8 @@
 >
 > **Captions are verbatim.** A case that comes from this library keeps its `id` AND its caption exactly as written here — never re-word a standard situation (e.g. "Session timeout" on one board and "Network reconnect" on its sibling — the boards stop being comparable). A genuinely new recurring situation → propose adding it to this library; do not free-text it onto one board.
 >
+> **A row with no Thai text keeps its name alone** (Text Field `Focus` · `Typing` · Image `Ratio & Sizing`): the Case table shows `Focus`, the Permutation Board caption carries only the name (+ the project's CTA line) — never write a Thai gloss for it yourself (user, 2026-11-19).
+>
 > **Backticks are file markup, not caption text** — a caption that quotes an id (`` `empty/section` ``) goes onto the canvas WITHOUT the backticks.
 > **A parenthetical note addressed to Skill is not caption text** — e.g. `(ONE case showing the three states)` on `button/interaction-states` in next.md: neither on the canvas nor in chat.
 > **Thai strings below are verbatim from the team's FigJam and boards** — they are the wording the team actually uses on boards, so they stay in Thai.
@@ -111,6 +113,8 @@ Default (unselected) · Selected · UnSelected · Multiple Select · Selected Di
 ### Never a pack — in ANY project (order: the project map's exception rows → this list → the rest of the project's map)
 `/status ?bar/i` · `/home ?indicator|iphone indicator/i` · `/^(nav|top) ?bar|^navbar|^header$/i` · `/^ic[_\/]|^icons?[\/_ ]|^icon$/i` · `/^(line|divider)$/i` · `/^background/i`
 > OS chrome, icons and decoration produce no cases in any design system, so they are never reported as "unmapped". A project file may still override one of them with an exception row placed ABOVE its NOT-a-pack rows (CLICX `gen_ic_eye` = the hide-balance trigger) — those exception rows are checked BEFORE this list, so they can fire.
+> **The screen's own wrapper is not a component**: an INSTANCE that holds the whole Key Screen (its one visible child, at the screen's size — CLICX `edit phone number`, `home master screen`) is the screen itself → map its children. Instances nested inside a mapped component (the icon inside a Text Field) belong to that component's pack — never mapped on their own.
+> These layers, and a project row that says `no pack`, pull nothing: they appear in neither the Case table nor ตัดออก (a header row may still say `ปุ่มไม่แตก Case`).
 
 ### Additions 2026-08-11
 | id | tier | opt-in | caption (EN — TH) |
@@ -150,7 +154,9 @@ Attach only when the flow actually uses them. Each takes a parameter (in the las
 - **"Content fits the screen" is not a reason.** `screen/scrolled` and the other opt-in Screen State rows stay ✗ when the screen's rows can grow (another proposed Case adds rows or fields — Multiple fields, MWA tiers, a long memo). Cut only with a measured reason (frame height ≤ the device viewport in every data state) or a §Screen facts row.
 - **The sample on the Key Screen is not a reason.** "This screen shows biller X / coupon Y / account Z" is one data state, never grounds to cut a pack row (3 of 4 models cut the MWA Case because the sample bill was electricity).
 - **Minting a Tier-3 Case** (a pack row without a stored id): rows a sibling Permutation Board in THIS flow already built (the MWA tier rows on 1.14.1) are มีแล้ว — never re-minted or copied. What THIS Key Screen shows that the sibling board does not (the confirmation screen's one `MWA overdue + VAT` row) is still minted, as exactly one new Case: one situation = one Case, named from the pack row's own words, never an umbrella name, never one Case per sub-rule. Mint only from a project pack row or an element visible on the Key Screen; an archetype dimension alone is not a Case. Every newly minted Case gets its own Confirm row, even when Skill leans toward cutting it.
-- **Group order for a Key Screen with no board yet**: the Group titles + order of the nearest sibling Permutation Board in THIS flow; none → the project file's categories in file order; never a board on another page.
+- **Space is not a reason.** A Case is never cut or merged so the Permutation Board fits: too little room changes only where it goes (a placement Confirm row; SKILL.md Phase 4 step 3 stops and asks).
+- **A separate screen in the flow is not a reason.** A loading / error screen elsewhere in the flow (CLICX `B.03-01.A | loading state`, `C.01-01.A | API error`) does not make this Key Screen's Loading / Error Cases มีแล้ว — only a Permutation Board does (this base's own, or the flow's shared one). The Cases stay (user, 2026-11-19); a project file may say otherwise.
+- **Group order for a Key Screen with no board yet**: the Group titles + order of the nearest sibling Permutation Board in THIS flow (scan-cases reports them per board as `groups`); none → the project file's categories in file order; never a board on another page.
 - **Group of a minted detail row**: a minted Case that is a detail row on the Key Screen (MWA overdue + VAT, fee, memo, fields) goes in `Bill Detail` (the project's detail Group) — never a new Group named after the pack or the biller; take a sibling board's Group title only when the Case is the same kind as that Group. Inside a Group, order the Cases as the Key Screen's rows run, top → bottom (fee, memo, then pack-derived rows such as Multiple fields, MWA).
 
 ## Priority (defaults when proposing the matrix)

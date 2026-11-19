@@ -14,6 +14,13 @@
 - `projects/_template.md`: เพิ่มช่องจดรูปแบบ description ตอน LEARN
 - audit รอบ 3: `SKILL.md` ตัดกฎป้าย ⚠️ ที่ซ้ำใน Confirm table · Phase 4 ข้อ 1 ชี้ไปที่ §What the harvest must capture (เดิมชี้ "must-yield list" ที่ไม่มีอยู่) · `projects/dgl.md` เพิ่มหัวข้อ §Screen facts (ว่าง) ให้ Phase 2 และ "จดไว้" มีที่อ่าน/จด
 - ทดสอบ 4 โมเดลบนจอ `B.02-01.A` แล้วแก้ 3 เรื่อง: (1) `archetype-cases.md` §Sibling copy (ใหม่) จอที่สร้างจาก Component เดียวกับจอที่มี Permutation Board แล้ว → เทียบสองจอ ถามก่อนว่าเป็นจอเดียวกันไหม เสนอเฉพาะ Case ที่ต่าง และมีข้อความสำหรับกรณีได้ 0 Case · `SKILL.md` Phase 1 ข้อ 3 และ 5 ชี้มาที่หัวข้อนี้ (2) `projects/clicx.md` แถว `button` ใช้ได้เฉพาะ Section `Edit phone number` (เดิมเขียนว่า flow B.01 ซึ่งกำกวม) (3) `SKILL.md` Phase 1 ข้อ 3: `linkedFrom` ว่าง → ไล่เส้นของโปรเจคด้วยมือ และใต้ use_figma ให้ scan ซ้ำผ่าน Bridge · ตัดข้อความซ้ำ 3 จุดเพื่อให้มีที่ (§Questions, G1, Phase 1 ข้อ 2)
+- เรื่องรองจากการทดสอบและ audit (ผู้ใช้ตอบ 2 ข้อ: แถวที่ไม่มีคำไทยใช้แค่ชื่อ Case · จอ loading / error ที่แยกไว้ใน flow ไม่ทำให้ Case มีแล้ว):
+  - `scan-cases.js` คืน `groups` ราย board (ชื่อ Group ตามลำดับ + จำนวน Case) และ `group` ราย Case · ตัดคำ Permutation ท้ายชื่อ ข้ามข้อความยาวเกิน 60 ตัว · live regression 6 จุด (NEXT 2 · CLICX 2 · PTP 2) จำนวน Case / designed เท่าเดิมทุก board
+  - `case-library.md`: แถวที่ไม่มีคำไทยใช้แค่ชื่อ · instance ที่ห่อทั้งจอคือตัวจอ · instance ซ้อนใน component เป็นของ Pack นั้น · layer ที่ไม่มี Pack ไม่ลงตาราง ตัดออก · ที่ว่างไม่พอไม่ใช่เหตุผลตัด Case · จอแยกใน flow ไม่ใช่เหตุผลว่ามีแล้ว · ชื่อ Group อ่านจาก `groups`
+  - `projects/clicx.md`: Detect ใช้ชื่อจออย่างเดียวพอ · `กว้าง N จอ` = จำนวน Case ของ Group ที่ยาวที่สุด · `button #1` · wrapper `edit phone number` · จอ loading / error แยกไม่นับว่ามีแล้ว
+  - `learn-audit.md`: LEARN / AUDIT ไม่ได้ Permutation Board มา หรือหา Key Screen ไม่เจอ → ถาม · `_template.md` และหัวข้อ §Screen facts ทุกไฟล์โปรเจค: จดเฉพาะตอนผู้ใช้บอกว่าจดไว้
+  - `SKILL.md`: วาง script ถึงบรรทัด `node self-check` · G0 สั้นลง · ไม่มี SECTION ชั้นนอก → scan ทั้งหน้า · Phase 3 แถวที่ไม่มีคำไทยใช้ชื่ออย่างเดียว · ตัดวงเล็บ funnel ของ deck
+  - ทดสอบ 4 รุ่น × 2 สถานการณ์ (ไม่ได้ตอบ / ตอบว่าจอแยกกัน) แล้วแก้: §Sibling copy ความต่างใน layer ที่ไม่มี Pack หรือค่าตัวอย่างไม่สร้าง Case · แถวในคลังที่ board ของจอสำเนาไม่มี ลงตัดออกอีกแถว · ข้อความ 0 Case คงประโยคเปิด ตารางหัว และตัดออก ไม่มีประโยคที่วาง · `clicx.md` ชื่อ layer เก่าที่ขัดกับการแก้ 2026-07-31 · ตาราง Case เริ่ม `Case#N` ใหม่ทุก Group
 
 ## 2026-11-19 — โปรเจคใหม่ TungNgern (ถุงเงิน)
 

@@ -1,5 +1,6 @@
 // scan-cases.js v2 — inventory Permutation boards + case cells + fill status.
-// Paste VERBATIM into use_figma / figma_execute (wrapped in a function → top-level return OK).
+// Paste VERBATIM into use_figma / figma_execute (wrapped in a function → top-level return OK), up to the
+// `// --- node self-check ---` line: the rest is a Node test that never runs inside Figma.
 // Scope: set SCOPE_ID to the SECTION (or board) to scan — the script loads that node's page itself, so it
 // works under use_figma, which starts every call on the file's first page with nothing selected.
 // SCOPE_ID empty → current selection, else the whole current page. Returns inventory JSON.
@@ -14,6 +15,8 @@
 // - designed = the cell holds something beside its caption and no longer holds the placeholder.
 // - A board is found by its NAME, by its stamp, or by an attached `Permutation` connector that ends on it
 //   (teams name boards freely: PTP `Guideline: Select Account`). `linkedFrom` tells which screen owns it.
+// - Every board reports `groups`: its Group titles in layer order, each with its Case count (Phase 3 Group column).
+//   A Case's Group = the first text of the nearest earlier sibling that holds no Case, climbing from the cell to the board.
 
 const SCOPE_ID = "";  // e.g. "438:213330" — the section that holds the base and its sibling boards
 const DETAIL = true; // false = per-board counts only. Use false under use_figma: its responses die around 20 KB.
@@ -146,10 +149,47 @@ function scanCases(roots, linked) {
     };
   }
 
+  // Group titles: walk up from each cell; the first earlier sibling that holds no Case label gives the title
+  // (CLICX `type=section title`, NEXT group text, PTP `#1 E-Saving Account` header). Boilerplate words, a trailing
+  // "Permutation(s)" (NEXT `Coupon State Permutation`) and description paragraphs (> 60 characters) are skipped.
+  const BOILER = /^\s*(permutations?\s*:?|description|title)\s*$/i;
+  function firstText(n) {
+    let r = null;
+    (function w(x) {
+      if (r || x.visible === false) return;
+      if (x.type === 'TEXT') {
+        const all = (x.characters || '').trim(), t = all.split('\n')[0].trim().replace(/\s+Permutations?$/i, '');
+        if (t && all.length <= 60 && !BOILER.test(t)) r = t;
+      }
+      else if ('children' in x) x.children.forEach(w);
+    })(n);
+    return r;
+  }
+  function groupsOf(board, cells, cases) {
+    const labels = new Set(cells.map(x => x[0])), memo = new Map();
+    const holdsCase = n => {
+      if (memo.has(n)) return memo.get(n);
+      const v = labels.has(n) || ('children' in n && n.children.some(holdsCase));
+      memo.set(n, v); return v;
+    };
+    const order = [], count = new Map();
+    cells.forEach(([, cell], i) => {
+      let t = null;
+      for (let node = cell; !t && node && node.parent && node !== board; node = node.parent) {
+        const sibs = node.parent.children;
+        for (let j = sibs.indexOf(node) - 1; j >= 0 && !t; j--) if (!holdsCase(sibs[j])) t = firstText(sibs[j]);
+      }
+      cases[i].group = t;
+      if (!count.has(t)) { count.set(t, 0); order.push(t); }
+      count.set(t, count.get(t) + 1);
+    });
+    return order.map(t => ({ t, n: count.get(t) }));
+  }
+
   const out = containers.map(c => {
     let boardStamp = null;
     try { boardStamp = JSON.parse(readPD(c, 'permBuildBoard') || 'null'); } catch (e) {}
-    const cases = [];
+    const cases = [], cells = [];
     const usesCaseWord = !!(c.findOne && c.findOne(x => x.type === 'TEXT' && isCaseWord(x.characters)));
     isLabel = usesCaseWord ? isCaseWord : isLabelText;
     (function walk(n) {
@@ -160,16 +200,17 @@ function scanCases(roots, linked) {
       // neighbour is a container of cases (FRAME / GROUP), never a bare caption.
       if (n.type === 'TEXT' && isLabel(n.characters)) {
         const cell = findCell(n, c);
-        if (cell && cell.type !== 'INSTANCE' && cell.type !== 'TEXT') cases.push(readCell(n, null, c));
+        if (cell && cell.type !== 'INSTANCE' && cell.type !== 'TEXT') { cases.push(readCell(n, null, c)); cells.push([n, cell]); }
         else if (cell && cell.parent && cell.parent !== c) {
           const others = cell.parent.children.filter(k => k !== cell && labelCount(k, 1) > 0);
-          if (others.length && others.every(k => k.type === 'INSTANCE' || k.type === 'TEXT')) cases.push(readCell(n, cell.parent, c));
+          if (others.length && others.every(k => k.type === 'INSTANCE' || k.type === 'TEXT')) { cases.push(readCell(n, cell.parent, c)); cells.push([n, cell.parent]); }
         }
       }
       if ('children' in n) n.children.forEach(walk);
     })(c);
+    const groups = groupsOf(c, cells, cases);
     cases.sort((a, b) => byLabel(a.n, b.n));
-    const row = { id: c.id, name: c.name, stamp: boardStamp, linkedFrom: linked.get(c) || [], count: cases.length, designed: cases.filter(x => x.designed).length, dupNumbers: findDupNumbers(cases.map(x => x.n)) };
+    const row = { id: c.id, name: c.name, stamp: boardStamp, linkedFrom: linked.get(c) || [], count: cases.length, designed: cases.filter(x => x.designed).length, groups, dupNumbers: findDupNumbers(cases.map(x => x.n)) };
     if (DETAIL) row.cases = cases;
     row._all = cases;
     return row;
@@ -268,6 +309,7 @@ globalThis.figma = { currentPage: { selection: [], children: [teamBoard('Permuta
 const scan = scanCases();
 delete globalThis.figma;
 A(scan.counts.cases === 4 && scan.counts.designed === 2, 'unstamped team board: designed screens counted, got ' + scan.counts.designed + '/4');
+A(JSON.stringify(scan.containers[0].groups) === '[{"t":"Group","n":2}]', 'NEXT: the group text before the row is the Group, got ' + JSON.stringify(scan.containers[0].groups));
 A(scan.counts.dupNumbers.length === 0 && scan.counts.renumberCompatible === true, 'numbering restarts per board: no cross-board dup alarm, got ' + JSON.stringify(scan.counts.dupNumbers));
 // indexed labels (PTP): `<g>.<n> | <name>` — no "Case" word at all
 p = parseLabel('1.2 | Account type exceed limited space ');
@@ -291,6 +333,7 @@ globalThis.figma = { currentPage: { selection: [], children: [N('FRAME', 'Permut
 const hscan = scanCases();
 delete globalThis.figma;
 A(hscan.counts.cases === 2 && hscan.counts.designed === 2, 'group header sharing the label grammar is not a case, got ' + JSON.stringify(hscan.counts));
+A(JSON.stringify(hscan.containers[0].groups) === '[{"t":"#1 E-Saving Account","n":2}]', 'PTP: a header in the label grammar is still the Group title, got ' + JSON.stringify(hscan.containers[0].groups));
 // a component-level case holds a CROP (PTP `SOFCard_CASA` 390x108), not a screen — it is still designed
 const crop = () => N('INSTANCE', 'SOFCard_CASA', [T('KTB')], { height: 108 });
 globalThis.figma = { currentPage: { selection: [], children: [N('FRAME', 'Permutation: Pg_Setting', [N('FRAME', 'Case',
@@ -340,5 +383,13 @@ const ccase = (n, slot) => N('FRAME', 'case', [N('FRAME', 'title', [tb('Case #' 
 const clicx = N('FRAME', 'G.02-01.B', [N('FRAME', 'permutation', [tb('Permutation:'), N('FRAME', 'container', [ccase(1, designedScreen()), ccase(2, designedScreen()), ccase(3, emptySlot())])])]);
 const kscan = scanCases([N('SECTION', 'Home', [clicx])]);
 A(kscan.counts.cases === 3 && kscan.counts.designed === 2 && kscan.counts.looseLabels === 3, 'CLICX instance captions: 3 cases, 2 designed, got ' + JSON.stringify(kscan.counts));
+// CLICX page `AI Test case`: each Group is a `Type` frame = section title (`Permutation:` + name) + one row of Cases
+const hid = s => N('FRAME', 'hidden', [T(s)], { visible: false });
+const st = name => N('INSTANCE', 'title block / section title', [T('Permutation:'), hid('ghost'), T(name)]);
+const typeRow = (name, n) => N('FRAME', 'Type', [st(name), hid('old title'), T('คำอธิบายยาวของ Group นี้ '.repeat(4)), N('FRAME', 'container', Array.from({ length: n }, (_, i) => ccase(i + 1, emptySlot())))]);
+const gboard = N('FRAME', 'B.01-01.B', [tb('Permutation:'), typeRow('General cases', 3), typeRow('Text Field', 2)]);
+const gs = scanCases([N('SECTION', 'Edit phone number', [gboard])]).containers[0];
+A(JSON.stringify(gs.groups) === '[{"t":"General cases","n":3},{"t":"Text Field","n":2}]' && gs.count === 5, 'CLICX: Group titles in order with counts, boilerplate skipped, got ' + JSON.stringify(gs.groups));
+A(JSON.stringify(kscan.containers[0].groups) === '[{"t":null,"n":3}]', 'a board with no Group title reports one untitled group, got ' + JSON.stringify(kscan.containers[0].groups));
 A(!isContainerName('title block / permutation') && !isContainerName('permutation') && isContainerName('Permutations_JUN26.02.1.13.1_X') && isContainerName('Loan Amount Permutations'), 'a name that merely ends in "permutation" is not a board; the plural prefix form is');
 console.log('scan-cases v2 self-check OK');

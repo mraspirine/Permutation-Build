@@ -119,7 +119,7 @@ FRAME 'Permutation:' / 'Permutation: <Name>'   [V · gap 0 · padding 0]  no fil
 | Link-account errors | 3 | Unable to link account · Incorrect OTP exceeds 3 times · Request OTP exceeds 3 times ⚠️ counts come from the brief |
 | Success CTA variants | 2 | Button `เสร็จสิ้น` · Button `ถัดไป` |
 
-## Screen facts (business rules per screen — grown by Phase 3 trims)
+## Screen facts (business rules per screen — grown only when the user says จดไว้)
 > Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**.
 > Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut.
 | Screen (name pattern) | Case (`caseId`) | Rule (why it can/can't happen) | Learned |

@@ -1,5 +1,5 @@
 // verify-board.js — the Phase 5 gate. Runs every Phase 5 check in one call.
-// Paste VERBATIM into use_figma / figma_execute after filling CONFIG (values come from
+// Paste VERBATIM (up to the `node self-check` line) into use_figma / figma_execute after filling CONFIG (values come from
 // projects/<name>.md §Verify config). Returns { pass, failures[], stats } — scaffold is DONE only
 // when pass === true. Never hand-write an abbreviated version of these checks.
 // Node self-check at bottom: `node scripts/verify-board.js`.

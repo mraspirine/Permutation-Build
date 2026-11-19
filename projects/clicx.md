@@ -4,7 +4,7 @@
 
 ## About / recognition
 - Product: CLICX — KTB / Infinitas digital bank app
-- Detect: nodes bind to variable collections **`color` · `spacing` · `radius` · `size-generic`** (no `❖ NEXT`); screens are named `<FLOW>.<SS>-<SS>.<STATE> | <name>`
+- Detect: screens named `<FLOW>.<SS>-<SS>.<STATE> | <name>` — enough on their own. Variables only back it up: collections **`color` · `spacing` · `radius`** (`size-generic` on some screens; no `❖ NEXT`), and a file may hold none locally (`AI Test case`, 2026-11-19)
 - **Screen size: 375 × 812** (not NEXT's 390 × 844)
 - Font: **Graphik TH** (Regular / Medium)
 
@@ -55,7 +55,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
   `fills[0].boundVariables.color.id` → `getVariableByIdAsync` → `setBoundVariableForPaint`.
   A matching hex without the binding is still wrong.
 - Title block fill `#CDD5DF` — comes free with `freshInstance` of an existing instance
-- Internal layer names: `permutation` → `container` → `case` → `Title` / `screen permutation`
+- Internal layer names: `permutation` → `container` → `case` → `title` (or `case description`) + the screen directly inside `case` — no `screen permutation` wrapper (corrected 2026-07-31, above); page `AI Test case`: `Type` → `container` → `Case` → `Title` + `screen`
 - **Every `permutation` frame has the SAME width** = board inner width (board width − 2×100), regardless of how many cases its row holds. The section-title instance is set to **`layoutSizingHorizontal = "FILL"`** so the grey header bar spans the full frame. Only the inner `container` row hugs its content.
 - **Link from screen to board: CONNECTOR named `Permutation`** · stroke **`#F79009`** · weight **4** · `ELBOWED` · no dash · start = **the main screen INSTANCE inside the `.A` frame** (e.g. `my asset screen`, `home master screen`), magnet **BOTTOM** — **except when that instance is taller than the clipping 812px frame** (`home master screen` is 1509 tall): anchor the `.A` FRAME itself, or the line starts ~700px below the visible screen → end = **the `.B` board frame**, magnet **TOP** · parent = the SECTION
   > **Draw it by CLONING an existing `Permutation` connector, then re-pointing both endpoints** — verified 2026-07-31:
@@ -71,7 +71,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
   > Pointer: SKILL.md Phase 4 step 5 + `board-grammar.md` §Link rule win — clone + re-point, else ask for Cmd+D (no connector in the file → the user draws one with Shift+C); never finish with an unattached VECTOR.
 - Flow connectors are a different thing: `Primary Line` · `#384250` · weight 4 · **dashed 8,8** — those link screens to logic boxes, not to boards
 - **Placement:** screens sit at `y≈1000–2800`; every permutation board sits at **`y = 3562`** and they are ordered left→right by flow letter (`C.01` … `H.02`). Gap between neighbouring boards ≈ **240**
-- **Board width** grows with its widest row (no wrapping) — check `siblingBoards` and keep it inside the free span
+- **Board width** grows with its widest row (no wrapping) — check `siblingBoards` and keep it inside the free span. Each Group is one row, so Phase 3's `กว้าง N จอ` = the Case count of the Group with the most Cases
 - **Minimum board width is 1200**: the `type=section title` block has `minWidth 1000` (+ 2×100 padding), so a one-column board is still 1200 wide — never plan a slot narrower than that (measured 2026-09-21)
 - **Page variant — the team's original CLICX page** (section `Product highlight - Entry point from Home`, harvested 2026-09-21 from `B.01-01.B`): the group frame is named `permutation container` [V · gap 80], its inner `container` is [V · gap 80] and each row `container` is [H · gap 100]; boards sit at `y = 3270`; the screen→board connector is named `Diamond to Screen - Yes`, weight 5 (same `#F79009`, caps and BOTTOM→TOP anchors). Match the neighbours on the page you build on
 - **Page variant — page `AI Test case`** (harvested 2026-11-19 from `B.03-01.B`): group frame `Type` [V · gap 40] → row `container` [H · gap 64] → `Case` [V · gap 40] → caption frame `Title` [V · gap 24] + slot `screen` 375×812; board fill there is raw `#EAEEF4` (unbound — still bind `color/bg_permu` on new boards); screen→board connector is named `Primary Line` (`#F79009`, w4, ELBOWED, caps `TRIANGLE_FILLED`→`ARROW_LINES`, BOTTOM→TOP) — not the dashed `#384250` flow `Primary Line` (colour and dash are the only difference). `scan-cases.js` only follows connectors named `Permutation`, so `linkedFrom` is empty here: before saying a Key Screen has no board, follow its `#F79009` line by hand. Bridge refused `clone()` on CONNECTOR here; `use_figma` cloned it fine
@@ -87,7 +87,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 ## Naming
 - Screens: `<FLOW>.<SS>-<SS>.A | <name>` — **`.A` = the real screen**
 - Boards: **`<FLOW>.<SS>-<SS>.B`** (a second board for the same screen becomes `.C`)
-- Case label: **`Case #N - <case name>`** (space after Case, hyphen, English name)
+- Case label: **`Case #N - <case name>`** (space after Case, hyphen, English name). N restarts in every Group, so the Phase 3 Case table restarts `Case#N` per Group too (the label form is for the canvas)
 - **Note body = plain Thai** (user, 2026-11-19: CLICX boards do not use these icons; example board `B.03-01.B`, node `732:10457`). The one marker allowed is ⚠️ opening a warning bullet (SKILL.md §How to talk); description and CTA-target bullets never carry one. So SKILL.md's `⚠️ ยืนยันค่า` and business-rule notes are written as the `⚠️ ต้องยืนยันกับ BA ว่า…` bullet, and an unknown CTA target (box ③) puts `⚠️ ยืนยัน target` in place of the CTA bullet. This rule outranks a neighbouring board whose notes still carry 🔍 🔗 🚫 lines — those are Skill's own earlier builds, not team style.
   One line → plain text. Two or more → a Figma **bullet list** (`setRangeListOptions(0, body.length, {type: "UNORDERED"})`, indentation 1; `body` = the note text before padding; set it BEFORE `equalizeRow` so the row is measured with the bullet indent), no blank line between, in this order: description · `⚠️ ต้องยืนยันกับ BA ว่า…` (values never invented) · `เมื่อกดปุ่ม “<ปุ่ม>” จะพาไปยังหน้า <จอ>`.
   After `equalizeRow` pads a bulleted note, set list type NONE on the padding only: `setRangeListOptions(body.length + 1, characters.length, {type: "NONE"})`, skipped when `characters.length <= body.length + 1` (starting at `body.length` strips the last bullet). Read back `getRangeListOptions` on the last body line (UNORDERED) and on the padding (NONE), then re-check the row heights. Thai has no word spaces — put real spaces at natural break points, or a long run overflows the 375px note.
@@ -102,12 +102,13 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | `/tooltip/i`, `/ic_circle-information/i` | info tooltip |
 | `/text group \d+:\d+/i` | label/value pair (max characters, max lines) |
 | `/top bar/i`, `/status bar/i` | OS chrome — not a case pack |
-| `/ screen$/i` (`home master screen`, `my asset screen`) | the screen itself — NOT a pack; map its children instead |
+| `/ screen$/i` (`home master screen`, `my asset screen`), `/^edit phone number$/i` | the screen itself — NOT a pack; map its children instead |
 | `/point note/i` | annotation, not a component under test |
 | `/^phone number$/i` | **Text Field + Text Field (Add-on)** — user answered 2026-11-19 (`B.01-01.A \| current phone number`) |
 | `/^img-/i` | **Image** — illustration asset; user answered 2026-11-19 |
-| `/sticky button/i`, `/^button$/i` | no pack **in Section `Edit phone number` only** (page `AI Test case`; every screen in it, `B.01-01.A`, `B.02-01.A` …) — its Disabled / Enabled live on separate `.A` screens there (user, 2026-11-19); any other Section → unmapped, ask |
+| `/sticky button/i`, `/^button( #\d+)?$/i` | no pack **in Section `Edit phone number` only** (page `AI Test case`; every screen in it, `B.01-01.A`, `B.02-01.A` …) — its Disabled / Enabled live on separate `.A` screens there (user, 2026-11-19); any other Section → unmapped, ask |
 > No match = flag as "unmapped", never guess.
+> Separate state screens in a flow (`B.03-01.A | loading state`, `C.01-01.A | API error` in `Edit phone number`) are other steps of the flow: the Key Screen's Loading / Error Cases stay on its Permutation Board (user, 2026-11-19 — B.01-01.B keeps them).
 
 ## Anchors (READ-ONLY)
 - File `lN13minj5i19c2fEyBSF3q`, page `AI Test 02`, section `Home` (`129:187281` is the NEXT section; CLICX screens live under the `Home` section on this page)
@@ -125,7 +126,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | Home / hub | homepage animation background · image background · pocket widget · loan widget image |
 | Copy | strings are bound to **Frontitude keys** (e.g. `system.error.notification.loading`) |
 
-## Screen facts (business rules per screen — grown by Phase 3 trims)
+## Screen facts (business rules per screen — grown only when the user says จดไว้)
 > Phase 2 reads this FIRST: a case listed here for the current screen is pre-bucketed **⊘ with the stored reason**. Rows below come from the team's notes on the boards.
 > Pointer: SKILL.md Phase 3 "A cut is just a cut" wins — append a row only when the user says so themselves ("จดไว้" · "จอนี้ไม่มีทางมี…"); never ask about a cut.
 | Screen (name pattern) | Case (`caseId`) | Rule | Learned |

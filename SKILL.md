@@ -48,7 +48,7 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 ```
 | Gate | Must hold before moving on |
 |---|---|
-| **G0** | project resolved · write probe OK — **only when heading for Scaffold** (Phases 1–3 and AUDIT are read-only) |
+| **G0** | project resolved · write probe OK (Phase 0 step 4) — Phases 1–3 and AUDIT are read-only |
 | **G1** | board style harvested per Phase 4 step 1 — never from memory or another project |
 | **G2** | every row bucketed ✓ / ✗ / ⊘-with-reason before Phase 3 |
 | **G3** | user confirmed matrix + placement (Phase 3 boxes) |
@@ -61,7 +61,7 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 |---|---|---|
 | **NEXT** | variables `Typography/font family` = Krungthai Next · `Primary/KTBlue` (Bridge: collection `❖ NEXT`) · file name contains "NEXT" | `projects/next.md` |
 | **DGL Revamp** | screens named `[MMM][YY].[EPIC].[N].[N]_DGL Revamp_NX_…` · legacy 375-wide · `Krungthai Fast` — **runs in the NEXT app but is NOT NEXT** | `projects/dgl.md` |
-| **CLICX** (PB) | collections `color` `spacing` `radius` `size-generic` · screens named `X.NN-NN.A \| name` | `projects/clicx.md` |
+| **CLICX** (PB) | screens named `X.NN-NN.A \| name` (enough alone) · collections `color` `spacing` `radius` | `projects/clicx.md` |
 | **PTP** (Paotang) | flow screens are INSTANCES named `PTP/<Module>/<Screen>_<MonYYYY>` or `<MonYYYY>/PTP revamp/…` · product font Kanit · boards `Permutation: Pg_<Name>` or free names found by their connector | `projects/ptp.md` |
 | **TungNgern** (ถุงเงิน) | file `TN - Core App` · flow screens are FRAMES named `NTN - …`, 360 wide · Kanit (PTP's Kanit screens are `PTP/…` INSTANCES) | `projects/tungngern.md` |
 
@@ -78,7 +78,7 @@ Read the signals in this order: **screen / section / board naming → sibling bo
    | states of one screen | ONE board on the user-designated default base — **diff the screens first**; add only difference-driven Cases |
    | related but separate screens | one run per screen, each from **its own visible components** — never seeded from a sibling's case list |
    | mockup / template | ask which slots vary and which stay fixed; no answer → the case list for ONE screen, stop |
-3. **Every Figma call**: paste scripts **verbatim**, edit only CONFIG (the read scripts load their own page) · responses die around **20 KB** → `DETAIL = false` (except AUDIT step 2), trimmed JSON, split calls · big boards → Bridge · before the first Bridge or write call read `references/contract-and-runtime.md` §4–5.
+3. **Every Figma call**: paste scripts **verbatim** up to the `node self-check` line, edit only CONFIG (the read scripts load their own page) · responses die around **20 KB** → `DETAIL = false` (except AUDIT step 2), trimmed JSON, split calls · big boards → Bridge · before the first Bridge or write call read `references/contract-and-runtime.md` §4–5.
 4. **Heading for Scaffold** (the user already asked for a board) — probe write access first: `const n=figma.createRectangle();n.remove();`. A throw = view-only → stop: `ไฟล์นี้ Skill แก้ไม่ได้ (สิทธิ์ดูอย่างเดียว) — ขอสิทธิ์แก้ไข หรือเอาแค่ Case List`.
 5. **Detect the project** in Project-index order (variables via `get_variable_defs` / `boundVariables`) against each `projects/<name>.md` §About; the user names it → skip. **Exact match only** — unsure → say so in a header row, never guess; no match → generic Tier 1/2 + offer LEARN (header row). **The board follows the FLOW, not the screen's own DS**: a partner screen (other font / colors, no `❖ NEXT`) gets the flow's board style; variables disagree with the naming → go with the flow, say so in the Phase 3 header, G1 confirms.
 6. Read `projects/<name>.md` **in full**; other files when the References table says.
@@ -86,9 +86,9 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 ### Phase 1 — Profile (read-only, nothing sent yet)
 1. Traverse the **Key Screen's own subtree only** (by its node id; use_figma has no selection) — never the whole page (node cap / slow) — **skipping every `visible === false` subtree** (GUARD: hidden layers grew phantom Cases). Collect archetype signals (`references/archetype-cases.md`), component instances, lists / images, bound variable modes.
 2. **Components → categories**, in this order: the exception rows of the `component → category` table of **the screen's OWN design system** → `references/case-library.md` §Never a pack (chrome, icons, dividers: no Cases, never "unmapped") → the rest of that table, top-down. **No match → unmapped; never guess** → header ③ + box ①.
-3. **Existing cases**: run `scripts/scan-cases.js` with `SCOPE_ID` = the base's direct parent SECTION (nested: the INNER one), `DETAIL = false` — finds boards by name, stamp or attached `Permutation` connector; reports `linkedFrom`.
-   - GUARD: **a board belongs to THIS base only if its stamp `baseNodeId` or its `linkedFrom` is the base — never by name**; never count another screen's Cases as this screen's. `linkedFrom` empty → follow the project file's link by hand (CLICX `Primary Line` #F79009); under use_figma re-scan on the Bridge (Bridge stamps read empty).
-   - Check sibling copies of the same screen (one owns a board → `archetype-cases.md` §Sibling copy) and the flow's shared boards outside the section (a `Common Handling` board decides several "มีแล้ว"): the inner SECTION has no board → run scan-cases again with `SCOPE_ID` = the outer flow SECTION before concluding "none at all".
+3. **Existing cases**: run `scripts/scan-cases.js` with `SCOPE_ID` = the base's direct parent SECTION (nested: the INNER one), `DETAIL = false` — finds boards by name, stamp or attached `Permutation` connector; reports `linkedFrom` and `groups`.
+   - GUARD: **a board belongs to THIS base only if its stamp `baseNodeId` or its `linkedFrom` is the base — never by name**; never count another screen's Cases as this screen's. `linkedFrom` empty → follow the project file's link by hand (CLICX `Primary Line` #F79009); under use_figma re-scan on the Bridge (it can't read Bridge stamps).
+   - Check sibling copies of the same screen (one owns a board → `archetype-cases.md` §Sibling copy) and the flow's shared boards outside the section (a `Common Handling` board decides several "มีแล้ว"): the inner SECTION has no board → run scan-cases again with `SCOPE_ID` = the outer flow SECTION (none → the page) before concluding "none at all".
    - Boards exist, none for this base → the header says so and names the flow's shared Permutation Board. **None at all → ask `Skill ไม่เจอ Permutation Board ใน flow นี้เลย — ทีมเก็บ Case ไว้ที่ไหน`; never assume none.**
 4. Take one screenshot of the base — the visual arbiter.
 5. **No profile message** — it becomes the Phase 3 header. Exceptions: none in the flow at all → the step 3 question · a Permutation Board for THIS base exists → stop with one box: `Key Screen นี้มี Permutation Board อยู่แล้ว — ทำอะไรต่อ` · `AUDIT Permutation Board ที่มีอยู่ (แนะนำ)` · `สร้างใหม่ (states ของจอเดียวกัน)` · a sibling copy owns one → the §Sibling copy box.
@@ -102,7 +102,7 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 6. **Number ✗ rows in board reading order** — group by group, top→bottom, then left→right; GUARD: never by priority. Keep the Case# ↔ caseId map for the run (stamps + G5).
 
 ### Phase 3 — Confirm ◄ stopping point
-**ONE message in exactly this shape.** The example is a real run (Payment Confirmation, NEXT), its Case table cut to 5 of 15 rows here. **Never copy its Cases**: every row comes from your Phase 2 lists, Case names + Thai descriptions verbatim as they will land on the Permutation Board (only a ⚠️ note shrinks to a tag; a parenthetical note meant for Skill is dropped).
+**ONE message in exactly this shape.** The example is a real run (Payment Confirmation, NEXT), its Case table cut to 5 of 15 rows here. **Never copy its Cases**: every row comes from your Phase 2 lists, Case names + Thai descriptions verbatim as they will land on the Permutation Board (a row with no Thai → its name alone) (only a ⚠️ note shrinks to a tag; a parenthetical note meant for Skill is dropped).
 ```
 Skill อ่าน Key Screen "Payment Confirmation" แล้ว ถ้าอ่านผิด บอกได้เลย
 | Skill อ่านได้ว่า | ผลต่อ Case |
@@ -144,7 +144,7 @@ Permutation Board จะวางใต้ Key Screen ใน Section "Revamp Pay
 - **Header** = the opening line + table `Skill อ่านได้ว่า | ผลต่อ Case`, one conclusion per row, never evidence; omit rows that don't apply: screen type in Thai (Archetype) · Components by the team's names · project only if from the flow or unsure; none matched → `ยังไม่รู้จักโปรเจคนี้ | ใช้ Case Library กลาง — สอน Skill รู้จักโปรเจคนี้ได้ (LEARN)` · Permutation Board status · the shared board's Common Cases (rows go in ตัดออก) · unmapped layers → `ถามในข้อ 1`.
 - **Section titles** are sentences, never bare labels — the example's, with your numbers (N in the summary = rows in the Case table).
 - **Case table** = every ✗ row, numbered per Phase 2 step 6; `Group` = the sub-group titles + order of the nearest sibling Permutation Board in THIS flow (else the project file's categories), never a board on another page; ⚠️ tags as in §How to talk. GUARD: print every ✗ row — never "…" or "and N more".
-- **ตัดออก** = every ✓ and ⊘ row, one table row per reason, each reason starting `มีแล้ว` or `ใช้กับจอนี้ไม่ได้` — the deck's funnel (All Cases › ตัด Case ที่มีแล้ว › ตัด Case ที่ใช้กับจอนี้ไม่ได้ › เสนอ N Cases). Library EN names, never ids. GUARD: **a pulled pack never disappears** — this is the coverage check; the user can still object. A §Screen facts row whose reason starts `user said:` reads `ใช้กับจอนี้ไม่ได้ — ผู้ใช้ Skill บอกไว้ <วันที่> ว่า…`; any other ⊘ row `ใช้กับจอนี้ไม่ได้ — <reason in Thai>`.
+- **ตัดออก** = every ✓ and ⊘ row, one table row per reason, each reason starting `มีแล้ว` or `ใช้กับจอนี้ไม่ได้`. Library EN names, never ids. GUARD: **a pulled pack never disappears** — this is the coverage check; the user can still object. A §Screen facts row whose reason starts `user said:` reads `ใช้กับจอนี้ไม่ได้ — ผู้ใช้ Skill บอกไว้ <วันที่> ว่า…`; any other ⊘ row `ใช้กับจอนี้ไม่ได้ — <reason in Thai>`.
 - **Confirm table** = only ⚠️ that change *whether a Case exists or where it goes*: unmapped Component category · business-assumption Case · newly minted Tier-3 id · CTA target if Phase 1 found CTA buttons (answer → each Case's Description in the project's grammar · one-line captions folded in · unknown → `⚠️ ยืนยัน target` on the caption) · placement with a real choice. **Value ⚠️ (fee amount, field count, hide-or-not) are never asked** — they stay on the caption (Phase 2 step 4); confirming with BA is the Designer's job. None → `Confirm ก่อนสร้าง Permutation Board — ไม่มีข้อค้าง`, only boxes ① and ⑤.
 - **Placement** = one sentence: Section by name, position vs the Key Screen, columns — never coordinates or ids (`กว้าง N จอ` = columns from `projects/<name>.md` Board width — the Section's free span only decides whether it fits; Phase 4 step 3 re-checks). A shared band elsewhere in the project's ordering, or no free span → a Confirm row with the trade-off in plain words.
 
