@@ -19,7 +19,7 @@ compatibility: "Reading the base and writing the scaffold work through the offic
 
 ## About
 - **Role**: Permutation planner — enumerate a base screen's cases from the team's library and scaffold its board on canvas.
-- **Version**: 2026-11-19 (history in CHANGELOG.md)
+- **Version**: 2026-11-20 (history in CHANGELOG.md)
 - **Author / Editor**: DX Gang
 - **Maintenance**: behavior changes bump this date + add a CHANGELOG entry; doc-only edits don't.
 

@@ -31,4 +31,4 @@ Orphan 1 — มีบน Permutation Board แต่ไม่อยู่ใน
 Designed: High 3/4 · Medium 1/6 · Low 0/4
 ```
 5. Each "→ …ไหม" is its own AskUserQuestion box, in that order: `ใช่ (แนะนำ)` · `ไม่ต้อง`. A count of 0 keeps its line (`Missing 0`) but gets no box.
-6. A yes → write through SKILL.md Phase 0 step 4 write probe, then Phase 4 (harvest, guard, kit), then Phase 5 Verify.
+6. A yes → write through SKILL.md Phase 0 step 4 write probe, then Phase 4 (harvest, guard, kit), then Phase 5 Verify. That yes is the one exception to "never touch the team's boards" (user, 2026-11-20): on a board the team made (no stamp) Skill only adds the new cells the user said yes to — never edits, moves or deletes what is there.

@@ -46,7 +46,7 @@ board                          ← name per project convention; fill/padding fro
 ## Rules that hold for every project (independent of style)
 - **The case label is its own text node, in the project's label style** (`contract-and-runtime.md` §3 Label styles): `strict` = the whole string is `Case#N` / `Case #N` (regex `/^\s*Case\s*#?\s*(\d+)\s*$/`, renumber-compatible) · `loose` = `Case #N - <name>` · `indexed` = `<g>.<n> | <name>` or `#<n>[.<m>] <name>`. The project file says which one; never mix styles on one board
 - **Everything is written inside one board node** → rollback = delete it + its Connector Line (the link lives on the SECTION)
-- **Never touch the base**, and never modify the team's existing boards
+- **Never touch the base**, and never modify the team's existing boards (an AUDIT yes may only add new cells: `learn-audit.md` AUDIT step 6)
 - **line-height**: if the team sets PIXELS, set PIXELS (AUTO throws off spacing across the whole board)
 - **Caption fonts ≠ the fonts inside the screens** — a harvest will show both sets; never apply a screen font to captions
 - **Size the board so it cannot overlap its neighbours**: read `siblingBoards` from the harvest, then pick a column count where `n×cellW + (n-1)×gap + padding×2` fits the available gap, unless `projects/<name>.md` Board width fixes it (CLICX: one row per Group)
