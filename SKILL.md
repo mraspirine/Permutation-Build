@@ -19,7 +19,7 @@ compatibility: "Reading the base and writing the scaffold work through the offic
 
 ## About
 - **Role**: Permutation planner — enumerate a base screen's cases from the team's library and scaffold its board on canvas. Coverage auditor, never a screen designer.
-- **Version**: 2026-11-10 (history in CHANGELOG.md)
+- **Version**: 2026-11-19 (history in CHANGELOG.md)
 - **Author / Editor**: DX Gang
 - **Maintenance**: behavior changes bump this date + add a CHANGELOG entry; doc-only edits don't.
 
@@ -63,6 +63,7 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 | **DGL Revamp** | screens named `[MMM][YY].[EPIC].[N].[N]_DGL Revamp_NX_…` · legacy 375-wide · `Krungthai Fast` — **runs in the NEXT app but is NOT NEXT** | `projects/dgl.md` |
 | **CLICX** (PB) | collections `color` `spacing` `radius` `size-generic` · screens named `X.NN-NN.A \| name` | `projects/clicx.md` |
 | **PTP** (Paotang) | flow screens are INSTANCES named `PTP/<Module>/<Screen>_<MonYYYY>` or `<MonYYYY>/PTP revamp/…` · product font Kanit · boards `Permutation: Pg_<Name>` or free names found by their connector | `projects/ptp.md` |
+| **TungNgern** (ถุงเงิน) | file `TN - Core App` · flow screens are FRAMES named `NTN - …`, 360 wide · Kanit (PTP's Kanit screens are `PTP/…` INSTANCES) | `projects/tungngern.md` |
 
 ---
 

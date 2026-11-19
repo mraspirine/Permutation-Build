@@ -50,7 +50,7 @@ cp -R figma-permutation-build ~/.claude/skills/
 
 ## ใช้กับโปรเจคตัวเองครั้งแรก
 
-ในนี้แถมโปรเจคที่สอนไว้แล้ว 4 ตัว (`projects/next.md`, `projects/dgl.md`, `projects/clicx.md`, `projects/ptp.md`)
+ในนี้แถมโปรเจคที่สอนไว้แล้ว 5 ตัว (`projects/next.md`, `projects/dgl.md`, `projects/clicx.md`, `projects/ptp.md`, `projects/tungngern.md`)
 แต่นั่นคือ**ธรรมเนียมของทีมนึงเท่านั้น ไม่ใช่ค่ากลางของทุกคน** — พอเอาไปใช้กับโปรเจคตัวเอง มันจะ:
 
 1. รู้ตัวว่าไม่รู้จักโปรเจคนี้
@@ -84,6 +84,7 @@ figma-permutation-build/
 │   ├── dgl.md                  DGL Revamp — อยู่แอปเดียวกับ NEXT แต่ board คนละสไตล์
 │   ├── clicx.md                CLICX — caption เป็น instance, จอ 375×812
 │   ├── ptp.md                  PTP — board เป็น GRID, label แบบ `1.2 | ชื่อ`, จอเป็น instance 390×844
+│   ├── tungngern.md            TungNgern — board วางอิสระ (ไม่มี auto-layout), label แบบ `Case N: ชื่อ`, จอเป็น frame 360×640
 │   └── _template.md            แบบฟอร์มเปล่าสำหรับบันทึกโปรเจคใหม่
 └── scripts/                    โค้ดที่ยิงเข้า Figma
     ├── scan-cases.js           สำรวจว่ามี board/เคสอะไรอยู่แล้ว ทำไปกี่ %

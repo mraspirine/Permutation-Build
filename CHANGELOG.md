@@ -5,6 +5,13 @@
 
 ---
 
+## 2026-11-19 — โปรเจคใหม่ TungNgern (ถุงเงิน)
+
+ที่มา: คนในทีมรัน LEARN กับไฟล์ `TN - Core App` แล้วส่งไฟล์โปรเจคมาให้รวม
+- `projects/tungngern.md` (ใหม่): Permutation Board วางอิสระ ไม่มี auto-layout · หัว Group เป็น component `Section` · หมายเหตุใต้ Case เป็น component `Permutation Sub Title` · label `Case N: <ชื่อ>` (loose) เลขเริ่มใหม่ทุก Group · จอเป็น FRAME กว้าง 360 · เส้นชื่อ `Connector line` สีส้ม เส้นประ
+- `SKILL.md` Project index: เพิ่มแถว TungNgern แยกจาก PTP ที่ใช้ Kanit เหมือนกัน · README: โปรเจคที่สอนไว้เป็น 5 ตัว
+- ยังไม่แก้: scripts หา Permutation Board ของ TungNgern ส่วนใหญ่ไม่เจอ (ชื่ออิสระ และเส้นไม่ได้ชื่อ Permutation) · วิธีอ้อมอยู่ใน `tungngern.md` §Naming
+
 ## 2026-11-10 — Report ไม่มีบรรทัด Rollback แล้ว
 
 ที่มา: คนในทีมอ่าน Report แล้วถามว่า Rollback คืออะไร และสั่งให้ลบทำไม (บรรทัดขึ้นต้นด้วย "ลบ" อ่านเหมือนคำสั่ง) ผู้ใช้เลือกตัดบรรทัดนี้ออก เพราะ Designer รู้อยู่แล้วว่าไม่อยากได้ Board ก็ลบเองได้
