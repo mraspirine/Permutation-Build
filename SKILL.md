@@ -33,7 +33,7 @@ The user is a designer, not this skill's maintainer. Every message shows only **
 - **Priority**: icon + English word in table cells — `🔴 High` · `🟠 Medium` · `🟡 Low` (never ⚪ — renders as a hollow glyph); no Thai gloss needed. Stamps keep `must` / `should` / `edge` (= High / Medium / Low)
 - **⚠️ in chat** = the emoji ⚠️ (never the bare text glyph) as a short tag in front of the Case in the Case table (`⚠️ ยืนยันค่า` · `⚠️ Business Rule` · `⚠️ แถวส่วนลด` · `⚠️ ข้อ N` = waits on Confirm question N), defined once per message: `⚠️ = ต้องยืนยันกับ BA ก่อน`. On the board only ⚠️, opening a warning clause (`⚠️ ยืนยันค่า`); the rest of a caption is plain text in the project file's grammar
 - **Never printed**: node ids · gate names (G0–G5) · tier / level (`T1`, `S/C`) · case ids (`coupon/none`) · label style (`strict`) · script names · bucket marks (✓ ✗ ⊘) · counts of any of these or of what Skill scanned. They live in stamps, `projects/<name>.md` and script JSON, shown only when asked ("ขอดูผล Verify"). **Layer names ARE printed**, with a Thai gloss when the name alone is unclear: `Transaction (การ์ด จาก→ไปยัง)`
-- **Questions**: one decision per AskUserQuestion box, recommended option first marked `(แนะนำ)`, in the Phase 3 order. GUARD: never 2–3 questions in one box. An answer that changes the table → show the new table briefly before the next box
+- **Questions**: one decision per AskUserQuestion box, recommended option first marked `(แนะนำ)`, in the Phase 3 order. An answer that changes the table → show the new table briefly before the next box
 
 ## When to use / not use
 - Use: one Key Screen — the user wants to know which Cases it should have, and/or wants its Permutation Board scaffolded
@@ -49,7 +49,7 @@ LEARN = teach a new project's layout + project-specific cases   AUDIT = re-scan 
 | Gate | Must hold before moving on |
 |---|---|
 | **G0** | project resolved · write probe OK — **only when heading for Scaffold** (Phases 1–3 and AUDIT are read-only) |
-| **G1** | board style harvested (Phase 4 step 1: nearest team board → project file's §Board anatomy → ask) — never from memory or another project |
+| **G1** | board style harvested per Phase 4 step 1 — never from memory or another project |
 | **G2** | every row bucketed ✓ / ✗ / ⊘-with-reason before Phase 3 |
 | **G3** | user confirmed matrix + placement (Phase 3 boxes) |
 | **G4** | build per Phase 4 step 4 (kit factories · chunked · guarded) |
@@ -85,13 +85,13 @@ Read the signals in this order: **screen / section / board naming → sibling bo
 
 ### Phase 1 — Profile (read-only, nothing sent yet)
 1. Traverse the **Key Screen's own subtree only** (by its node id; use_figma has no selection) — never the whole page (node cap / slow) — **skipping every `visible === false` subtree** (GUARD: hidden layers grew phantom Cases). Collect archetype signals (`references/archetype-cases.md`), component instances, lists / images, bound variable modes.
-2. **Components → categories**, in this order: the exception rows of the `component → category` table of **the screen's OWN design system** → `references/case-library.md` §Never a pack (chrome, icons, dividers: no Cases, never "unmapped") → the rest of that table, top-down (a partner screen uses its own project's table; the board still follows the flow). **No match → unmapped; never guess** → header ③ + box ①.
+2. **Components → categories**, in this order: the exception rows of the `component → category` table of **the screen's OWN design system** → `references/case-library.md` §Never a pack (chrome, icons, dividers: no Cases, never "unmapped") → the rest of that table, top-down. **No match → unmapped; never guess** → header ③ + box ①.
 3. **Existing cases**: run `scripts/scan-cases.js` with `SCOPE_ID` = the base's direct parent SECTION (nested: the INNER one), `DETAIL = false` — finds boards by name, stamp or attached `Permutation` connector; reports `linkedFrom`.
-   - GUARD: **a board belongs to THIS base only if its stamp `baseNodeId` or its `linkedFrom` is the base — never by name**; never count another screen's Cases as this screen's.
-   - Check sibling copies of the same screen (one may own a board → *states of one screen*) and the flow's shared boards outside the section (a `Common Handling` board decides several "มีแล้ว"): the inner SECTION has no board → run scan-cases again with `SCOPE_ID` = the outer flow SECTION before concluding "none at all".
+   - GUARD: **a board belongs to THIS base only if its stamp `baseNodeId` or its `linkedFrom` is the base — never by name**; never count another screen's Cases as this screen's. `linkedFrom` empty → follow the project file's link by hand (CLICX `Primary Line` #F79009); under use_figma re-scan on the Bridge (Bridge stamps read empty).
+   - Check sibling copies of the same screen (one owns a board → `archetype-cases.md` §Sibling copy) and the flow's shared boards outside the section (a `Common Handling` board decides several "มีแล้ว"): the inner SECTION has no board → run scan-cases again with `SCOPE_ID` = the outer flow SECTION before concluding "none at all".
    - Boards exist, none for this base → the header says so and names the flow's shared Permutation Board. **None at all → ask `Skill ไม่เจอ Permutation Board ใน flow นี้เลย — ทีมเก็บ Case ไว้ที่ไหน`; never assume none.**
 4. Take one screenshot of the base — the visual arbiter.
-5. **No profile message** — it becomes the Phase 3 header. Exceptions: none in the flow at all → the step 3 question · a Permutation Board for THIS base exists → stop with one box: `Key Screen นี้มี Permutation Board อยู่แล้ว — ทำอะไรต่อ` · `AUDIT Permutation Board ที่มีอยู่ (แนะนำ)` · `สร้างใหม่ (states ของจอเดียวกัน)`.
+5. **No profile message** — it becomes the Phase 3 header. Exceptions: none in the flow at all → the step 3 question · a Permutation Board for THIS base exists → stop with one box: `Key Screen นี้มี Permutation Board อยู่แล้ว — ทำอะไรต่อ` · `AUDIT Permutation Board ที่มีอยู่ (แนะนำ)` · `สร้างใหม่ (states ของจอเดียวกัน)` · a sibling copy owns one → the §Sibling copy box.
 
 ### Phase 2 — Enumerate (internal, nothing printed)
 1. **First, read `projects/<name>.md` §Screen facts** and pre-bucket its rows for this screen (and `*` rows whose condition holds in THIS flow): a `*` row whose reason is "covered by the flow's shared board" → ✓ มีแล้ว, once Phase 1 found that board in THIS flow · a row whose component is not on screen → skip (step 2 leaves it out) · every other row → **⊘ with the stored reason**.

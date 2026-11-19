@@ -106,7 +106,7 @@ Boolean prop `Show Description#1:3` toggles the secondary line.
 | `/point note/i` | annotation, not a component under test |
 | `/^phone number$/i` | **Text Field + Text Field (Add-on)** — user answered 2026-11-19 (`B.01-01.A \| current phone number`) |
 | `/^img-/i` | **Image** — illustration asset; user answered 2026-11-19 |
-| `/sticky button/i`, `/^button$/i` | no pack **in flow `B.01` only** — its Disabled / Enabled live on separate `.A` screens (user, 2026-11-19); any other flow → unmapped, ask |
+| `/sticky button/i`, `/^button$/i` | no pack **in Section `Edit phone number` only** (page `AI Test case`; every screen in it, `B.01-01.A`, `B.02-01.A` …) — its Disabled / Enabled live on separate `.A` screens there (user, 2026-11-19); any other Section → unmapped, ask |
 > No match = flag as "unmapped", never guess.
 
 ## Anchors (READ-ONLY)

@@ -13,6 +13,7 @@
 - แทนที่ข้อ "caption ใช้ emoji marker" ของ 2026-07-31 · `projects/clicx.md` เพิ่มรูปแบบ board หน้า `AI Test case` (เส้น `Primary Line` สีส้มคนละเส้นกับเส้น flow) · ถามก่อนขยาย Section · คำตอบ Component 3 ตัว (`button` เฉพาะ flow B.01)
 - `projects/_template.md`: เพิ่มช่องจดรูปแบบ description ตอน LEARN
 - audit รอบ 3: `SKILL.md` ตัดกฎป้าย ⚠️ ที่ซ้ำใน Confirm table · Phase 4 ข้อ 1 ชี้ไปที่ §What the harvest must capture (เดิมชี้ "must-yield list" ที่ไม่มีอยู่) · `projects/dgl.md` เพิ่มหัวข้อ §Screen facts (ว่าง) ให้ Phase 2 และ "จดไว้" มีที่อ่าน/จด
+- ทดสอบ 4 โมเดลบนจอ `B.02-01.A` แล้วแก้ 3 เรื่อง: (1) `archetype-cases.md` §Sibling copy (ใหม่) จอที่สร้างจาก Component เดียวกับจอที่มี Permutation Board แล้ว → เทียบสองจอ ถามก่อนว่าเป็นจอเดียวกันไหม เสนอเฉพาะ Case ที่ต่าง และมีข้อความสำหรับกรณีได้ 0 Case · `SKILL.md` Phase 1 ข้อ 3 และ 5 ชี้มาที่หัวข้อนี้ (2) `projects/clicx.md` แถว `button` ใช้ได้เฉพาะ Section `Edit phone number` (เดิมเขียนว่า flow B.01 ซึ่งกำกวม) (3) `SKILL.md` Phase 1 ข้อ 3: `linkedFrom` ว่าง → ไล่เส้นของโปรเจคด้วยมือ และใต้ use_figma ให้ scan ซ้ำผ่าน Bridge · ตัดข้อความซ้ำ 3 จุดเพื่อให้มีที่ (§Questions, G1, Phase 1 ข้อ 2)
 
 ## 2026-11-19 — โปรเจคใหม่ TungNgern (ถุงเงิน)
 

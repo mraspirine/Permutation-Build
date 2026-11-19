@@ -48,3 +48,11 @@ Before enumerating anything ask `Skill ได้ Key Screen มา N จอ — 
 - **Related but separate screens** → one run per screen, each enumerated from that screen's own visible Components, not seeded from a sibling's Case List.
 - **Mockup / template** → ask which slots vary and which stay fixed before enumerating; no answer → the Case List for ONE screen, then stop.
 
+## Sibling copy (SKILL.md Phase 1 step 3)
+A **sibling copy** is another screen in the same flow built from the same main component as the Key Screen, or with the same visible layer tree (CLICX: frames `B.01-01.A | current phone number` and `B.02-01.A | edit phone number` each wrap one instance of `edit phone number`). It matters only when the sibling owns a Permutation Board (stamp or link) and the Key Screen owns none:
+1. **Diff the two screens first**: visible layers, texts, component overrides. Each difference can create a Case.
+2. **Ask before the Phase 3 message**, one box: `Key Screen นี้สร้างจาก Component เดียวกับจอ "<sibling>" ที่มี Permutation Board แล้ว — นับเป็นจอเดียวกันไหม` · `จอเดียวกัน — เสนอเฉพาะ Case ที่ต่างกัน (แนะนำ)` · `จอแยกกัน — แตก Case ใหม่ทั้งชุด`.
+3. **จอเดียวกัน** → header row `จอนี้สร้างจาก Component เดียวกับ "<sibling>" | เสนอเฉพาะ Case ที่ต่างกัน`; the Case table holds only the Cases the diff creates; every Case on the sibling's board goes to ตัดออก in ONE row (Case names joined by ` · `) with `มีแล้ว — อยู่ใน Permutation Board ของจอ "<sibling>"`. **The diff creates none** → in place of the Case table write `ไม่มี Case ใหม่ — Case ของจอนี้อยู่ใน Permutation Board ของจอ "<sibling>" ครบแล้ว`, ask no more boxes and stop; nothing is written.
+4. **จอแยกกัน** → a normal run from the Key Screen's own components, never seeded from the sibling's Case List; SKILL.md Phase 4 step 2's sibling-duplicate guard still applies.
+5. **Non-interactive run** → print the message as step 3 shows it (the Case table, or the `ไม่มี Case ใหม่` sentence in its place), plus Confirm row `Key Screen นี้เป็นจอเดียวกับ "<sibling>" ไหม` · `ถ้าไม่ใช่ → Skill แตก Case ใหม่ทั้งชุด`, then stop.
+
