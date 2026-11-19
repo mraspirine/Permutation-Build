@@ -1,6 +1,6 @@
 # contract-and-runtime — the board contract + how to write to Figma (Phase 4–5, AUDIT)
 
-> Read §4–5 before the first Bridge or write call (SKILL.md Phase 0 step 3), this whole file before the first WRITE call of Phase 4 (SKILL.md Phase 4 step 4), and §2 before AUDIT on a stamped board.
+> Read §4–5 before the first Figma call (SKILL.md Phase 0 step 3), this whole file before the first WRITE call of Phase 4 (SKILL.md Phase 4 step 4), and §2 before AUDIT on a stamped board.
 > It is shared by every file and mode — do not change it casually. Nothing in this file is printed to the user.
 
 ---
@@ -40,9 +40,9 @@
 | Read / audit a large existing permutation board | **figma-console Bridge required** (official MCP overflows on big boards) |
 | Clone + re-point the screen→board CONNECTOR | **try the active runtime; Bridge throws in some files where `use_figma` succeeds** (`board-grammar.md` §Tool limitation) |
 
-## 5 · Write idiom (every WRITE call)
+## 5 · Call idiom (items 2–3 every call, read or write; the rest every WRITE call)
 1. **`guard(<EXPECTED>)`** at the top of every write batch (the desktop's active file can drift). Bridge: pass the file **name**. use_figma: pass the **fileKey** — `figma.root.name` is always `"Document"` there, so a name guard throws on every call
-2. **use_figma starts every call on the file's FIRST page, with no user selection.** The read scripts load their own page (`scan-cases.js` via `SCOPE_ID`, `harvest-board.js` via `BOARD_HINT`, `verify-board.js` via `boardId`): paste them verbatim, edit only the CONFIG lines. Your own WRITE scripts need `await figma.setCurrentPageAsync(<page>)` first; address nodes by id
+2. **use_figma starts every call on the file's FIRST page, with no user selection.** The read scripts load their own page (`scan-cases.js` via `SCOPE_ID`, `harvest-board.js` via `BOARD_HINT`, `verify-board.js` via `boardId`): paste them verbatim up to the `node self-check` line, edit only the CONFIG lines. Your own WRITE scripts need `await figma.setCurrentPageAsync(<page>)` first; address nodes by id
 3. **Responses die around 20 KB on the official MCP** (`use_figma` AND `get_metadata`; the echoed script counts) → `DETAIL = false` (except AUDIT step 2, `learn-audit.md`), return trimmed JSON, split calls; anything bigger goes through the Bridge, where a cross-page read needs `await page.loadAsync()` first
 4. **Only touch what this skill created; never modify the base** — phase 1 does not even clone screens
 5. **Never call `figma.commitUndo()` under use_figma** (it throws and the whole atomic batch silently no-ops)
@@ -51,7 +51,7 @@
 8. **Auto-layout ordering**: `layoutMode` **first**, append the children, then lock the size — `finalizeFixed()` for a fixed slot, `growWithContent()` after the last append for a container that hugs. Resizing before `layoutMode` silently leaves a frame hugging (an 844-tall placeholder collapses to ~21px) — use the kit's factories
 9. **Verify by reading values back** (placeholder and container width/height) — never assume a set stuck
 
-## 6 · Build recipe (SKILL.md Phase 4 step 4 points here; the stops — harvest, sibling guard, placement — stay in SKILL.md)
+## 6 · Build recipe (SKILL.md Phase 4 step 4 points here; the stops — harvest, sibling guard, placement — ask in SKILL.md, their tests are in `board-grammar.md` §Scaffold stops)
 - **Paste `scripts/scaffold-kit.js` as the prelude** of every build call and build only with its factories — frames: `alFrame` → append → `finalizeFixed` / `growWithContent` · `placeholder` · `stampCase` / `stampBoard` · library-component captions: `freshInstance` + `setInstanceTexts` + `equalizeRow` · GRID groups: `gridPlan` → `gridFrame` + `placeInGrid` · `elbowLink`. They encode the ordering that otherwise silently collapses frames
 - **One board container**, `stampBoard`-ed — everything goes inside it
 - **Per case**: label node (project's label style, §3) + caption nodes (verbatim; the Phase 3 CTA-target answer folded into the Description) + `placeholder()` + `stampCase()`
